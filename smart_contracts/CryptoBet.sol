@@ -3,12 +3,11 @@
 pragma solidity >=0.8.0 <0.9.0;
 
 import "EventsEmmiter.sol";
+import "MathContract.sol";
 import "@openzeppelin-contracts/contracts/token/ERC20/IERC20.sol";
 
 
 contract CryptoBet {
-
-    using SafeMath for uint256;
 
     uint256[2] shares;
     uint256 amountShares;
@@ -34,7 +33,6 @@ contract CryptoBet {
         IERC20 token,
         string assetName
     ) public {
-
         shares = _shares;
         money = _money;
         resolutionDate = _resolutionDate;
@@ -53,9 +51,9 @@ contract CryptoBet {
 
     }
 
+    using MathContract for uint256;
 
     function wageMoney(uint256[2] shares) public returns(bool){
-
     }
 
     function exchange(uint8 newoutcome) extera returns(bool){
@@ -71,23 +69,11 @@ contract CryptoBet {
     }
 
     function _priceBuyShares(uint outcome, uint256 nshares) internal view returns(uint256){
-        uint256 price = 0;
-        uint instant_price = money[outcome] * (10 ** 18) / amountMoney;
-        for(uint8 i; i <= shares.length; i++){
-            price += (money[outcome] * (10 ** 18) + instant_price) / (amountMoney + instant_price);
-            instant_price = (money[outcome] * (10 ** 18) + instant_price) / (amountMoney + instant_price;
-        }
-        return price;
+        return n - (amountShares - shares[outcome]) * (ln(amountShares + n) - ln(amountShares));
     }
 
-    function _priceSellShares(uint outcome, uint256 nshares) internal view returns(uint){
-        uint256 price = 0;
-        uint instant_price = money[outcome] * (10 ** 18) / amountMoney;
-        for(uint8 i, i <= shares.length, i++){
-            price += (money[outcome] * (10 ** 18) + instant_price) / (amountMoney + instant_price);
-            instant_price = money[outcome] * (10 ** 18) + instant_price) / (amountMoney + instant_price;
-        }
-        return price;
+    function _priceSellShares(uint outcome, uint256 nshares) internal view returns(uint256){
+        return - n - (amountShares - shares[outcome]) * (ln(amountShares - n) - ln(amountShares));
     }
 
     function _validate_outcomes(uint8 outcome) internal view{
