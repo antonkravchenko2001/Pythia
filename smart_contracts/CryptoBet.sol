@@ -2,8 +2,8 @@
 
 pragma solidity >=0.8.0 <0.9.0;
 
-import "EventsEmmiter.sol";
-import "MathContract.sol";
+import "./EventsEmitter.sol";
+import "./MathContract.sol";
 import "@openzeppelin-contracts/contracts/token/ERC20/IERC20.sol";
 
 
@@ -46,38 +46,85 @@ contract CryptoBet {
         require(amountShares >= 0);
 
         instanteneousPrice = _instanteneous_price();
-
+        EventsEmitter emitter = EventsEmitter();
         _validate_outcomes();
 
     }
 
     using MathContract for uint256;
 
-    function wageMoney(uint256[2] shares) public returns(bool){
+    function wageMoney(uint256[2] buyShares) public returns(bool){
+        uint256 total_price = 0;
+        uint256 num_shares = 0;
+        uint[2] money_waged;
+
+        for(uint8 i = 0; i < numShares.length; i++){
+            total_price += _priceBuyShares(i, numShares[i]);
+            num_shares += buyShares[i];
+        }
+
+        require(token.balanceOf(msg.sender) >= total_price);
+
+        for(uint8 i; i < numShares.length; i++){
+            require(
+               (shares[i] + buyShares[i]) * (10 ** 18) / (amountShares + buyShares[i]) >=
+               MIN_PRICE_SHARE * 10 ** 16
+            );
+        }
+
+        for(uint8 i; i < numShares.length; i++){
+            shares[i] += buyShares[i];
+            instanteneousPrice += (shares[i] + buyShares[i]) * (10 ** 18) / (amountShares + buyShares[i]);
+            money_waged[i] = _priceBuyShares(i, buyShares[i]);
+            money[i] += money_waged[i];
+            for(uint8 j; j < numShares.length; j++){
+                addressMoney[msg.sender][j] += money_waged[i];
+                addressShares[msg.sender][j] += buyShares[j];
+            }
+        }
+
+        token.transferFrom(msg.sender, this.address, total_price);
+        emitter.EmitDeposit(msg.sender, this.address, buyShares, money_waged);
     }
 
-    function exchange(uint8 newoutcome) extera returns(bool){
+    function withdraw(uint256[2] shares) public returns(bool){
+        require (msg.sender == owner, "only owner can withdraw funds");
+        require(_resolutionDate >= block.timestamp);
+        uint _rewardAmount = (money - money[winningOutcome]) * addressShares[msg.sender][winningOutcome] / shares[winningOutcome];
+        _rewardAmount += addressMoney[msg.sender][winningOutcome];
+        uint expertScore = calcExpertScore(msg.sender);
+        token.transfer(msg.sender, _rewardAmount);
+        addressShares[msg.sender][winningOutcome] = 0;
+        addressMoney[msg.sender][winningOutcome] = 0;
+
+        emitter.EmitWithdraw(msg.sender,this.address, _rewardAmount, expertScore);
+    }
+
+    function calcExpertScore(address _address) internal view returns (uint) {
+        uint expertScore = expertScore * amountMoney;
+        uint winningShares = addressShares[_address][winningOutcome] * 10 ** 6;
+        uint winningIn = winningShares / shares[winningOutcome];
+        uint sumShares = 0;
+
+        for (i = 0; i <= shares.length; i++) {
+            sumShares += addressShares[_address][i];
+        }
+
+        uint winningOut = winningShares / sumShares;
+        uint losingSharesTotal = (amountshares - shares[winningOutcome]) * 10 ** 12 / amountShares;
+        uint harmonicMean = (2 * winningIn * winningOut) / (winningIn + winningOut);
+
+        return expertScore * harmonicMean * losingSharesTotal;
 
     }
 
-    function withdraw() public returns(bool){
-
-    }
-
-    function placeBet() public view returns(uint256){
-
-    }
 
     function _priceBuyShares(uint outcome, uint256 nshares) internal view returns(uint256){
         return n - (amountShares - shares[outcome]) * (ln(amountShares + n) - ln(amountShares));
     }
 
-    function _priceSellShares(uint outcome, uint256 nshares) internal view returns(uint256){
-        return - n - (amountShares - shares[outcome]) * (ln(amountShares - n) - ln(amountShares));
-    }
-
     function _validate_outcomes(uint8 outcome) internal view{
-        for(uint8 i = 0; i <= shares.length, i++){
+        for(uint8 i = 0; i <= shares.length; i++){
             _validate_outcome(i);
         }
     }
@@ -110,3 +157,4 @@ contract CryptoBet {
         }
         return total_amount_money;
     }
+}

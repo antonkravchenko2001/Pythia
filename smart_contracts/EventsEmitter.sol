@@ -2,7 +2,7 @@
 
 pragma solidity >=0.8.0 <0.9.0;
 
-contract EventsEmmiter{
+contract EventsEmitter{
 
     event Deposit(
         address indexed player,
@@ -14,7 +14,8 @@ contract EventsEmmiter{
     event Withdraw(
         address indexed player,
         address indexed bet,
-        uint256 amount
+        uint256 amount,
+        uint256 ExpertScore
     );
 
     function EmitDeposit(
@@ -30,9 +31,10 @@ contract EventsEmmiter{
     function EmitWithdraw(
         address player,
         address bet,
-        uint256 amount
+        uint256 amount,
+        uint256 expertScore
     ) external returns(bool) {
-        emit Withdraw(player, bet, amount);
+        emit Withdraw(player, bet, amount, expertScore);
         return true;
     }
 
