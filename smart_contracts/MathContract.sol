@@ -4,6 +4,14 @@ pragma solidity >=0.8.0 <0.9.0;
 
 contract MathContract{
 
+    function sumArr(uint256[] memory nums) internal pure returns(uint256){
+        uint256 _sum = 0;
+        for(uint8 i; i < nums.length; i++){
+            _sum += nums[i];
+        }
+        return _sum;
+    }
+
     function ln(uint256 num) internal pure returns(uint256){
         return log2(num) * 693 / 1000;
     }
