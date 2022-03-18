@@ -5,6 +5,8 @@ pragma solidity >=0.8.0 <0.9.0;
 import "./EventsEmitter.sol";
 import "./MathContract.sol";
 import "@openzeppelin-contracts/contracts/token/ERC20/IERC20.sol";
+import "@chainlink/contracts/src/v0.8/ChainlinkClient.sol";
+
 
 
 contract CryptoBet {
@@ -33,6 +35,8 @@ contract CryptoBet {
 
     address emmiterAddress;
     uint8 MIN_PRICE_SHARE = 2;
+    bytes32 JOB_ID = "9ea03a32a0074fb18cf6f072190e9855";
+    address ORACLE_ADDRESS = address(0x34195E3eD889BBe21a532A48Ec90A845f65b9dFA);
 
 
     constructor(
@@ -47,7 +51,7 @@ contract CryptoBet {
 
         shares = _shares;
         amountShares = shares.sumArr();
-
+        assetName = _assetName;
         money = _money;
         amountMoney = money.sumArr();
 
@@ -60,6 +64,12 @@ contract CryptoBet {
 
         require(amountMoney >= 0);
         require(amountShares >= 0);
+
+        string assetRequest = (
+            "https://api.coingecko.com/api/v3/simple/price?ids=" +
+            _assetName +
+            "&vs_currencies=usd"
+        );
 
         uint256 instanteneousPrice = _instanteneousPrice();
         EventsEmitter emitter = EventsEmitter(emmiterAddress);
@@ -185,6 +195,27 @@ contract CryptoBet {
             (amountShares - shares[outcome]) *
             (ln(amountShares + n) - ln(amountShares))
         );
+    }
+
+    function _PriceRequest() internal view returns(uint256){
+        Chainklink.Request req = buildChainlinkRequest(
+            JOB_ID,
+            address(this),
+            this.fulfill.selector
+        );
+        req.add("get", assetRequest);
+        req.add("path", _assetName);
+        req.add("path","usd");
+        sendChainlinkRequestTo(ORACLE_ADDRESS, req, 10000000000000000);
+
+    }
+
+    function fulfill(bytes32 _requestId,uint265 _price) internal {
+        if (_price > betValues[0]){
+            winningOutcome = 0;
+        } else {
+            winningOutcome = 1;
+        }
     }
 
     function _getInstanteneousPrice() internal view returns(uint256[2]){
