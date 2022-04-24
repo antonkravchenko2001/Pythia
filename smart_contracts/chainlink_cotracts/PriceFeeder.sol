@@ -7,7 +7,7 @@ import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contr
 contract PriceFeeder is ChainlinkClient {
     using Chainlink for Chainlink.Request;
 
-    address constant linkTokenAddress;
+    address constant linkTokenAddress = 0xa36085F69e2889c224210F603D836748e7dC0088;
     IERC20 linkToken;
 
     uint256 public price;
@@ -24,10 +24,10 @@ contract PriceFeeder is ChainlinkClient {
         jobId = "d5270d1c311941d0b08bead21fea7747";
         assetName = _assetName;
         fee = 0.1 * 10 ** 18;
-        fund(fee);
+        fund();
     }
 
-    function requestVolumeData() public returns (bytes32 requestId)
+    function requestPrice() public returns (bytes32 requestId)
     {
         Chainlink.Request memory request = buildChainlinkRequest(
             jobId,
@@ -58,12 +58,12 @@ contract PriceFeeder is ChainlinkClient {
         return string(abi.encodePacked(startUrl, assetName, endUrl));
     }
 
-    function fund(uint256 fee) internal {
+    function fund() internal {
         require(linkToken.balanceOf(msg.sender) >= fee);
         linkToken.transferFrom(
             msg.sender,
-            address(_priceFeeder),
-             _priceFeeder.fee
+            address(this),
+            fee
         );
     }
 }

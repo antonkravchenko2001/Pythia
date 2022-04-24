@@ -1,48 +1,94 @@
 // SPDX-License-Identifier: GPL-3.0
-
 pragma solidity ^0.8.0;
 
 import "./helper_contracts/Maths.sol";
-import "./helper_contracts/MarketObjects.sol";
+import "./chainlink_contracts/PriceFeeder.sol";
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC20/IERC20.sol";
+import "https://github.com/smartcontractkit/chainlink/blob/develop/contracts/src/v0.8/interfaces/KeeperCompatibleInterface.sol";
 
 
-contract Markets {
+
+contract Markets is KeeperCompatibleInterface{
 
     using MathContract for *;
-    using MarketObjects for *;
-
     // deposit event
     event Deposited(
+        //address of the player
         address player,
-        uint256 marketId,
+        //market id
+        bytes32 marketId,
+        //shares bought
         uint256[2] sharesBought,
+        //money waged
         uint256[2] moneyWaged
     );
 
     // withdraw event
     event Withdrawed(
         address player,
-        uint256 betId,
+        bytes32 marketId,
         uint256 moneyWithdrawed,
         uint256 expertScore
     );
 
     // market created event
     event MarketCreated(
-        uint256 marketId
+        bytes32 marketId
     );
+
+    event MarketResolved(
+        bytes32 marketId
+    );
+
+    //player struct
+    struct Player{
+        uint256[2] moneyWaged;
+        uint256[2] sharesOwned;
+        uint256 reward;
+        uint256 expertScore;
+        bool withdrawed;
+    }
+
+
+    // market struct
+    struct Market{
+        //mapping(address => player) players of the market
+        mapping(address => Player) players;
+        //total amount of shares owned for each outcome
+        uint256[2] sharesOwned;
+        //total amount of money waged for each outcome
+        uint256[2] moneyWaged;
+        //the asset name
+        string assetName;
+        //value to compare the price of the asset with to determine the outcome
+        uint256 benchPrice;
+        //resolution price;
+        uint256 resolutionPrice;
+        //winning outcome
+        uint256 winningOutcome;
+        //Resolution date
+        uint256 resolutionDate;
+        // The last date to wage money on a bet
+        uint256 wageDeadline;
+        //resolved flag
+        bool resolved;
+        //pay token contract
+        IERC20 payToken;
+        //price feeder contract
+        PriceFeeder priceFeeder;
+    }
 
     // constants
     uint256 constant MULTIPLIER = 1000000000000000000;
     uint256 constant ALPHA = 100;
+    uint256 constant MAX_MARKETS_UPDATE = 30;
     IERC20 linkToken;
 
     //the amount of markets created
-    uint256 numMarkets;
+    uint256 public numMarkets;
 
     //mapping to store all the bets. The bet is identified by its betId
-    mapping(bytes32 => Markets) public markets;
+    mapping(bytes32 => Market) public markets;
 
     //mapping to store marketIds
     mapping(uint256 => bytes32) public marketIds;
@@ -51,7 +97,7 @@ contract Markets {
     function createMarket(
         uint256[2] memory _sharesOwned,
         uint256[2] memory _moneyWaged,
-        bytes32 _assetName,
+        string calldata _assetName,
         uint256 _benchPrice,
         uint256 _resolutionDate,
         uint256 _wageDeadline,
@@ -59,69 +105,82 @@ contract Markets {
     ) external {
 
         //checking date conditions
-        require(now < _resolutionDate);
-        require(now < _wageDeadline);
-        require(_wageDeadline < _resolutionDate);
+        require(
+            block.timestamp < _resolutionDate,
+            "resolution date has passed"
+        );
+        require(
+            block.timestamp < _wageDeadline,
+            "wagedeadline has passed"
+        );
+        require(
+            _wageDeadline < _resolutionDate,
+            "resolution happens after last wage"
+        );
 
-        //checking money waged and shares owned conditions
+        //check money waged condition
         _validateMoneyWaged(_moneyWaged);
+
+        //check shares owned condition
         _validateSharesOwned(_sharesOwned);
 
-        //define mappings for players
-        mapping(address => Player) players;
-        //initialize reward for the player
-        uint256 _reward;
-        //initialize expert score for the player
-        uint256 _expertScore;
+        //initialize the market
+        Market storage market = markets[marketIds[numMarkets]];
 
-        Player _player = Player(
-            _moneyWaged,
-            _sharesOwned,
-            _reward,
-            _expertScore,
-            false
-        );
-        _players[msg.sender] = _player;
+        //initialize marketId
+        bytes32 _marketId;
+
+        //initialize price feeder contract
+        PriceFeeder _priceFeeder;
+
+        //initialize pay token
+        {
+            // assign pay token
+            IERC20 _payToken;
+            _payToken = IERC20(_payTokenAddress);
+            market.payToken = _payToken;
+        }
+
+        //initialize the player (one who creates a market is the first player
+        {
+            Player memory _player;
+            _player.sharesOwned = _sharesOwned;
+            _player.moneyWaged = _moneyWaged;
+            //add player to market players
+            market.players[msg.sender] = _player;
+        }
 
         //deploy price feeder contract
-        PriceFeeder _priceFeeder = new PriceFeeder(_assetName);
+        _priceFeeder = new PriceFeeder(_assetName);
 
-        IERC20 _payToken = IERC20(_payTokenAddress);
-
-        uint256 _resolutionPrice;
-        uint256 _winningOutcome;
-        bool _resolved;
-
-        //get marketId
-        uint256 marketId = keccak256(
-            abi.encodePacked(msg.sender, _priceFeederAddress)
+        //create marketId
+        _marketId = keccak256(
+            abi.encodePacked(msg.sender, address(_priceFeeder))
         );
 
-        //crypto market initialization
-        Market bet = Market(
-            _players,
-            _sharesOwned,
-            _moneyWaged,
-            _assetName,
-            _benchPrice,
-            _resolutionPrice,
-            _winningOutcome,
-            _resolutionDate,
-            _wageDeadline,
-            _resolved,
-            _payToken,
-            _priceFeeder
-        );
-
-        markets[marketId] = market;
-        marketIds[numMarkets] = marketId;
+        //assign shares owned
+        market.sharesOwned = _sharesOwned;
+        //assign money waged
+        market.moneyWaged = _moneyWaged;
+        //assign asset name
+        market.assetName = _assetName;
+        //assign bench price
+        market.benchPrice = _benchPrice;
+        // assign resolution date
+        market.resolutionDate = _resolutionDate;
+        // assign wage  deadline
+        market.wageDeadline = _wageDeadline;
+        // assign price feeder
+        market.priceFeeder = _priceFeeder;
+        // assign market id
+        marketIds[numMarkets] = _marketId;
         numMarkets += 1;
 
-        emit MakretCreated(marketId);
+        emit MarketCreated(_marketId);
 
         emit Deposited(
-            BetId,
             msg.sender,
+            _marketId,
             _moneyWaged,
             _sharesOwned
         );
@@ -130,12 +189,12 @@ contract Markets {
 
     //waging money on a market
     function wageMoney(
-        uint256 marketId,
+        bytes32 marketId,
         uint256[2] memory _sharesToPurchase
     ) external {
 
         //check that wage deadline is not passed
-        require(markets[marketId].wageDeadline > now);
+        require(markets[marketId].wageDeadline > block.timestamp);
 
         //array to store the amount to be waged by a player on each outcome
         uint256[2] memory _moneyToWage;
@@ -159,7 +218,7 @@ contract Markets {
         );
 
         //transfer funds
-        markets[marketId].token.transferFrom(
+        markets[marketId].payToken.transferFrom(
             msg.sender,
             address(this),
             _transferAmount
@@ -168,33 +227,35 @@ contract Markets {
         //update moneyWage and sharesOwned both for market and for a player
         for(uint256 i; i <  _sharesToPurchase.length; i++){
 
-            market[marketId].sharesOwned[i] += _sharesToPurchase[i];
-            market[marketId].moneyWaged[i] += _moneyToWage[i];
+            markets[marketId].sharesOwned[i] += _sharesToPurchase[i];
+            markets[marketId].moneyWaged[i] += _moneyToWage[i];
 
             (
-                market
+                markets
                 [marketId]
                 .players
                 [msg.sender]
                 .sharesOwned
+                [i]
             ) += _sharesToPurchase[i];
 
             (
-                market
+                markets
                 [marketId]
                 .players
                 [msg.sender]
                 .moneyWaged
+                [i]
             ) += _moneyToWage[i];
 
         }
 
         // emit deposit events
-        emit Deposited(marketId, msg.sender, _sharesToPurchase, _moneyToWage);
+        emit Deposited(msg.sender, marketId, _sharesToPurchase, _moneyToWage);
     }
 
     //withdrawing money from a market
-    function withdraw(uint256 marketId) external {
+    function withdraw(bytes32 marketId) external {
 
         //check that market is resolved
         require(markets[marketId].resolved);
@@ -202,7 +263,7 @@ contract Markets {
             check that the player had not previously
             withdrawed money from this market
         */
-        require(~markets[marketId].players[msg.sender].withdrawed);
+        require(!markets[marketId].players[msg.sender].withdrawed);
 
         //calculate reward
         uint256 _rewardAmount = calcReward(marketId, msg.sender);
@@ -219,7 +280,7 @@ contract Markets {
             .players
             [msg.sender]
             .reward
-        ) = _rewardAmount;
+        ) = calcReward(marketId, msg.sender);
 
         //update the player's expert score data
         (
@@ -228,7 +289,7 @@ contract Markets {
             .players
             [msg.sender]
             .expertScore
-        ) = _expertScore;
+        ) = calcExpertScore(marketId, msg.sender);
 
         //update the player's withdrawed flag
         (
@@ -241,8 +302,8 @@ contract Markets {
 
         //emit an event
         emit Withdrawed(
-            marketId,
             msg.sender,
+            marketId,
             _rewardAmount,
             _expertScore
         );
@@ -250,27 +311,28 @@ contract Markets {
 
     //caclulating reward
     function calcReward(
-        uint256 _marketId,
-        address _player
+        bytes32 _marketId,
+        address _playerAddress
     ) public view returns(uint256){
 
-        Market market = markets[marketId];
-        uint256 winningOutcome = market.winningOutcome;
+        uint256[2] memory _moneyWaged = markets[_marketId].moneyWaged;
+        Player memory _player = markets[_marketId].players[_playerAddress];
+        uint256 _winningOutcome = markets[_marketId].winningOutcome;
 
         //total amount of money waged on losing outcomes
         uint256 _loserMoney = (
-            market.moneyWaged.sumArr() -
-            market.moneyWaged[winningOutcome]
+            _moneyWaged.sumArr() -
+            _moneyWaged[_winningOutcome]
         );
 
         //the amount money waged by the player on the winning outcomes
         uint256 _winOutcomeMoney = (
-            market.players[_player].moneyWaged[winningOutcome]
+            _player.moneyWaged[_winningOutcome]
         );
 
         //total amount of winning shares owned by th player
         uint256 _winSharesOwned = (
-            market.players[_player].sharesOwned[winningOutcome]
+            _player.sharesOwned[_winningOutcome]
         );
 
         return (
@@ -283,31 +345,33 @@ contract Markets {
 
     //caclulating expert score
     function calcExpertScore(
-        uint256 marketId,
-        address _player
+        bytes32 _marketId,
+        address _playerAddress
     ) public view returns(uint256){
 
-        Market market = markets[marketId];
-        uint256 winningOutcome = market.winningOutcome;
+        uint256[2] memory _moneyWaged = markets[_marketId].moneyWaged;
+        uint256[2] memory _sharesOwned = markets[_marketId].sharesOwned;
+        Player memory _player = markets[_marketId].players[_playerAddress];
+        uint256 _winningOutcome = markets[_marketId].winningOutcome;
 
         //total amount of shares owned by the player
         uint256 _totalSharesPlayer = (
-            market.players[_player].sharesOwned.sumArr()
+            _player.sharesOwned.sumArr()
         );
 
         //total amount of winning outcome shares owned by the player
         uint256 _totalWinSharesPlayer = (
-            market.players[_player].sharesOwned[_winningOutcome]
+            _player.sharesOwned[_winningOutcome]
         );
 
         //total amount of winning outcome shares
         uint256 _totalWinShares = (
-            market.sharesOwned[_winningOutcome]
+            _sharesOwned[_winningOutcome]
         );
 
         //total amount of losing outcomes shares
         uint256 _totalLosingShares = (
-            market.sharesOwned[1 - _winningOutcome]
+            _sharesOwned[1 - _winningOutcome]
         );
 
         //total amount of shares owned
@@ -317,7 +381,7 @@ contract Markets {
 
         //total amount of money waged on a market
         uint256  _totalMoneyWaged = (
-            market.moneyWaged.sumArr()
+            _moneyWaged.sumArr()
         );
 
         return (
@@ -337,6 +401,8 @@ contract Markets {
         uint256 _nshares
     ) internal view returns(uint256){
 
+
+
         //amount of money waged on the outcome to be bought
         uint256 m = (
             markets
@@ -353,26 +419,36 @@ contract Markets {
             [1 - _outcome]
         );
 
-        return (m * exp((ONE * nshares) / (ALPHA * n)) - m * ONE) / ONE;
+        return (
+            m *
+            (
+                MathContract.exp((MathContract.ONE * _nshares) / (ALPHA * n)) -
+                MathContract.ONE
+            ) /
+            MathContract.ONE
+        );
     }
 
     //getting winning outcome based on the price
     function _getWinningOutcome(
         bytes32 _marketId
-    ) internal returns(uint256) {
+    ) internal view returns(uint256) {
 
-        Market market = markets[marketId];
+        uint256 _resolutionPrice = markets[_marketId].resolutionPrice;
+        uint256 _benchPrice = markets[_marketId].benchPrice;
 
-        if(market.resolutionPrice >= market.benchPrice){
+        if(_resolutionPrice >= _benchPrice){
             return 1;
         } else {
             return 0;
         }
     }
 
+
+
     //validating shares owned
     function _validateSharesOwned(
-        uint256[2] calldata _sharesOwned
+        uint256[2] memory _sharesOwned
     ) internal pure{
         for(uint256 i = 0; i <= _sharesOwned.length; i++){
             require(_sharesOwned[i] > 0);
@@ -381,10 +457,68 @@ contract Markets {
 
     //validating money waged
     function _validateMoneyWaged(
-        uint256[2] calldata _moneyWaged
+        uint256[2] memory _moneyWaged
     ) internal pure{
         for(uint256 i = 0; i <= _moneyWaged.length; i++){
             require(_moneyWaged[i] > 0);
+        }
+    }
+
+    function checkUpkeep(bytes calldata checkData) external view  override returns (
+        bool upkeepNeeded,
+        bytes memory performData
+    )
+    {
+        bytes32[30] memory resolvedMarketIds;
+        bytes32 _marketId;
+        bool _resolved;
+        uint256 count;
+
+        for(uint256 i; i < numMarkets; i++){
+
+            require(count < 30);
+
+            _marketId = marketIds[i];
+            _resolved = markets[_marketId].resolved;
+
+            if(!markets[_marketId].resolved){
+                resolvedMarketIds[i] = _marketId;
+                count += 1;
+            }
+        }
+        if(count > 0){
+            upkeepNeeded = true;
+        }
+        return (upkeepNeeded, abi.encode(resolvedMarketIds));
+    }
+
+    function performUpkeep(bytes calldata performData) external override {
+
+        bytes32[30] memory resolvedMarketIds = abi.decode(
+            performData,
+            (bytes32[30])
+        );
+        PriceFeeder _priceFeeder;
+        bytes32 _marketId;
+
+        for(uint256 i; i < resolvedMarketIds.length; i++){
+            _marketId = resolvedMarketIds[i];
+            require(!markets[_marketId].resolved);
+
+            _priceFeeder = (
+                markets
+                [resolvedMarketIds[i]]
+                .priceFeeder
+            );
+
+             _priceFeeder.requestPrice();
+            markets[resolvedMarketIds[i]].resolutionPrice = (
+                _priceFeeder.price()
+            );
+
+            markets[_marketId].resolved = true;
+
+            emit MarketResolved(_marketId);
         }
     }
 
