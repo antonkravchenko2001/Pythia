@@ -1,11 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0
+
 pragma solidity ^0.8.0;
 
 import "./helper_contracts/Maths.sol";
 import "./chainlink_contracts/PriceFeeder.sol";
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC20/IERC20.sol";
-import "https://github.com/smartcontractkit/chainlink/blob/develop/contracts/src/v0.8/interfaces/KeeperCompatibleInterface.sol";
-
 
 
 contract Markets is KeeperCompatibleInterface{
@@ -25,18 +24,24 @@ contract Markets is KeeperCompatibleInterface{
 
     // withdraw event
     event Withdrawed(
+        //player
         address player,
+        //market
         bytes32 marketId,
+        //amount of money withdrawed
         uint256 moneyWithdrawed,
+        //player's expert score
         uint256 expertScore
     );
 
     // market created event
     event MarketCreated(
+        //market
         bytes32 marketId
     );
 
     event MarketResolved(
+        //market
         bytes32 marketId
     );
 
@@ -59,30 +64,32 @@ contract Markets is KeeperCompatibleInterface{
         //total amount of money waged for each outcome
         uint256[2] moneyWaged;
         //the asset name
-        string assetName;
+        address priceFeedAddress;
         //value to compare the price of the asset with to determine the outcome
         uint256 benchPrice;
-        //resolution price;
-        uint256 resolutionPrice;
-        //winning outcome
-        uint256 winningOutcome;
         //Resolution date
         uint256 resolutionDate;
         // The last date to wage money on a bet
         uint256 wageDeadline;
+        //winning outcome
+        uint256 winningOutcome;
         //resolved flag
         bool resolved;
-        //pay token contract
-        IERC20 payToken;
-        //price feeder contract
-        PriceFeeder priceFeeder;
     }
 
-    // constants
+    // multiplier used in computations
     uint256 constant MULTIPLIER = 1000000000000000000;
-    uint256 constant ALPHA = 100;
+    //alpha hyperparamter used in price function
+    uint256 constant ALPHA = 15;
+    //the maximum amount of markets that can be resolved within one block
     uint256 constant MAX_MARKETS_UPDATE = 30;
+
+    //payToken
+    IERC20 payToken;
+    //linkToken
     IERC20 linkToken;
+    //price feeder contract
+    PriceConsumer priceConsumer;
 
     //the amount of markets created
     uint256 public numMarkets;
@@ -90,18 +97,25 @@ contract Markets is KeeperCompatibleInterface{
     //mapping to store all the bets. The bet is identified by its betId
     mapping(bytes32 => Market) public markets;
 
-    //mapping to store marketIds
-    mapping(uint256 => bytes32) public marketIds;
+    //initialize pay and link stoken
+    constructor(
+        address payesTokenAddress,
+        address linkTokenAddress,
+        address priceConsumerAddress,
+    ) public {
+        payToken = IERC20(payesTokenAddress);
+        linkToken = IERC20(linkTokenAddress);
+        priceConsumer = PriceFeeder(priceConsumerAddress);
+    }
 
     //function to create a bet
     function createMarket(
         uint256[2] memory _sharesOwned,
         uint256[2] memory _moneyWaged,
-        string calldata _assetName,
+        address _priceFeedAddress,
         uint256 _benchPrice,
         uint256 _resolutionDate,
         uint256 _wageDeadline,
-        address _payTokenAddress
     ) external {
 
         //checking date conditions
@@ -125,21 +139,7 @@ contract Markets is KeeperCompatibleInterface{
         _validateSharesOwned(_sharesOwned);
 
         //initialize the market
-        Market storage market = markets[marketIds[numMarkets]];
-
-        //initialize marketId
-        bytes32 _marketId;
-
-        //initialize price feeder contract
-        PriceFeeder _priceFeeder;
-
-        //initialize pay token
-        {
-            // assign pay token
-            IERC20 _payToken;
-            _payToken = IERC20(_payTokenAddress);
-            market.payToken = _payToken;
-        }
+        Market storage market = markets[numMarkets];
 
         //initialize the player (one who creates a market is the first player
         {
@@ -150,37 +150,28 @@ contract Markets is KeeperCompatibleInterface{
             market.players[msg.sender] = _player;
         }
 
-        //deploy price feeder contract
-        _priceFeeder = new PriceFeeder(_assetName);
-
-        //create marketId
-        _marketId = keccak256(
-            abi.encodePacked(msg.sender, address(_priceFeeder))
-        );
-
         //assign shares owned
         market.sharesOwned = _sharesOwned;
         //assign money waged
         market.moneyWaged = _moneyWaged;
-        //assign asset name
-        market.assetName = _assetName;
+        //assign price feed address
+        market.priceFeedAddress = _priceFeedAddress;
         //assign bench price
         market.benchPrice = _benchPrice;
         // assign resolution date
         market.resolutionDate = _resolutionDate;
         // assign wage  deadline
         market.wageDeadline = _wageDeadline;
-        // assign price feeder
-        market.priceFeeder = _priceFeeder;
-        // assign market id
-        marketIds[numMarkets] = _marketId;
+        //increment the num markets by 1
         numMarkets += 1;
 
-        emit MarketCreated(_marketId);
+        //emit event that market is created
+        emit MarketCreated(numMarkets);
 
+        //emit event that the money was deposited
         emit Deposited(
             msg.sender,
-            _marketId,
+            numMarkets,
             _moneyWaged,
             _sharesOwned
         );
@@ -189,7 +180,7 @@ contract Markets is KeeperCompatibleInterface{
 
     //waging money on a market
     function wageMoney(
-        bytes32 marketId,
+        uint256 marketId,
         uint256[2] memory _sharesToPurchase
     ) external {
 
