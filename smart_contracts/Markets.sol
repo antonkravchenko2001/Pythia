@@ -65,7 +65,7 @@ contract Markets is KeeperCompatibleInterface{
         //the asset name
         address priceFeedAddress;
         //value to compare the price of the asset with to determine the outcome
-        uint256 benchPrice;
+        uint256 strikePrice;
         //resolution price
         uint256 resolutionPrice;
         //The last date to wage money on a bet
@@ -87,7 +87,7 @@ contract Markets is KeeperCompatibleInterface{
     //keepers fee
     uint256 constant KEEPER_FEE = MULTIPLIER * 2;
     //maximum amount of markets that can be stored in the contract
-    uint256 constant MAX_AMOUNT_CONTRACTS = 1000;
+    uint256 constant MAX_AMOUNT_MARKETS = 1000;
 
     //payToken
     IERC20 payToken;
@@ -106,11 +106,11 @@ contract Markets is KeeperCompatibleInterface{
     constructor(
         address payesTokenAddress,
         address linkTokenAddress,
-        address priceConsumerAddress
+        address priceFeederAddress
     ) public {
         payToken = IERC20(payesTokenAddress);
         linkToken = IERC20(linkTokenAddress);
-        priceFeeder = PriceFeeder(priceConsumerAddress);
+        priceFeeder = PriceFeeder(priceFeederAddress);
     }
 
     //function to create a bet
@@ -118,14 +118,14 @@ contract Markets is KeeperCompatibleInterface{
         uint256[2] memory _sharesOwned,
         uint256[2] memory _moneyWaged,
         address _priceFeedAddress,
-        uint256 _benchPrice,
+        uint256 _strikePrice,
         uint256 _resolutionDate,
         uint256 _wageDeadline
     ) external {
 
         //check the the amount of markets does not exceed the max amount
         require(
-            numMarkets < MAX_AMOUNT_CONTRACTS,
+            numMarkets < MAX_AMOUNT_MARKETS,
             "the market amount limit reached, redeploy the contract"
         );
 
@@ -192,8 +192,8 @@ contract Markets is KeeperCompatibleInterface{
         market.moneyWaged = _moneyWaged;
         //assign price feed address
         market.priceFeedAddress = _priceFeedAddress;
-        //assign bench price
-        market.benchPrice = _benchPrice;
+        //assign strike price
+        market.strikePrice = _strikePrice;
         // assign resolution date
         market.resolutionDate = _resolutionDate;
         // assign wage  deadline
@@ -355,14 +355,14 @@ contract Markets is KeeperCompatibleInterface{
     )
     {
         //an array to store markets ids of the markets to be resolved
-        uint256[30] memory _resolvedMarketIds;
+        uint256[MAX_MARKETS_UPDATE] memory _resolvedMarketIds;
 
         bool _resolved;
         uint256 _count;
 
         for(uint256 i; i < numMarkets; i++){
             //check that number of markets to be resolved < MAX_MARKETS_UPDATE
-            if(_count >= 30){
+            if(_count >= MAX_MARKETS_UPDATE){
                 break;
             }
 
@@ -386,7 +386,7 @@ contract Markets is KeeperCompatibleInterface{
     function performUpkeep(bytes calldata performData) external override {
 
         //get an array of markets ids for which to query price
-        uint256[30] memory _resolvedMarketIds = abi.decode(
+        uint256[MAX_MARKETS_UPDATE] memory _resolvedMarketIds = abi.decode(
             performData,
             (uint256[30])
         );
@@ -420,24 +420,20 @@ contract Markets is KeeperCompatibleInterface{
     function getMarketInfo(uint256 _marketId) external view returns(
         uint256[2] memory,
         uint256[2] memory,
-        address,
         uint256,
         uint256,
         uint256,
         uint256,
-        uint256,
-        bool resolved
+        uint256
     ){
-         return (
+         return(
             markets[_marketId].sharesOwned,
             markets[_marketId].moneyWaged,
-            markets[_marketId].priceFeedAddress,
-            markets[_marketId].benchPrice,
+            markets[_marketId].strikePrice,
             markets[_marketId].resolutionPrice,
             markets[_marketId].wageDeadline,
             markets[_marketId].resolutionDate,
-            markets[_marketId].winningOutcome,
-            markets[_marketId].resolved
+            markets[_marketId].winningOutcome
         );
     }
 
@@ -600,11 +596,11 @@ contract Markets is KeeperCompatibleInterface{
 
         //get resolution price
         uint256 _resolutionPrice = markets[_marketId].resolutionPrice;
-        //get benchmark price
-        uint256 _benchPrice = markets[_marketId].benchPrice;
+        //get strike price
+        uint256 _strikePrice = markets[_marketId].strikePrice;
 
         //compare them to one another
-        if(_resolutionPrice >= _benchPrice){
+        if(_resolutionPrice >= _strikePrice){
             return 1;
         } else {
             return 0;
