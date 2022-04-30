@@ -17,8 +17,7 @@ library MathContract{
         return _sum;
     }
 
-
-    function exp(uint256 x) public pure returns (uint) {
+    function exp(uint256 x) external pure returns (uint) {
 
         require(x <= MAX_VAL);
 
@@ -64,5 +63,9 @@ library MathContract{
         result += 0x9c7 * zpow / ONE;
 
         return result << shift;
+    }
+
+    function one() external pure returns(uint256){
+        return ONE;
     }
 }
