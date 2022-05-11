@@ -85,7 +85,7 @@ contract Markets is KeeperCompatibleInterface{
     //the maximum amount of markets that can be resolved within one block
     uint256 constant MAX_MARKETS_UPDATE = 30;
     //keepers fee
-    uint256 constant KEEPER_FEE = MULTIPLIER * 2;
+    uint256 constant KEEPER_FEE = 100;
     //maximum amount of markets that can be stored in the contract
     uint256 constant MAX_AMOUNT_MARKETS = 1000;
 
@@ -123,23 +123,23 @@ contract Markets is KeeperCompatibleInterface{
         uint256 _wageDeadline
     ) external {
 
-        //check the the amount of markets does not exceed the max amount
-        require(
-            numMarkets < MAX_AMOUNT_MARKETS,
-            "the market amount limit reached, redeploy the contract"
-        );
+        // // check the the amount of markets does not exceed the max amount
+        // require(
+        //     numMarkets < MAX_AMOUNT_MARKETS,
+        //     "the market amount limit reached, redeploy the contract"
+        // );
 
-        //check that resolution date has not passed
-        require(
-            block.timestamp < _resolutionDate,
-            "resolution date has passed"
-        );
+        // //check that resolution date has not passed
+        // require(
+        //     block.timestamp < _resolutionDate,
+        //     "resolution date has passed"
+        // );
 
-        //check that wage deadline date has not passed
-        require(
-            block.timestamp < _wageDeadline,
-            "wagedeadline has passed"
-        );
+        // //check that wage deadline date has not passed
+        // require(
+        //     block.timestamp < _wageDeadline,
+        //     "wage deadline has passed"
+        // );
 
         //check that wage deadline date does not exceed the resolution date
         require(
@@ -147,31 +147,18 @@ contract Markets is KeeperCompatibleInterface{
             "resolution happens after last wage"
         );
 
-        //check money waged condition
-        _validateMoneyWaged(_moneyWaged);
-
-        //check shares owned condition
-        _validateSharesOwned(_sharesOwned);
-
         //trasfer amount
         uint256 _transferAmount = _moneyWaged.sumArr();
 
-        //check that person has funds
-        require(payToken.balanceOf(msg.sender) >= _transferAmount);
-        require(linkToken.balanceOf(msg.sender) >= KEEPER_FEE);
-
-        //transfer funds
-        payToken.transferFrom(
-            msg.sender,
-            address(this),
-            _transferAmount
-        );
-
-        linkToken.transferFrom(
-            msg.sender,
-            address(this),
-            _transferAmount
-        );
+        // //check that person has funds
+        // require(
+        //     payToken.balanceOf(msg.sender) > _transferAmount,
+        //     "insufficient player funds in pay token"
+        // );
+        // require(
+        //     linkToken.balanceOf(msg.sender) > KEEPER_FEE,
+        //     "insufficient player link funds"
+        // );
 
 
         //initialize the market
@@ -188,7 +175,7 @@ contract Markets is KeeperCompatibleInterface{
 
         //assign shares owned
         market.sharesOwned = _sharesOwned;
-        //assign money waged
+        // assign money waged
         market.moneyWaged = _moneyWaged;
         //assign price feed address
         market.priceFeedAddress = _priceFeedAddress;
@@ -199,7 +186,11 @@ contract Markets is KeeperCompatibleInterface{
         // assign wage  deadline
         market.wageDeadline = _wageDeadline;
 
-        //emit event that market is created
+        // validate the market
+        _validateMarket(numMarkets);
+
+
+        // emit event that market is created
         emit MarketCreated(numMarkets);
 
         //emit event that the money was deposited
@@ -213,6 +204,18 @@ contract Markets is KeeperCompatibleInterface{
         //increment the num markets by 1
         numMarkets += 1;
 
+        // transfer funds
+        payToken.transferFrom(
+            msg.sender,
+            address(this),
+            _transferAmount
+        );
+
+        linkToken.transferFrom(
+            msg.sender,
+            address(this),
+            KEEPER_FEE
+        );
     }
 
     //waging money on a market
@@ -222,7 +225,13 @@ contract Markets is KeeperCompatibleInterface{
     ) external {
 
         //check that wage deadline is not passed
-        require(markets[_marketId].wageDeadline > block.timestamp);
+        require(
+            markets[_marketId].wageDeadline > block.timestamp,
+            "wage deadline has passed"
+        );
+
+        //validate the market
+        _validateMarket(_marketId);
 
         //array to store the amount to be waged by a player on each outcome
         uint256[2] memory _moneyToWage;
@@ -245,13 +254,6 @@ contract Markets is KeeperCompatibleInterface{
         //check tha the player has sufficient funds
         require(
             payToken.balanceOf(msg.sender) >= _transferAmount
-        );
-
-        //transfer funds
-        payToken.transferFrom(
-            msg.sender,
-            address(this),
-            _transferAmount
         );
 
         //update moneyWage and sharesOwned both for market and for a player
@@ -284,6 +286,15 @@ contract Markets is KeeperCompatibleInterface{
 
         }
 
+        _validateMarket(_marketId);
+
+        //transfer funds
+        payToken.transferFrom(
+            msg.sender,
+            address(this),
+            _transferAmount
+        );
+
         // emit deposit events
         emit Deposited(
             _marketId,
@@ -295,6 +306,9 @@ contract Markets is KeeperCompatibleInterface{
 
     //withdrawing money from a market
     function withdraw(uint256 _marketId) external {
+
+        //validate the market
+        _validateMarket(_marketId);
 
         //check that the market is resolved
         require(markets[_marketId].resolved);
@@ -308,9 +322,6 @@ contract Markets is KeeperCompatibleInterface{
         uint256 _rewardAmount = _calcReward(_marketId, msg.sender);
         //calculate expert score
         uint256 _expertScore = _calcExpertScore(_marketId, msg.sender);
-
-        //reward the player
-        payToken.transfer(msg.sender, _rewardAmount);
 
         //update the player's reward info (within the market)
         (
@@ -338,6 +349,9 @@ contract Markets is KeeperCompatibleInterface{
             [msg.sender]
             .withdrawed
         ) = true;
+
+        //reward the player
+        payToken.transfer(msg.sender, _rewardAmount);
 
         //emit an event
         emit Withdrawed(
@@ -556,7 +570,7 @@ contract Markets is KeeperCompatibleInterface{
         uint256 _marketId,
         uint256 _outcome,
         uint256 _amountShares
-    ) public view returns(uint256){
+    ) internal view returns(uint256){
 
         //amount of money waged on the outcome to be bought
         uint256 _moneyOutcome = (
@@ -607,21 +621,30 @@ contract Markets is KeeperCompatibleInterface{
         }
     }
 
-    //validating shares owned
-    function _validateSharesOwned(
-        uint256[2] memory _sharesOwned
-    ) internal pure{
-        for(uint256 i = 0; i <= _sharesOwned.length; i++){
-            require(_sharesOwned[i] > 0);
+    //validating the market
+    function _validateMarket(
+        uint256 _marketId
+    ) internal view{
+        //validating money waged
+        {
+            uint256[2] memory _moneyWaged = markets[_marketId].moneyWaged;
+            for(uint256 i = 0; i < _moneyWaged.length; i++){
+                require(
+                    _moneyWaged[i] > 0,
+                    "money waged can't be 0"
+                );
+            }
         }
-    }
 
-    //validating money waged
-    function _validateMoneyWaged(
-        uint256[2] memory _moneyWaged
-    ) internal pure{
-        for(uint256 i = 0; i <= _moneyWaged.length; i++){
-            require(_moneyWaged[i] > 0);
+        //validating shares Owned
+        {
+            uint256[2] memory _sharesOwned = markets[_marketId].sharesOwned;
+            for(uint256 i = 0; i < _sharesOwned.length; i++){
+                require(
+                    _sharesOwned[i] > 0,
+                    "shares owned can't be 0"
+                );
+            }
         }
     }
 
