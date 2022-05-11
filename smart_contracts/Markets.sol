@@ -123,23 +123,23 @@ contract Markets is KeeperCompatibleInterface{
         uint256 _wageDeadline
     ) external {
 
-        // // check the the amount of markets does not exceed the max amount
-        // require(
-        //     numMarkets < MAX_AMOUNT_MARKETS,
-        //     "the market amount limit reached, redeploy the contract"
-        // );
+        // check the the amount of markets does not exceed the max amount
+        require(
+            numMarkets < MAX_AMOUNT_MARKETS,
+            "the market amount limit reached, redeploy the contract"
+        );
 
-        // //check that resolution date has not passed
-        // require(
-        //     block.timestamp < _resolutionDate,
-        //     "resolution date has passed"
-        // );
+        //check that resolution date has not passed
+        require(
+            block.timestamp < _resolutionDate,
+            "resolution date has passed"
+        );
 
-        // //check that wage deadline date has not passed
-        // require(
-        //     block.timestamp < _wageDeadline,
-        //     "wage deadline has passed"
-        // );
+        //check that wage deadline date has not passed
+        require(
+            block.timestamp < _wageDeadline,
+            "wage deadline has passed"
+        );
 
         //check that wage deadline date does not exceed the resolution date
         require(
@@ -150,15 +150,15 @@ contract Markets is KeeperCompatibleInterface{
         //trasfer amount
         uint256 _transferAmount = _moneyWaged.sumArr();
 
-        // //check that person has funds
-        // require(
-        //     payToken.balanceOf(msg.sender) > _transferAmount,
-        //     "insufficient player funds in pay token"
-        // );
-        // require(
-        //     linkToken.balanceOf(msg.sender) > KEEPER_FEE,
-        //     "insufficient player link funds"
-        // );
+        //check that person has funds
+        require(
+            payToken.balanceOf(msg.sender) > _transferAmount,
+            "insufficient player funds in pay token"
+        );
+        require(
+            linkToken.balanceOf(msg.sender) > KEEPER_FEE,
+            "insufficient player link funds"
+        );
 
 
         //initialize the market
