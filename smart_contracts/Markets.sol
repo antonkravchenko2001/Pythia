@@ -221,7 +221,7 @@ contract Markets is KeeperCompatibleInterface{
     //waging money on a market
     function wageMoney(
         uint256 _marketId,
-        uint256[2] memory _sharesToPurchase
+        uint256[2] memory _moneyToWage
     ) external {
 
         //check that wage deadline is not passed
@@ -233,27 +233,22 @@ contract Markets is KeeperCompatibleInterface{
         //validate the market
         _validateMarket(_marketId);
 
-        //array to store the amount to be waged by a player on each outcome
-        uint256[2] memory _moneyToWage;
-
-        //total to be waged amount
-        uint256 _transferAmount;
+        uint256[2] memory _sharesToPurchase;
 
         //amount of money to be waged for each outcome
         for(uint256 i = 0; i < _sharesToPurchase.length; i++){
-            _moneyToWage[i] += _priceBuyShares(
+            _sharesToPurchase[i] += _numSharesForPrice(
                 _marketId,
                 i,
-                _sharesToPurchase[i]
+                _moneyToWage[i]
             );
         }
 
-        //transfer amount
-        _transferAmount = _moneyToWage.sumArr();
+
 
         //check tha the player has sufficient funds
         require(
-            payToken.balanceOf(msg.sender) >= _transferAmount
+            payToken.balanceOf(msg.sender) >= _moneyToWage.sumArr()
         );
 
         //update moneyWage and sharesOwned both for market and for a player
@@ -292,7 +287,7 @@ contract Markets is KeeperCompatibleInterface{
         payToken.transferFrom(
             msg.sender,
             address(this),
-            _transferAmount
+            _moneyToWage.sumArr()
         );
 
         // emit deposit events
@@ -566,10 +561,10 @@ contract Markets is KeeperCompatibleInterface{
     }
 
     //calculating price of buying n shares of outcome i
-    function _priceBuyShares(
+    function _numSharesForPrice(
         uint256 _marketId,
         uint256 _outcome,
-        uint256 _amountShares
+        uint256 _moneyToWage
     ) internal view returns(uint256){
 
         //amount of money waged on the outcome to be bought
@@ -588,17 +583,16 @@ contract Markets is KeeperCompatibleInterface{
             [1 - _outcome]
         );
 
-        // M1 * (e ^ (n / alpha * N2)  - 1) should be computed
-        //instead  M1 * (ONE * e ^ (n / alpha * N2)  - ONE) / ONE
+        //ln(1 + m1 / M1) * alpha * N2
+        //ln((M1 + m1) * ONE / M1) * alpha * N2 / ONE
         return (
-            _moneyOutcome *
             (
-                (
-                    (MathContract.one() * _amountShares) /
-                    (ALPHA * _sharesOppositeOutcome)
-                ).exp() -
-                MathContract.one()
-            ) /
+                (MathContract.one() *
+                (_moneyOutcome + _moneyToWage) /
+                _moneyOutcome).ln()
+            ) *
+            ALPHA *
+            _sharesOppositeOutcome /
             MathContract.one()
         );
     }

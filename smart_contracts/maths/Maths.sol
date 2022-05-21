@@ -3,10 +3,8 @@ pragma solidity ^0.8.0;
 
 library MathContract{
 
-    uint256 public constant MAX_VAL = 2454971259878909886679;
-    uint256 public constant ONE = 0x10000000000000000;
-    uint256 public constant LN2 = 0xb17217f7d1cf79ac;
-    uint256 public constant LOG2_E = 0x171547652b82fe177;
+    uint256 public constant ONE = 10000000000;
+    uint256 public constant LOG2_E = 14426950409;
 
 
     function sumArr(uint256[2] memory nums) external pure returns(uint256){
@@ -17,55 +15,54 @@ library MathContract{
         return _sum;
     }
 
-    function exp(uint256 x) external pure returns (uint) {
-
-        require(x <= MAX_VAL);
-
-        x = x * uint(ONE) / uint(LN2);
-        uint256 shift;
-        uint256 z;
-        shift = x / uint(ONE);
-        z = uint(x % uint(ONE));
-
-        uint256 zpow = z;
-        uint256 result = ONE;
-
-        result += 0xb17217f7d1cf79ab * zpow / ONE;
-        zpow = zpow * z / ONE;
-        result += 0x3d7f7bff058b1d50 * zpow / ONE;
-        zpow = zpow * z / ONE;
-        result += 0xe35846b82505fc5 * zpow / ONE;
-        zpow = zpow * z / ONE;
-        result += 0x276556df749cee5 * zpow / ONE;
-        zpow = zpow * z / ONE;
-        result += 0x5761ff9e299cc4 * zpow / ONE;
-        zpow = zpow * z / ONE;
-        result += 0xa184897c363c3 * zpow / ONE;
-        zpow = zpow * z / ONE;
-        result += 0xffe5fe2c4586 * zpow / ONE;
-        zpow = zpow * z / ONE;
-        result += 0x162c0223a5c8 * zpow / ONE;
-        zpow = zpow * z / ONE;
-        result += 0x1b5253d395e * zpow / ONE;
-        zpow = zpow * z / ONE;
-        result += 0x1e4cf5158b * zpow / ONE;
-        zpow = zpow * z / ONE;
-        result += 0x1e8cac735 * zpow / ONE;
-        zpow = zpow * z / ONE;
-        result += 0x1c3bd650 * zpow / ONE;
-        zpow = zpow * z / ONE;
-        result += 0x1816193 * zpow / ONE;
-        zpow = zpow * z / ONE;
-        result += 0x131496 * zpow / ONE;
-        zpow = zpow * z / ONE;
-        result += 0xe1b7 * zpow / ONE;
-        zpow = zpow * z / ONE;
-        result += 0x9c7 * zpow / ONE;
-
-        return result << shift;
-    }
-
     function one() external pure returns(uint256){
         return ONE;
+    }
+
+    function ln(uint256 x) public pure returns (uint) {
+        require(x > 0);
+        uint256 ilog2 = floorLog2(x);
+        uint256 z = (x >> ilog2);
+        uint256 term = (z - ONE) * ONE / (z + ONE);
+        uint256 halflnz = term;
+        uint256 termpow = term * term / ONE * term / ONE;
+        halflnz += termpow / 3;
+        termpow = termpow * term / ONE * term / ONE;
+        halflnz += termpow / 5;
+        termpow = termpow * term / ONE * term / ONE;
+        halflnz += termpow / 7;
+        termpow = termpow * term / ONE * term / ONE;
+        halflnz += termpow / 9;
+        termpow = termpow * term / ONE * term / ONE;
+        halflnz += termpow / 11;
+        termpow = termpow * term / ONE * term / ONE;
+        halflnz += termpow / 13;
+        termpow = termpow * term / ONE * term / ONE;
+        halflnz += termpow / 15;
+        termpow = termpow * term / ONE * term / ONE;
+        halflnz += termpow / 17;
+        termpow = termpow * term / ONE * term / ONE;
+        halflnz += termpow / 19;
+        termpow = termpow * term / ONE * term / ONE;
+        halflnz += termpow / 21;
+        termpow = termpow * term / ONE * term / ONE;
+        halflnz += termpow / 23;
+        termpow = termpow * term / ONE * term / ONE;
+        halflnz += termpow / 25;
+        return (ilog2 * ONE) * ONE / LOG2_E + 2 * halflnz;
+    }
+
+    function floorLog2(uint256 x) public pure returns (uint256) {
+        x /= ONE;
+        uint256 n;
+        if (x >= 2**128) { x >>= 128; n += 128;}
+        if (x >= 2**64) { x >>= 64; n += 64;}
+        if (x >= 2**32) { x >>= 32; n += 32;}
+        if (x >= 2**16) { x >>= 16; n += 16;}
+        if (x >= 2**8) { x >>= 8; n += 8;}
+        if (x >= 2**4) { x >>= 4; n += 4;}
+        if (x >= 2**2) { x >>= 2; n += 2;}
+        if (x >= 2**1) { x >>= 1; n += 1;}
+        return n;
     }
 }
