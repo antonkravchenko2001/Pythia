@@ -1,5 +1,5 @@
-export const serverUrl = 'https://fkb8lv8amgpn.usemoralis.com:2053/server';
-export const appId = 'S7c4GCnEMaj1Te6w2BYDZaXmP8Dwy0Nt84a73FEf';
+export const serverUrl = 'https://uj5tozevki90.usemoralis.com:2053/server';
+export const appId = 'cKC95YPjyNN8qvLLqEEeGiYZwwc1qRZd8MqoBegb';
 export const marketsABI = [
 	{
 		"inputs": [
@@ -349,7 +349,7 @@ export const marketsABI = [
 		"type": "function"
 	}
 ];
-export const marketsAddress = '0x0C0411a068b63fca3160e370Da4D7521Ac248e3D';
+export const marketsAddress = '0x5F80929D42372De47a8d2b921960Bb5509C5D3Bc';
 export const ERC20ABI = [
 	{
 		"anonymous": false,

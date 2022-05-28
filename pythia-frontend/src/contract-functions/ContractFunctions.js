@@ -1,5 +1,5 @@
-import Moralis from './main.js';
-import {marketsAddress, marketsABI, payTokenAddress, ERC20ABI, linkTokenAddress, chain} from './config.js'
+import Moralis from '../main.js';
+import {marketsAddress, marketsABI, payTokenAddress, ERC20ABI, linkTokenAddress, chain} from '../config.js'
 
 export const _getLinkFee = async() => {
     const options = {
@@ -55,6 +55,7 @@ export const _getMarketInfo = async(_marketId) => {
             options
         );
         console.log(marketInfo);
+        return marketInfo;
     } catch (error){
         console.error(error);
     }
@@ -73,16 +74,18 @@ export const _getPlayerInfo = async(_player, _marketId) => {
     };
 
     try {
-        let marketInfo = await Moralis.Web3API.native.runContractFunction(
+        let playerInfo = await Moralis.Web3API.native.runContractFunction(
             options
         );
-        console.log(marketInfo);
+        console.log(playerInfo);
+        return playerInfo;
     } catch (error){
         console.error(error);
     }
 }
 
 export const _approveLinkTransfer = async(_amount) => {
+    await Moralis.enableWeb3();
     let options = {
         contractAddress: linkTokenAddress,
         functionName: "approve",
@@ -101,6 +104,7 @@ export const _approveLinkTransfer = async(_amount) => {
 }
 
 export const _approvePayTokenTransfer = async(_amount) => {
+    await Moralis.enableWeb3();
     let options = {
         contractAddress: payTokenAddress,
         functionName: "approve",
@@ -141,16 +145,16 @@ export const _createMarket = async(params) =>  {
 }
 
 export let _wageMoney = async(params) =>  {
-    const amount = options.params._moneyToWage.reduce(
-        (acc, curr) => {return acc + curr;}
-    );
-    await _approvePayTokenTransfer(amount);
     const options = {
         contractAddress: marketsAddress,
         functionName: "wageMoney",
         abi: marketsABI,
         params: params
     };
+    const amount = options.params._moneyToWage.reduce(
+        (acc, curr) => {return acc + curr;}
+    );
+    await _approvePayTokenTransfer(amount);
     try{
         await Moralis.executeFunction(options);
         console.log('money waged');
