@@ -162,3 +162,42 @@ export let _wageMoney = async(params) =>  {
         console.error(error);
     }
 }
+
+export let marketCreated = async() =>{
+    const options = {
+        contractAddress: marketsAddress,
+        topic: topicMarketCreated,
+    }
+    try{
+        await Moralis.Web3API.native.getContractEvents(options);
+        console.log("market created emitted");
+    } catch{
+        console.error(error);
+    }
+}
+
+export let deposited = async() =>{
+    const options = {
+        contractAddress: marketsAddress,
+        topic: topicDeposited,
+    }
+    try{
+        await Moralis.Web3API.native.getContractEvents(options);
+        console.log("deposit emitted");
+    } catch{
+        console.error(error);
+    }
+}
+
+export let withdrawed = async() =>{
+    const options = {
+        contractAddress: marketsAddress,
+        topic: topicWithdrawed
+    }
+    try{
+        await Moralis.Web3API.native.getContractEvents(options);
+        console.log("withdrawal emitted");
+    } catch{
+        console.error(error);
+    }
+}

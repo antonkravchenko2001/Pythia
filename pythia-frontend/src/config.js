@@ -538,3 +538,6 @@ export const ERC20ABI = [
 export const payTokenAddress = '0x04DF6e4121c27713ED22341E7c7Df330F56f289B';
 export const linkTokenAddress = '0xa36085F69e2889c224210F603D836748e7dC0088';
 export const chain = 'kovan';
+export const topicMarketCreated = "event MarketCreated(bytes32 marketId)";
+export const topicDeposited = "event Deposited(address player,bytes32 marketId,uint256[2] sharesBought,uint256[2] moneyWaged)";
+export const topicWithdrawed = "event Withdrawed(address player,bytes32 marketId,uint256[2] sharesBought,uint256[2] moneyWaged)";
