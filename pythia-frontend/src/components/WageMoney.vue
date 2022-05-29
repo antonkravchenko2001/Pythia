@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import {_wageMoney} from '../contract-functions/ContractFunctions.js';
+import {_wageMoney, deposited} from '../contract-functions/ContractFunctions.js';
 
 export default {
     data() {
@@ -25,6 +25,7 @@ export default {
                 _marketId: this.getMarketId()
             };
             await _wageMoney(params);
+            await deposited();
         },
     },
 

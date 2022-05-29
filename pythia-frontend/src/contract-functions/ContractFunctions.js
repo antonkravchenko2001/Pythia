@@ -87,6 +87,7 @@ export const _getPlayerInfo = async(_player, _marketId) => {
 export const _approveLinkTransfer = async(_amount) => {
     await Moralis.enableWeb3();
     let options = {
+        chain: chain,
         contractAddress: linkTokenAddress,
         functionName: "approve",
         abi: ERC20ABI,
@@ -106,6 +107,7 @@ export const _approveLinkTransfer = async(_amount) => {
 export const _approvePayTokenTransfer = async(_amount) => {
     await Moralis.enableWeb3();
     let options = {
+        chain: chain,
         contractAddress: payTokenAddress,
         functionName: "approve",
         abi: ERC20ABI,
@@ -132,6 +134,7 @@ export const _createMarket = async(params) =>  {
     await _approvePayTokenTransfer(amount);
 
     let options = {
+        chain: chain,
         contractAddress: marketsAddress,
         functionName: "createMarket",
         abi: marketsABI,
@@ -146,6 +149,7 @@ export const _createMarket = async(params) =>  {
 
 export let _wageMoney = async(params) =>  {
     const options = {
+        chain: chain,
         contractAddress: marketsAddress,
         functionName: "wageMoney",
         abi: marketsABI,
@@ -158,6 +162,54 @@ export let _wageMoney = async(params) =>  {
     try{
         await Moralis.executeFunction(options);
         console.log('money waged');
+    } catch(error){
+        console.error(error);
+    }
+}
+
+export let marketCreated = async() =>{
+    const options = {
+        chain: chain,
+        abi: marketsABI,
+        contractAddress: marketsAddress,
+        topic: 'MarketCreated',
+    }
+    try{
+        const event = await Moralis.Web3API.native.getContractEvents(options);
+        console.log(event);
+        return event;
+    } catch(error){
+        console.error(error);
+    }
+}
+
+export let deposited = async() =>{
+    const options = {
+        chain: chain,
+        abi: marketsABI,
+        contractAddress: marketsAddress,
+        topic: 'Deposited',
+    }
+    try{
+        const event = await Moralis.Web3API.native.getContractEvents(options);
+        console.log(event);
+        return event;
+    } catch(error){
+        console.error(error);
+    }
+}
+
+export let withdrawed = async() =>{
+    const options = {
+        chain: chain,
+        abi: marketsABI,
+        contractAddress: marketsAddress,
+        topic: 'Withdrawed'
+    }
+    try{
+        const event = await Moralis.Web3API.native.getContractEvents(options);
+        console.log(event);
+        return event;
     } catch(error){
         console.error(error);
     }
