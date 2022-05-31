@@ -1,17 +1,16 @@
 <template>
-  <LoginUi />
+  <NavBar />
   <WageMoney />
-  <router-link to="/">Home</router-link>
 </template>
 
 <script>
-import LoginUi from '../components/LoginUi.vue'
 import WageMoney from '../components/WageMoney.vue'
+import NavBar from '@/components/NavBar.vue'
 
 export default {
     components: {
-        LoginUi,
-        WageMoney
+      WageMoney,
+      NavBar
     }
 }
 </script>

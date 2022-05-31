@@ -1,31 +1,52 @@
 <template>
-    <div>
-        <router-link to="/"></router-link>
+    <div class="nav-bar">
+       <div v:if="!isHomePage">
+           <HomeButton/>
+       </div>
+       <div>
+           <AboutButton/>
+       </div>
+       <div>
+           <LoginUi/>
+       </div>
     </div>
 </template>
 
 <script>
-import { _wageMoney, _getMarketInfo} from '../contract-functions/ContractFunctions.js';
+import AboutButton from './AboutButton.vue';
+import HomeButton from './HomeButton.vue';
+import LoginUi from './LoginUi.vue';
 
-export default {
-    data() {
-        return  {
-            moneyWaged: [0, 0],
-            marketId: '0'
-        };
-    },
-    methods: {
-        async wageMoney() {
-            const params = {
-                _moneyWaged: this.moneyWaged,
-                _marketId: this.marketId,
-            };
-            await _wageMoney(params);
-            await _getMarketInfo(this.marketId);
+    export default {
+        data(){
+            return {
+                isHomePage: this.isHome(),
+            }
         },
+        methods :{
+            isHome() {
+                let page = this.$route.name;
+                let isHome = (page === 'home');
+                console.log(isHome);
+                return isHome;
+            }
+        },
+        components: {
+            AboutButton,
+            HomeButton,
+            LoginUi
+        }
     }
-}
 </script>
 
 <style scoped>
+    
+    .nav-bar {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        background-color:  #0d1820;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
 </style>

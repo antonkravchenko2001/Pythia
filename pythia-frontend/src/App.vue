@@ -5,17 +5,20 @@
 
 <style>
   html, body {
-    margin: 0;
-    height: 100%;
-    background-image: linear-gradient(151deg, #353535 20%, #212121 65%);
+    height: 100vh;
+    background-color: #0e2438;
+    margin:0px;
   }
 
   input {
-    background: #454545;
+    background: #243b53;
     border: none;
     border-radius: 5px;
     box-shadow: 0.5px 0.5px 5px #121212;
     padding: 7px;
+    color: #cecece;
+    font-family: sans-serif;
+    font-size: 13px;
     
   }
 
@@ -26,12 +29,15 @@
   }
 
   textarea {
-    background: #454545;
+    background: #243b53;
     border: none;
     border-radius: 5px;
     box-shadow: 0.5px 0.5px 5px #121212;
     padding: 7px;
     font-size: 14px;
+    color: #cecece;
+    font-family: sans-serif;
+    font-size: 13px;
   }
 
   

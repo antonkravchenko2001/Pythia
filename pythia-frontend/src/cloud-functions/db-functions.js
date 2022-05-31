@@ -8,3 +8,9 @@ export let saveMarket = async(params) => {
     market.set('MarketDescription', params.marketDescription);
     await market.save();
 }
+
+
+
+
+
+

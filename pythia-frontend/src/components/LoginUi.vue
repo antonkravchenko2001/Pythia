@@ -39,8 +39,8 @@ export default {
     color:#121212;
     border:none;
     border-radius: 25px;
-    box-shadow: 1px 1px 8px #121212;
     font-size: 12px;
+    font-family: sans-serif;
     padding: 8px;
  }
 

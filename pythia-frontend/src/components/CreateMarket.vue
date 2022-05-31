@@ -1,5 +1,7 @@
 <template>
-    <button v-if="!clicked" @click="click()" >create market</button>
+    <div v-if="!clicked" class="create-market-div">
+        <button @click="click()" class="create-market-button" >create market</button>
+    </div>
     <div v-if="clicked" class="flex-container">
         <div class="grid">
             <input type="text" class='long-input'>
@@ -63,6 +65,8 @@ export default {
     .flex-container {
         display: flex;
         justify-content: center;
+        align-items: center;
+        height: 100vh;
     }
     .grid {
         display: grid;
@@ -70,8 +74,8 @@ export default {
         column-gap: 10px;
         grid-template-columns: repeat(2, minmax(120px, 150px));
         grid-template-rows: repeat(9, 1fr);
-        background-color: #151515;
-        box-shadow: 1px 1px 8px #151515;
+        background-color: #122d46;
+        box-shadow: 1px 1px 8px #121212;
         border: none;
         border-radius: 5px;
         padding: 15px;
@@ -93,8 +97,9 @@ export default {
         border: none;
         border-radius: 15px;
         background-color: #2968a7;
-        color:#e1e1e1;
+        color:#eeeeee;
         box-shadow: 1px 1px 8px #121212;
+        font-family: sans-serif;
     }
     .submit-button:hover{
         background-color: #1f5082;
@@ -105,14 +110,36 @@ export default {
         grid-column-end: 2;
         grid-row-start: 9;
         border: 1.5px solid;
-        border-color: #c62828b1;
+        border-color: #c6284d8a;
         border-radius: 15px;
         background-color: #212121;
-        color:#e1e1e1;
+        color:#eeeeee;
         box-shadow: 1px 1px 8px #121212;
+        font-family: sans-serif;
     }
 
     .close-button:hover {
-        background-color: #c62828b1;
+        background-color: #c6284d8a;
+    }
+
+    .create-market-div {
+        display: flex;
+        height: 70vh;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .create-market-button{
+        border: none;
+        border-radius: 20px;
+        background-color: #57c080dc;
+        color:#121212;
+        font-size: 14px;
+        padding: 12px;
+        box-shadow: 1px 1px 8px #121212;
+        font-family: sans-serif;
+    }
+    .create-market-button:hover{
+        background-color: #35794fdc;
     }
 </style>

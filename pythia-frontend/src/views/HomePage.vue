@@ -1,16 +1,16 @@
 <template>
-  <LoginUi />
+  <NavBar />
   <CreateMarket />
 </template>
 
 <script>
-import LoginUi from '../components/LoginUi.vue'
 import CreateMarket from '../components/CreateMarket.vue'
+import NavBar from '@/components/NavBar.vue'
 
 export default {
     components: {
-      CreateMarket,
-      LoginUi
-  }
+    CreateMarket,
+    NavBar
+}
 }
 </script>
