@@ -1,7 +1,8 @@
 import { createRouter, createWebHistory} from 'vue-router'
 import HomePage from '../views/HomePage.vue'
 import WageMoneyPage from '../views/WageMoneyPage.vue'
-import AboutPage from '../views/AboutPage'
+import AboutPage from '../views/AboutPage.vue'
+import MyWages from '../views/MyWages.vue'
 
 const routes = [
     {
@@ -18,6 +19,11 @@ const routes = [
         path: '/about',
         name: 'about',
         component: AboutPage
+    },
+    {
+        path: '/my-wages',
+        name: 'myWages',
+        component: MyWages
     }
 
 ];

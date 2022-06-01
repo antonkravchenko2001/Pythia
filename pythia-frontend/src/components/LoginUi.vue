@@ -37,7 +37,8 @@ export default {
  .login-button {
     background-color: #3ac4b4;
     color:#121212;
-    border:none;
+    border: solid 2px;
+    border-color: #32978b;
     border-radius: 25px;
     font-size: 12px;
     font-family: sans-serif;

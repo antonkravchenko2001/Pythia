@@ -1,10 +1,16 @@
 <template>
-    <button @click="$router.push('about')" class="about-button">About</button>
+    <button @click="$router.push(path)" class="home-button">{{text}}</button>
 </template>
+
+<script>
+export default {
+    props: ['path', 'text']
+}
+</script>
 
 <style scoped>
 
- .about-button {
+ .home-button {
     background-color: #0d1820;
     padding: 25px;
     font: sans-serif;
@@ -14,7 +20,7 @@
     font-family: sans-serif;
  }
 
- .about-button:hover{
+ .home-button:hover{
      background-color: #406996;
      color: #121212;
  }

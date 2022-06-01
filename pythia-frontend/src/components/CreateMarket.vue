@@ -1,6 +1,6 @@
 <template>
     <div v-if="!clicked" class="create-market-div">
-        <button @click="click()" class="create-market-button" >create market</button>
+        <button @click="click()" class="create-market-button" >CREATE MARKET</button>
     </div>
     <div v-if="clicked" class="flex-container">
         <div class="grid">
@@ -131,11 +131,13 @@ export default {
 
     .create-market-button{
         border: none;
-        border-radius: 20px;
-        background-color: #57c080dc;
-        color:#121212;
-        font-size: 14px;
-        padding: 12px;
+        border-radius: 5px;
+        border: solid 2px;
+        border-color: #57c080dc;
+        background-color: #0e2438;
+        color:#cecece;
+        font-size: 15px;
+        padding: 20px;
         box-shadow: 1px 1px 8px #121212;
         font-family: sans-serif;
     }

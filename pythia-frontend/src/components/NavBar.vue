@@ -1,10 +1,13 @@
 <template>
     <div class="nav-bar">
-       <div v:if="!isHomePage">
-           <HomeButton/>
+       <div v-if='!isHomePage'>
+           <NavButton path='/' text='Home' />
        </div>
        <div>
-           <AboutButton/>
+           <NavButton path='my-wages' text='Portfolio'/>
+       </div>
+       <div>
+           <NavButton path='about' text='About'/>
        </div>
        <div>
            <LoginUi/>
@@ -13,9 +16,8 @@
 </template>
 
 <script>
-import AboutButton from './AboutButton.vue';
-import HomeButton from './HomeButton.vue';
-import LoginUi from './LoginUi.vue';
+import NavButton from './NavButton.vue'
+import LoginUi from './LoginUi.vue'
 
     export default {
         data(){
@@ -32,10 +34,9 @@ import LoginUi from './LoginUi.vue';
             }
         },
         components: {
-            AboutButton,
-            HomeButton,
-            LoginUi
-        }
+    NavButton,
+    LoginUi,
+}
     }
 </script>
 
