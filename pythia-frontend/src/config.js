@@ -349,7 +349,7 @@ export const marketsABI = [
 		"type": "function"
 	}
 ];
-export const marketsAddress = '0x5F80929D42372De47a8d2b921960Bb5509C5D3Bc';
+export const marketsAddress = '0x4123A7A9e4f5df7884331A4F015de4e4E7905212';
 export const ERC20ABI = [
 	{
 		"anonymous": false,

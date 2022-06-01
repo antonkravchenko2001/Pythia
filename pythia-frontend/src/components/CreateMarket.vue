@@ -4,7 +4,7 @@
     </div>
     <div v-if="clicked" class="flex-container">
         <div class="grid">
-            <input type="text" class='long-input'>
+            <input type="text" class='long-input' required v-model='marketParams.marketName'>
             <input type="text" class='long-input' required v-model='marketParams.priceFeedAddress'/>
             <input type="number" class='long-input' required v-model='marketParams.strikePrice' />
             <input type="number" required v-model='marketParams.resolutionDate' />
@@ -13,7 +13,7 @@
             <input type="number" required v-model='marketParams.sharesOwned[1]'/>
             <input type="number" required v-model='marketParams.moneyWaged[0]'/>
             <input type="number" required v-model='marketParams.moneyWaged[1]'/>
-            <textarea class='long-input text-area'></textarea>
+            <textarea class='long-input text-area' v-model='marketParams.marketDescription'></textarea>
             <button @click="createMarket" class="submit-button">create market</button>
             <button @click="close()" class="close-button">cancel</button>
         </div>
@@ -21,18 +21,23 @@
 </template>
 
 <script>
-import { _createMarket, _getMarketInfo} from '../contract-functions/ContractFunctions.js';
+import { _createMarket, _numMarkets} from '../contract-functions/ContractFunctions.js';
+import Moralis from '../main.js'
+import saveCreatedMarket from '../cloud-functions/db-functions.js';
 
 export default {
     data() {
         return  {
                 marketParams: {
-                    sharesOwned: [0, 0],
-                    moneyWaged: [0, 0],
+                    marketName: '',
                     priceFeedAddress: '0',
                     strikePrice: 0,
                     resolutionDate: 0,
-                    wageDeadline: 0
+                    wageDeadline: 0,
+                    sharesOwned: [0, 0],
+                    moneyWaged: [0, 0],
+                    marketDescr: ''
+
                 },
                 clicked : false
         };
@@ -44,17 +49,44 @@ export default {
         close() {
             this.clicked = false;
         },
+
+        async saveMarket() {
+            let marketId = await _numMarkets();
+            marketId = marketId.toString();
+            const marketName = this.marketParams.marketName;
+            const marketDescription = this.marketParams.marketDescription;
+            const totalMoneyWaged = this.marketParams.moneyWaged.reduce(
+                (acc, curr) => {return acc + curr;}
+            );
+
+            try{
+                await saveCreatedMarket(
+                    {
+                        marketId,
+                        marketName,
+                        marketDescription,
+                        totalMoneyWaged
+                    }
+                );
+            } catch(error){
+                console.error(error)
+            }
+        },
         async createMarket() {
             const params = {
                 _sharesOwned: this.marketParams.sharesOwned,
                 _moneyWaged: this.marketParams.moneyWaged,
                 _priceFeedAddress: this.marketParams.priceFeedAddress,
-                _strikePrice: this.marketParams.strikePrice,
+                _strikePrice: Moralis.Units.ETH(`${this.marketParams.strikePrice}`),
                 _resolutionDate: this.marketParams.resolutionDate,
                 _wageDeadline: this.marketParams.wageDeadline,
             };
-            await _createMarket(params);
-            await _getMarketInfo('0');
+            try{
+                await this.saveMarket();
+                await _createMarket(params);
+            } catch(error){
+                console.log(error);
+            }
         },
     }
 }

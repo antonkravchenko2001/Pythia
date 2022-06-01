@@ -14,7 +14,6 @@ export const _getLinkFee = async() => {
         let linkFee = await Moralis.Web3API.native.runContractFunction(
             options
         );
-        console.log(linkFee)
         return linkFee;
     } catch (error){
         console.error(error);
@@ -25,7 +24,7 @@ export const _numMarkets = async() => {
     const options = {
         chain: chain,
         address: marketsAddress,
-        function_name: "getLinkFee",
+        function_name: "getNumMarkets",
         abi: marketsABI,
         params: {},
     };
@@ -98,7 +97,7 @@ export const _approveLinkTransfer = async(_amount) => {
     };
     try{
         await Moralis.executeFunction(options);
-        console.log(`approved ${_amount}`)
+        console.log(`approved ${_amount} of link`)
     } catch(error) {
         console.error(error);
     }
@@ -118,7 +117,7 @@ export const _approvePayTokenTransfer = async(_amount) => {
     };
     try{
         await Moralis.executeFunction(options);
-        console.log(`approved ${_amount}`)
+        console.log(`approved ${_amount} of token`)
     } catch(error) {
         console.error(error);
     }
@@ -145,6 +144,7 @@ export const _createMarket = async(params) =>  {
     } catch(error){
         console.error(error);
     }
+
 }
 
 export let _wageMoney = async(params) =>  {
