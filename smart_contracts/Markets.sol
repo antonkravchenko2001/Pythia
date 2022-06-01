@@ -81,11 +81,11 @@ contract Markets is KeeperCompatibleInterface{
     //multiplier used in computations
     uint256 constant MULTIPLIER = 10 ** 18;
     //alpha hyperparamter used in the price function for a market
-    uint256 constant ALPHA = 15;
+    uint256 constant ALPHA = 4;
     //the maximum amount of markets that can be resolved within one block
     uint256 constant MAX_MARKETS_UPDATE = 30;
     //keepers fee
-    uint256 constant KEEPER_FEE = 100;
+    uint256 constant KEEPER_FEE = 10 ** 5;
     //maximum amount of markets that can be stored in the contract
     uint256 constant MAX_AMOUNT_MARKETS = 1000;
 
@@ -204,18 +204,18 @@ contract Markets is KeeperCompatibleInterface{
         //increment the num markets by 1
         numMarkets += 1;
 
-        // transfer funds
-        payToken.transferFrom(
-            msg.sender,
-            address(this),
-            _transferAmount
-        );
+        // // transfer funds
+        // payToken.transferFrom(
+        //     msg.sender,
+        //     address(this),
+        //     _transferAmount
+        // );
 
-        linkToken.transferFrom(
-            msg.sender,
-            address(this),
-            KEEPER_FEE
-        );
+        // linkToken.transferFrom(
+        //     msg.sender,
+        //     address(this),
+        //     KEEPER_FEE
+        // );
     }
 
     //waging money on a market
@@ -366,7 +366,7 @@ contract Markets is KeeperCompatibleInterface{
         //an array to store markets ids of the markets to be resolved
         uint256[MAX_MARKETS_UPDATE] memory _resolvedMarketIds;
 
-        bool _resolved;
+
         uint256 _count;
 
         for(uint256 i; i < numMarkets; i++){
@@ -375,9 +375,10 @@ contract Markets is KeeperCompatibleInterface{
                 break;
             }
 
-            _resolved = markets[i].resolved;
-
-            if(!markets[i].resolved){
+            if(
+                (!markets[i].resolved) &&
+                (markets[i].resolutionDate <= block.timestamp)
+            ){
                 //fill array with id of the market
                 _resolvedMarketIds[_count] = i;
                 _count += 1;
@@ -406,22 +407,24 @@ contract Markets is KeeperCompatibleInterface{
             _marketId = _resolvedMarketIds[i];
 
             //double check that the market is not resolved
-            if(markets[_marketId].resolved){
-                continue;
+            if(
+                (!markets[_marketId].resolved) &&
+                (markets[_marketId].resolutionDate <= block.timestamp)
+            ){
+
+                //get latest price
+                markets[_marketId].resolutionPrice = (
+                    priceFeeder.getLatestPrice(
+                        markets[_marketId].priceFeedAddress
+                    )
+                );
+
+                //mark the market as resolved
+                markets[_marketId].resolved = true;
+
+                //emit an event
+                emit MarketResolved(_marketId);
             }
-
-            //get latest price
-            markets[_marketId].resolutionPrice = (
-                priceFeeder.getLatestPrice(
-                    markets[_marketId].priceFeedAddress
-                )
-            );
-
-            //mark the market as resolved
-            markets[_marketId].resolved = true;
-
-            //emit an event
-            emit MarketResolved(_marketId);
         }
     }
 
@@ -461,6 +464,16 @@ contract Markets is KeeperCompatibleInterface{
             markets[_marketId].players[_player].expertScore,
             markets[_marketId].players[_player].withdrawed
         );
+    }
+
+    //get num markets
+    function getNumMarkets() external view returns(uint256){
+        return numMarkets;
+    }
+
+    //get num markets
+    function getLinkFee() external view returns(uint256){
+        return KEEPER_FEE;
     }
 
     //caclulating reward
