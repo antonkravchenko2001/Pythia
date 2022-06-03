@@ -1,33 +1,31 @@
 <template>
-    <button v-if="!user" @click="logIn" class="login-button">Connect Wallet</button>
-    <button v-if="user" @click="logOut" class="login-button">Disconnect</button>
+    <button v-if="!isLoggedIn" @click="logIn" class="login-button">Connect Wallet</button>
+    <button v-if="isLoggedIn" @click="logOut" class="login-button">Disconnect</button>
 </template>
 
 <script>
-import Moralis from '../main.js';
 
 export default {
-  data(){
-    return {
-      user: Moralis.User.current()
-    }
-  },
   methods: {
     async logIn(){
-      try{
-        await Moralis.authenticate();
-        this.user = Moralis.User.current();
-      } catch(error){
-        console.error(error);
-      }
+      await this.$store.commit('logIn')
+      console.log('logged in')
     },
     async logOut(){
-      await Moralis.User.logOut();
-      this.user = Moralis.User.current();
+      await this.$store.commit('logOut')
       console.log('logged out');
 
     }
   },
+  computed: {
+    isLoggedIn(){
+      console.log(this.$store);
+      if(this.$store.state.user){
+        return true;
+      }
+      return false;
+    }
+  }
 
 };
 </script>

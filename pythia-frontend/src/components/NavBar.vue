@@ -1,10 +1,7 @@
 <template>
     <div class="nav-bar">
-       <div v-if='!isHomePage'>
+       <div v-if="!isHome">
            <NavButton path='/' text='Home' />
-       </div>
-       <div v-if="loggedIn">
-           <NavButton path='my-wages' text='Portfolio'/>
        </div>
        <div>
            <NavButton path='about' text='About'/>
@@ -18,34 +15,26 @@
 <script>
 import NavButton from './NavButton.vue'
 import LoginUi from './LoginUi.vue'
-import Moralis from '../main.js'
 
     export default {
-        data(){
-            return {
-                isHomePage: this.isHome(),
-                loggedIn: this.isLoggedIn()
-            }
-        },
-        methods :{
-            isHome() {
-                let page = this.$route.name;
-                let isHome = (page === 'home');
-                console.log(isHome);
-                return isHome;
-            },
+
+        computed: {
             isLoggedIn(){
-                let user = Moralis.User.current();
-                if(user){
-                    return true
+                console.log(this.$store);
+                if(this.$store.state.user){
+                    return true;
                 }
                 return false;
+            },
+            isHome(){
+                let isHome = (this.$route.name === 'home');
+                return isHome;
             }
         },
         components: {
-    NavButton,
-    LoginUi,
-}
+            NavButton,
+            LoginUi,
+        }
     }
 </script>
 

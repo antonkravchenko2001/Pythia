@@ -7,8 +7,8 @@
             <input type="text" class='long-input' required v-model='marketParams.marketName'>
             <input type="text" class='long-input' required v-model='marketParams.priceFeedAddress'/>
             <input type="number" class='long-input' required v-model='marketParams.strikePrice' />
-            <input type="number" required v-model='marketParams.resolutionDate' />
-            <input type="number" required v-model='marketParams.wageDeadline'/>
+            <input type="text" required v-model='marketParams.wageDeadline'/>
+            <input type="text" required v-model='marketParams.resolutionDate' />
             <input type="number" required v-model='marketParams.sharesOwned[0]'/>
             <input type="number" required v-model='marketParams.sharesOwned[1]'/>
             <input type="number" required v-model='marketParams.moneyWaged[0]'/>
@@ -78,8 +78,8 @@ export default {
                 _moneyWaged: this.marketParams.moneyWaged,
                 _priceFeedAddress: this.marketParams.priceFeedAddress,
                 _strikePrice: Moralis.Units.ETH(`${this.marketParams.strikePrice}`),
-                _resolutionDate: this.marketParams.resolutionDate,
-                _wageDeadline: this.marketParams.wageDeadline,
+                _resolutionDate: this.dateToUnix(this.marketParams.resolutionDate),
+                _wageDeadline: this.dateToUnix(this.marketParams.wageDeadline),
             };
             try{
                 await this.saveMarket();
@@ -88,6 +88,13 @@ export default {
                 console.log(error);
             }
         },
+        dateToUnix(dateStr){
+            const date = new Date(dateStr);
+            console.log(date);
+            const unixTimestamp = Math.floor(date.getTime() / 1000) + 43200;
+            console.log(unixTimestamp);
+            return unixTimestamp;
+        }
     }
 }
 </script>
