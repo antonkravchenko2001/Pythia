@@ -39,8 +39,9 @@ export default {
     border-color: #32978b;
     border-radius: 25px;
     font-size: 12px;
-    font-family: sans-serif;
     padding: 8px;
+    font-family: 'MontSerrat';
+    font-weight: 450;
  }
 
  .login-button:hover{

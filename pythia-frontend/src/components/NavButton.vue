@@ -13,11 +13,11 @@ export default {
  .home-button {
     background-color: #0d1820;
     padding: 25px;
-    font: sans-serif;
     color: #cecece;
     border: None;
     font-size: 13px;
-    font-family: sans-serif;
+    font-family: 'MontSerrat';
+    font-weight: 450;
  }
 
  .home-button:hover{
