@@ -8,7 +8,7 @@
             <div class="share-type">No</div>
             <div class="share-type">Yes</div>
             <div></div><div></div>
-            <div >
+            <div>
             </div>
             <div>
             </div>

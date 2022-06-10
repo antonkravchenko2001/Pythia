@@ -13,8 +13,8 @@
 </template>
 
 <script>
-import NavButton from './NavButton.vue'
-import LoginUi from './LoginUi.vue'
+import NavButton from './subcomponents/NavButton.vue'
+import LoginUi from './subcomponents/LoginUi.vue'
 
     export default {
 

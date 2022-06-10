@@ -1,15 +1,15 @@
 <template>
   <NavBar />
-  <WageMoney />
+  <MarketDisplay />
 </template>
 
 <script>
-import WageMoney from '../components/WageMoney.vue'
+import MarketDisplay from '../components/MarketDisplay.vue'
 import NavBar from '@/components/NavBar.vue'
 
 export default {
     components: {
-      WageMoney,
+      MarketDisplay,
       NavBar
     }
 }

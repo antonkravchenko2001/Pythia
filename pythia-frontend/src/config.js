@@ -240,6 +240,16 @@ export const marketsABI = [
 		"name": "getMarketInfo",
 		"outputs": [
 			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256[2]",
+				"name": "",
+				"type": "uint256[2]"
+			},
+			{
 				"internalType": "uint256[2]",
 				"name": "",
 				"type": "uint256[2]"
@@ -250,24 +260,14 @@ export const marketsABI = [
 				"type": "uint256[2]"
 			},
 			{
-				"internalType": "uint256",
+				"internalType": "uint256[2]",
 				"name": "",
-				"type": "uint256"
+				"type": "uint256[2]"
 			},
 			{
-				"internalType": "uint256",
+				"internalType": "bool",
 				"name": "",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
+				"type": "bool"
 			},
 			{
 				"internalType": "uint256",
@@ -347,9 +347,38 @@ export const marketsABI = [
 		],
 		"stateMutability": "view",
 		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_marketId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_outcome",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_moneyToWage",
+				"type": "uint256"
+			}
+		],
+		"name": "numSharesForPrice",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
 	}
 ];
-export const marketsAddress = '0x4123A7A9e4f5df7884331A4F015de4e4E7905212';
+export const marketsAddress = '0x93eA6d6c950949A470c64513fc45209B472Ad131';
 export const ERC20ABI = [
 	{
 		"anonymous": false,

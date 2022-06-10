@@ -1,5 +1,9 @@
-import Moralis from '../main.js';
+import Moralis from '../main.js'
 import {marketsAddress, marketsABI, payTokenAddress, ERC20ABI, linkTokenAddress, chain} from '../config.js'
+import {unixToDate, weiToEth} from '../helperFunctions.js'
+
+
+//call methods
 
 export const _getLinkFee = async() => {
     const options = {
@@ -50,13 +54,35 @@ export const _getMarketInfo = async(_marketId) => {
     };
 
     try {
-        let marketInfo = await Moralis.Web3API.native.runContractFunction(
+        let _marketInfo = await Moralis.Web3API.native.runContractFunction(
             options
         );
+
+        let asset = await Moralis.Cloud.run(
+            "getAsset",
+            {priceFeed: _marketInfo[0]}
+        );
+        console.log(asset);
+        asset = asset.get('asset');
+
+        let marketInfo = {
+            marketId: _marketId,
+            asset,
+            strikePrice: weiToEth(_marketInfo[1][0]),
+            resolvePrice: weiToEth(_marketInfo[1][1]),
+            wageDeadline: unixToDate(_marketInfo[2][0]),
+            resolveDate: unixToDate(_marketInfo[2][0]),
+            sharesOwned: [weiToEth(_marketInfo[3][0]), weiToEth(_marketInfo[3][1])],
+            moneyWaged: [weiToEth(_marketInfo[4][0]), weiToEth(_marketInfo[4][1])],
+            resolved: _marketInfo[5],
+            winningOutcome: parseInt(_marketInfo[6])
+        }
         console.log(marketInfo);
         return marketInfo;
+
     } catch (error){
         console.error(error);
+        return false;
     }
 }
 
@@ -82,6 +108,28 @@ export const _getPlayerInfo = async(_player, _marketId) => {
         console.error(error);
     }
 }
+
+export const _numSharesForPrice = async(params) => {
+    const options = {
+        chain: chain,
+        address: marketsAddress,
+        function_name: "numSharesForPrice",
+        abi: marketsABI,
+        params
+    };
+
+    try {
+        let numShares = await Moralis.Web3API.native.runContractFunction(
+            options
+        );
+        return numShares;
+    } catch (error){
+        console.error(error);
+    }
+}
+
+
+//send methods
 
 export const _approveLinkTransfer = async(_amount) => {
     await Moralis.enableWeb3();
@@ -141,6 +189,7 @@ export const _createMarket = async(params) =>  {
     };
     try{
         await Moralis.executeFunction(options);
+        console.log('market created')
     } catch(error){
         console.error(error);
     }

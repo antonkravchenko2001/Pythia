@@ -143,7 +143,7 @@ contract Markets is KeeperCompatibleInterface{
 
         //check that wage deadline date does not exceed the resolution date
         require(
-            _wageDeadline < _resolutionDate,
+            _wageDeadline <= _resolutionDate,
             "resolution happens after last wage"
         );
 
@@ -237,7 +237,7 @@ contract Markets is KeeperCompatibleInterface{
 
         //amount of money to be waged for each outcome
         for(uint256 i = 0; i < _sharesToPurchase.length; i++){
-            _sharesToPurchase[i] += _numSharesForPrice(
+            _sharesToPurchase[i] += numSharesForPrice(
                 _marketId,
                 i,
                 _moneyToWage[i]
@@ -430,21 +430,27 @@ contract Markets is KeeperCompatibleInterface{
 
     //get market info
     function getMarketInfo(uint256 _marketId) external view returns(
+        address,
         uint256[2] memory,
         uint256[2] memory,
-        uint256,
-        uint256,
-        uint256,
-        uint256,
+        uint256[2] memory,
+        uint256[2] memory,
+        bool,
         uint256
     ){
          return(
+            markets[_marketId].priceFeedAddress,
+            [
+                markets[_marketId].strikePrice,
+                markets[_marketId].resolutionPrice
+            ],
+            [
+                markets[_marketId].wageDeadline,
+                markets[_marketId].resolutionDate
+            ],
             markets[_marketId].sharesOwned,
             markets[_marketId].moneyWaged,
-            markets[_marketId].strikePrice,
-            markets[_marketId].resolutionPrice,
-            markets[_marketId].wageDeadline,
-            markets[_marketId].resolutionDate,
+            markets[_marketId].resolved,
             markets[_marketId].winningOutcome
         );
     }
@@ -574,11 +580,11 @@ contract Markets is KeeperCompatibleInterface{
     }
 
     //calculating price of buying n shares of outcome i
-    function _numSharesForPrice(
+    function numSharesForPrice(
         uint256 _marketId,
         uint256 _outcome,
         uint256 _moneyToWage
-    ) internal view returns(uint256){
+    ) public view returns(uint256){
 
         //amount of money waged on the outcome to be bought
         uint256 _moneyOutcome = (

@@ -1,8 +1,7 @@
 import { createRouter, createWebHistory} from 'vue-router'
 import HomePage from '../views/HomePage.vue'
-import WageMoneyPage from '../views/WageMoneyPage.vue'
+import MarketPage from '../views/MarketPage.vue'
 import AboutPage from '../views/AboutPage.vue'
-import MyWages from '../views/MyWages.vue'
 
 const routes = [
     {
@@ -13,18 +12,13 @@ const routes = [
     {
         path: '/markets/:marketId',
         name: 'markets',
-        component: WageMoneyPage
+        component: MarketPage
     },
     {
         path: '/about',
         name: 'about',
         component: AboutPage
     },
-    {
-        path: '/my-wages',
-        name: 'myWages',
-        component: MyWages
-    }
 
 ];
 

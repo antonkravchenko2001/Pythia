@@ -1,15 +1,15 @@
 <template>
   <NavBar />
-  <CreateMarket />
+  <HomeContent />
 </template>
 
 <script>
-import CreateMarket from '../components/CreateMarket.vue'
+import HomeContent from '../components/HomeContent.vue'
 import NavBar from '@/components/NavBar.vue'
 
 export default {
-    components: {
-    CreateMarket,
+  components: {
+    HomeContent,
     NavBar
 }
 }

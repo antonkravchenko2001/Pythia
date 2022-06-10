@@ -11,10 +11,9 @@
 </template>
 
 <script>
-import MarketInfo from './MarketInfo.vue'
-import BuyShares from './BuyShares.vue'
-import MarketState from './MarketState.vue'
-
+import MarketInfo from './subcomponents/MarketInfo.vue'
+import BuyShares from './subcomponents/BuyShares.vue'
+import MarketState from './subcomponents/MarketState.vue'
 export default {
     components: {
         MarketInfo,
