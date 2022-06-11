@@ -99,13 +99,21 @@ export const _getPlayerInfo = async(_player, _marketId) => {
     };
 
     try {
-        let playerInfo = await Moralis.Web3API.native.runContractFunction(
+        let _playerInfo = await Moralis.Web3API.native.runContractFunction(
             options
         );
+        const playerInfo = {
+            sharesOwned: [weiToEth(_playerInfo[0][0]), weiToEth(_playerInfo[0][1])],
+            moneyWaged: [weiToEth(_playerInfo[1][0]), weiToEth(_playerInfo[1][1])],
+            reward: weiToEth(_playerInfo[2]),
+            expertScore: weiToEth(_playerInfo[3]),
+            withdrawed: _playerInfo[4]
+        };
         console.log(playerInfo);
         return playerInfo;
     } catch (error){
         console.error(error);
+        return false;
     }
 }
 
@@ -126,6 +134,28 @@ export const _numSharesForPrice = async(params) => {
     } catch (error){
         console.error(error);
     }
+}
+
+
+export const _getExpertScore = async(_player, _marketId) => {
+    let options = {
+        chain: chain,
+        address: marketsAddress,
+        function_name: "_calcExpertScore",
+        abi: marketsABI,
+        params: {
+            _marketId,
+            _playerAddress: _player
+        },
+    }
+
+    const _expertScore = await Moralis.Web3API.native.runContractFunction(
+        options
+    );
+
+    console.log(_expertScore);
+    return weiToEth(_expertScore);
+
 }
 
 
@@ -174,7 +204,7 @@ export const _approvePayTokenTransfer = async(_amount) => {
 
 export const _createMarket = async(params) =>  {
     const linkFee =  await _getLinkFee();
-    const amount =  params._sharesOwned.reduce(
+    const amount =  params._moneyWaged.reduce(
         (acc, curr) => {return acc + curr;}
     );
     await _approveLinkTransfer(linkFee);

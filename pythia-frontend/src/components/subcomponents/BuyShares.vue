@@ -1,73 +1,167 @@
 <template>
-    <div class="buy-shares-outer">
+    <div v-if='$store.state.user' class="buy-shares-outer">
         <div class="buy-withdraw-buttons">
-            <button class="buy-button">Buy</button>
-            <button class="withdraw-button">Withdraw</button>
+            <button class="buy-button" ref='buy' name='buy'  @click="click('buy')" :class="{'buy-button-active': buttons.buy}">Wage Money</button>
+            <button v-if='resolved' class="withdraw-button" ref='withdraw' name='withdraw'  @click="click('withdraw')"  :class="{'withdraw-button-active': buttons.withdraw}">Withdraw</button>
         </div>
-        <div class="buy-shares-inner">
+        <div v-if='buttons.buy' class="buy-shares-inner">
             <div class="share-type">No</div>
             <div class="share-type">Yes</div>
-            <div></div><div></div>
-            <div>
+            <div class="market-stats no-annot">
+                <span>10%</span>
+            </div><div class="market-stats yes-annot">
+                <span>90%</span>
             </div>
-            <div>
+            <input type='number' class='buy-shares-input' v-model='buyInfo.moneyTowage[0]'/>
+            <input type='number' class='buy-shares-input' v-model='buyInfo.moneyTowage[1]'/>
+            <div class="grid-spec dynamic-stats">
+                <div class="dynamic-stats-title">Shares bought</div>
+                <div class="dynamic-stats-group">
+                    <div class="dynamic-stats-element">0.001</div>
+                    <div class="dynamic-stats-element">0.002</div>
+                </div>
             </div>
-            <div class="grid-spec"></div>
-            <div></div><div></div>
+            <div class="grid-spec submit-button-div">
+                <button class="submit-button" @click="wageMoney">Submit</button>
+            </div>
+        </div>
+
+        <div  v-if='buttons.withdraw' class="withdraw-money-inner">
+            <div class="withdraw-money-stats">
+                <div>Percent of winning shares</div><div class="withdraw-money-stat-values">10%</div>
+                <div>Percent of winning money</div><div class="withdraw-money-stat-values">10%</div>
+                <div>Money won</div><div class="withdraw-money-stat-values">12%</div>
+                <div>Expert score</div><div class="withdraw-money-stat-values">1500</div>
+            </div>
+            <div class="withdraw-button-div">
+                <button class="withdraw-button-submit">Withdraw</button>
+            </div>
         </div>
     </div>
 </template>
 
+<script>
+    import { _wageMoney} from '../../contract-functions/ContractFunctions';
+    export default {
+        data(){
+            return {
+                buyInfo: {
+                    odds: [0, 0],
+                    moneyTowage: [0, 0],
+                    sharesToBuy: [0, 0],
+                },
+                withDrawInfo: {
+                    resolved: false,
+                    withdrawed: false,
+                    winSharesPercent: 0,
+                    winMoneyPercent: 0,
+                    moneyWon: 0,
+                    expertScore: 0
+                },
+                buttons :{
+                    buy: true,
+                    withdraw: false
+                }
+            }
+        },
+        methods: {
+            click(btn) {
+                const buttonName = this.$refs[btn].name;
+                if(!this.buttons[buttonName]){
+                    this.buttons[buttonName] = true;
+                    if(buttonName === 'buy'){
+                        this.buttons.withdraw = false;
+                    } else if(buttonName === 'withdraw') {
+                        this.buttons.buy = false;
+                    }
+                }
+            },
+            async  wageMoney(){
+                const _marketId = this
+                    .$route
+                    .params
+                    .marketId
+                    .toString();
+
+                //wage Money
+                await _wageMoney(
+                    {
+                        _marketId,
+                        _moneyToWage: this.buyInfo.moneyTowage
+                    }
+                )
+           }
+        },
+        async created(){
+            // const marketId = this
+            //                 .$route
+            //                 .params
+            //                 .marketId
+            //                 .toString();
+            // const playerAddress = this
+            //                       .$store
+            //                       .state
+            //                       .user
+            //                       .get('ethAddress');
+            // const playerInfo = await _getPlayerInfo(playerAddress, marketId);
+            // const marketInfo = await _getMarketInfo(marketId);
+
+            // this.withDrawInfo.expertScore = playerInfo
+            // await _getExpertScore(playerAddress, marketId);
+        }
+    }
+</script>
+
 <style scoped>
     .buy-shares-outer {
         display: grid;
-        grid-template-rows: 1fr 8.5fr;
+        grid-template-rows: 1fr 8fr;
         color:#cecece;
     }
 
     .buy-shares-inner {
         display: grid;
-        gap: 15px;
-        grid-template-rows: 0.8fr 1.5fr 1.2fr 1fr 1fr;
+        gap: 10px;
+        grid-template-rows: 0.5fr 1.4fr 1fr 1.5fr 1fr;
         grid-template-columns: repeat(2,1fr);
-        background-color: #122D46;
+        background-color: #0e2438;
         padding:10px;
+        border: #79e2f2 1.2px solid;
+        border-radius: 5px;
     }
     .buy-withdraw-buttons {
         display: flex;
-        justify-content: flex-end;
+        justify-content: space-between;
     }
 
     .withdraw-button {
         background-color: #0b1723;
-        margin-bottom: 1.5px;
+        margin-bottom: 5px;
         border: none;
         color: #cecece;
         font-size: 13px;
+        padding-left: 15px;
+        padding-right: 15px;
     }
 
-    .withdraw-button:active {
-        color: #57D9A3;
-        border-bottom: 1.5px solid;
-        border-color: #57D9A3;
+    .withdraw-button-active {
+        color: #79e2f2;
         margin-bottom: 0px;
-        background-color: #122D46;
     }
 
     .buy-button {
         background-color: #0b1723;
-         margin-bottom: 1.5px;
+        margin-bottom: 5px;
         border: none;
         color: #cecece;
         font-size: 13px;
+        padding-left: 10px;
+        padding-right: 10px;
 
     }
 
-    .buy-button:active {
+    .buy-button-active {
         color: #79e2f2;
-        border-bottom: 1.5px solid;
-        border-color: #79e2f2;
-        background-color: #122D46;
         margin-bottom: 0px;
     }
 
@@ -79,6 +173,7 @@
     .grid-spec {
         grid-column-start: 1;
         grid-column-end: 3;
+        /* background-color: #243b53; */
     }
 
     .buy-info {
@@ -88,18 +183,122 @@
         border-color: #79e2f2;
     }
 
-    .buy-form{
-        display: grid;
-        justify-content: center;
-        align-items: center;
-        background-color: #243b53;
-        border: 1.2px solid;
-        border-color: #79e2f2;
-        width: 100
-    }
-
     .share-type{
         font-size: 13px;
+    }
+
+    .market-stats{
+        border-radius: 5px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 13px;
+        font-weight: 300;
+        font-family: 'Montserrat';
+    }
+    .buy-shares-input {
+        max-width: 80px;
+        max-height: 40px;
+        box-shadow: none;
+        font-size: 12px;
+        background: #243b53;
+        color:#cecece;
+        font-weight: 200;
+        font-family: 'Montserrat';
+        border: none;
+    }
+
+    .submit-button-div {
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    .submit-button {
+        background: #3a9770;
+        border: #358262 1.5px solid;
+        box-shadow: 1px 1px 8px #121212;
+        border-radius: 5px;
+        color:#cecece;
+    }
+
+    .submit-button:active{
+        background: #358262;
+        box-shadow: none;
+    }
+
+    .dynamic-stats {
+        font-family: 'Montserrat';
+        grid-template-rows:  repeat(2, 1fr);
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .dynamic-stats-group {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .dynamic-stats-title {
+        font-size: 11px
+    }
+
+    .dynamic-stats-element {
+        font-size:10px;
+        font-weight: 200;
+        margin-top: 5px;
+    }
+
+    .yes-annot {
+       border: #4decc9c2 1.5px solid;
+       color: #4decc9c2;
+   }
+
+   .no-annot {
+       border: #ec4d4dc2 1.5px solid;
+       color: #ec4d4dc2 ;
+   }
+
+   .withdraw-money-inner {
+        border:#79e2f2 1.2px solid;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        background-color: #0e2438;
+        padding:10px;
+        border-radius: 5px;
+   }
+
+   .withdraw-money-stats {
+        display: grid;
+        grid-template-columns: 5fr 1fr;
+        grid-template-rows: repeat(5,1fr);
+        row-gap: 5px;
+        column-gap: 10px;
+        font-size: 10px;
+   }
+
+   .withdraw-money-stat-values {
+        font-weight: 200;
+   }
+
+   .withdraw-button-div {
+        display: flex;
+        justify-content: center;
+   }
+
+   .withdraw-button-submit {
+        background-color:#7c3ec2;
+        color:#cecece;
+        border: none;
+        padding-top: 3px;
+        padding-bottom: 3px;
+        border-radius: 5px;
+        box-shadow: 1px 1px 8px #121212;
+   }
+
+    .withdraw-button-submit:active {
+        box-shadow: none;
+        background-color: #542c83;
+
     }
 
 

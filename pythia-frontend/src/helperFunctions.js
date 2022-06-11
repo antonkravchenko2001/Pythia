@@ -12,11 +12,22 @@ export const dateToUnix = (dateStr) => {
     return unixTimestamp;
 }
 
-export const toScientific = (num) => {
+const toScientific = (num) => {
     if(Math.abs(num) <= 1e-5){
         return num.toExponential();
     }
     return num;
+}
+
+const fromScientific = (num) => {
+    return Number(num.toString());
+}
+
+
+export const ethToWei = (num) => {
+    return Moralis.Units.ETH(
+        `${fromScientific(num)}`
+    );
 }
 
 export const weiToEth = (weiString) => {

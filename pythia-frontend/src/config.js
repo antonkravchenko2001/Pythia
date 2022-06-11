@@ -195,6 +195,54 @@ export const marketsABI = [
 	{
 		"inputs": [
 			{
+				"internalType": "uint256",
+				"name": "_marketId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "address",
+				"name": "_playerAddress",
+				"type": "address"
+			}
+		],
+		"name": "_calcExpertScore",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_marketId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "address",
+				"name": "_playerAddress",
+				"type": "address"
+			}
+		],
+		"name": "_calcReward",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
 				"internalType": "bytes",
 				"name": "checkData",
 				"type": "bytes"
@@ -226,7 +274,7 @@ export const marketsABI = [
 				"type": "uint256"
 			}
 		],
-		"stateMutability": "view",
+		"stateMutability": "pure",
 		"type": "function"
 	},
 	{
@@ -378,7 +426,7 @@ export const marketsABI = [
 		"type": "function"
 	}
 ];
-export const marketsAddress = '0x93eA6d6c950949A470c64513fc45209B472Ad131';
+export const marketsAddress = '0x0e41D88af498F6aebB934a1e928FC310516F76A6';
 export const ERC20ABI = [
 	{
 		"anonymous": false,

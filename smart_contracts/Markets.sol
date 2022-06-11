@@ -478,7 +478,7 @@ contract Markets is KeeperCompatibleInterface{
     }
 
     //get num markets
-    function getLinkFee() external view returns(uint256){
+    function getLinkFee() external pure returns(uint256){
         return KEEPER_FEE;
     }
 
@@ -486,7 +486,9 @@ contract Markets is KeeperCompatibleInterface{
     function _calcReward(
         uint256 _marketId,
         address _playerAddress
-    ) internal view returns(uint256){
+    ) public view returns(uint256){
+        //require for market to be resolved;
+        require(markets[_marketId].resolved);
 
         //money waged on each outcome in the market
         uint256[2] memory _moneyWaged = markets[_marketId].moneyWaged;
@@ -513,6 +515,9 @@ contract Markets is KeeperCompatibleInterface{
             _player.sharesOwned[_winningOutcome]
         );
 
+        //denominator > 0
+        require( _winSharesOwned > 0);
+
         return (
             (
                 (MULTIPLIER * _loserMoney) / _winSharesOwned
@@ -525,7 +530,10 @@ contract Markets is KeeperCompatibleInterface{
     function _calcExpertScore(
         uint256 _marketId,
         address _playerAddress
-    ) internal view returns(uint256){
+    ) public view returns(uint256){
+
+        //require for market to be resolved;
+        require(markets[_marketId].resolved);
 
         //money waged on each outcome in the market
         uint256[2] memory _moneyWaged = markets[_marketId].moneyWaged;

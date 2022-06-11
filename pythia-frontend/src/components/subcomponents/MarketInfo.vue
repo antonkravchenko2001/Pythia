@@ -21,12 +21,12 @@
             </div>
         </div>
         <div class='item-val'>
-            eTH VS USD Market
+            {{marketData.description}}
         </div>
         <div class="field-with-buttons">
             <div class="button-container">
                 <button  ref='marketStats' name='marketStats'  @click="click('marketStats')" class="market-info-button" :class="{market: buttons.marketStats}" >Market Stats</button>
-                <button ref='myPortfolio' name='myPortfolio' @click="click('myPortfolio')" class="portfolio-info-button" :class="{portfolio: buttons.myPortfolio}">My Portfolio</button>
+                <button v-if='$store.state.user' ref='myPortfolio' name='myPortfolio' @click="click('myPortfolio')" class="portfolio-info-button" :class="{portfolio: buttons.myPortfolio}">My Portfolio</button>
             </div>
             <div v-if='buttons.marketStats' class="item-val market-stats market-stats-dashboard">
                 <div>
@@ -34,17 +34,17 @@
                 <div class="market-info-text">No</div>
                 <div class="market-info-text">Yes</div>
                 <div class="market-info-text">Money Waged</div>
-                <div class="market-stats-component">
-                    {{marketData.moneyWaged[0]}}
+                <div class="market-stats-component no-annot">
+                    {{marketData.moneyWaged[0]}}$
                 </div>
-                <div class="market-stats-component">
-                    {{marketData.moneyWaged[1]}}
+                <div class="market-stats-component yes-annot">
+                    {{marketData.moneyWaged[1]}}$
                 </div>
                 <div class="market-info-text">Shares Owned</div>
-                <div class="market-stats-component">
+                <div class="market-stats-component no-annot">
                     {{marketData.sharesOwned[0]}}
                 </div>
-                <div class="market-stats-component">
+                <div class="market-stats-component yes-annot">
                     {{marketData.sharesOwned[1]}}
                 </div>
             </div>
@@ -54,14 +54,18 @@
                 <div class="market-info-text">No</div>
                 <div class="market-info-text">Yes</div>
                 <div class="market-info-text">Money Waged</div>
-                <div class="market-stats-component">
+                <div class="market-stats-component no-annot">
+                    {{playerData.moneyWaged[0]}}$
                 </div>
-                <div class="market-stats-component">
+                <div class="market-stats-component yes-annot">
+                    {{playerData.moneyWaged[1]}}$
                 </div>
                 <div class="market-info-text">Shares Owned</div>
-                <div class="market-stats-component">
+                <div class="market-stats-component no-annot">
+                    {{playerData.sharesOwned[0]}}
                 </div>
-                <div class="market-stats-component">
+                <div class="market-stats-component yes-annot">
+                    {{playerData.sharesOwned[1]}}
                 </div>
             </div>
         </div>
@@ -69,7 +73,8 @@
 </template>
 
 <script>
-    import {_getMarketInfo} from '../../contract-functions/ContractFunctions.js'
+    import {_getMarketInfo, _getPlayerInfo} from '../../contract-functions/ContractFunctions.js'
+    import Moralis from '../../main.js'
 
     export default {
         data(){
@@ -82,6 +87,10 @@
                     description: '',
                     sharesOwned: [0, 0],
                     moneyWaged: [0, 0],
+                },
+                playerData: {
+                    sharesOwned: [0, 0],
+                    moneyWaged: [0, 0]
                 },
                 buttons: {
                     marketStats: true,
@@ -104,6 +113,8 @@
             }
         },
         async created(){
+
+            //get Market data from blockchain
             const _marketId = this
                             .$route
                             .params
@@ -116,6 +127,42 @@
             this.marketData.wageDeadline = marketInfo.wageDeadline;
             this.marketData.sharesOwned = marketInfo.sharesOwned;
             this.marketData.moneyWaged = marketInfo.moneyWaged;
+
+            let marketDescription = await Moralis.Cloud.run(
+                'getMarkets',
+                {filters: {marketId: _marketId}}
+            );
+            this.marketData.description = marketDescription[0].get('description');
+
+            //update database with blockchain data
+            let options = {
+                filters: {marketId: _marketId},
+                values: {
+                    volume: marketInfo.moneyWaged.reduce(
+                        (acc, curr) => {return acc + curr;}
+                    ),
+                    volumeShares: marketInfo.sharesOwned.reduce(
+                        (acc, curr) => {return acc + curr;}
+                    ),
+                    resolved: marketInfo.resolved,
+                    winningOutcome: marketInfo.winningOutcome,
+                    resolvePrice: marketInfo.resolvePrice
+                }
+            };
+            console.log(options);
+            await Moralis.Cloud.run(
+                'setMarket',
+                options
+            );
+            //get playerInfo
+            const _player = this
+                            .$store
+                            .state
+                            .user
+                            .get('ethAddress');
+            const playerInfo = await _getPlayerInfo(_player, _marketId);
+            this.playerData.moneyWaged = playerInfo.moneyWaged;
+            this.playerData.sharesOwned = playerInfo.sharesOwned;
         }
     };
 </script>
@@ -145,10 +192,11 @@
     .item-val {
         border: none;
         padding: 5px;
-        background-color: #122D46;
+        background-color: #0e2438;
         color: #cecece;
         font-size: 11px;
         font-weight: 300;
+        border-radius: 5px;
     }
 
     .colored-border {
@@ -159,7 +207,7 @@
     .field-with-buttons {
         display: grid;
         grid-template-columns: 1fr;
-        grid-template-rows: 1fr 6fr;
+        grid-template-rows: 1fr 5fr;
 
     }
 
@@ -170,21 +218,20 @@
 
     .market-info-button {
         background-color: #0b1723;
-        margin-bottom: 1.5px;
+        margin-bottom: 5px;
         border: none;
         color: #cecece;
         font-size: 13px;
     }
 
     .market {
-        color: #57D9A3;
+        color: #79e2f2;
         margin-bottom: 0px;
-        background-color: #122D46;
     }
 
     .portfolio-info-button {
         background-color: #0b1723;
-        margin-bottom: 1.5px;
+        margin-bottom: 5px;
         border: none;
         color: #cecece;
         font-size: 13px;
@@ -193,7 +240,6 @@
 
     .portfolio {
         color: #79e2f2;
-        background-color: #122D46;
         margin-bottom: 0px;
     }
 
@@ -210,22 +256,37 @@
     }
 
     .market-stats-component {
+        display: flex;
+        justify-content: center;
+        align-items: center;
         background-color: #243b53;
         border: 1.2px solid;
         border-color: #79e2f2;
         font-size: 13px;
     }
     .market-info-text {
+        display: flex;
+        align-items: center;
         font-size: 12.5px
     }
 
     .my-portfolio-dashboard {
-        border: #79e2f2 1.5px solid;
+        border: #79e2f2 1.2px solid;
 
     }
 
     .market-stats-dashboard {
-        border: #57D9A3 1.5px solid;
+        border: #79e2f2 1.2px solid;
 
+    }
+
+    .no-annot {
+        border: #ec4d4dc2 1.5px solid;
+        color: #ec4d4dc2;
+    }
+
+    .yes-annot {
+        border: #4decc9c2 1.5px solid;
+        color: #4decc9c2;
     }
 </style>

@@ -1,7 +1,19 @@
 <template>
-    <div class="market-state-container">
-        <div v-if='isResolved' class="market-resolved">Resolved</div>
-        <div v-if='!isResolved' class="market-unresolved">Unresolved</div>
+    <div v-if='isResolved' class='outer-container'>
+        <div class="market-state-container">
+            <div class="market-resolved">Resolved</div>
+        </div>
+        <div class="winning-outcome-container">
+            <div>Winning Outcome:</div>
+            <div>0</div>
+        </div>
+        <div class="winning-outcome-container">
+            <div>Resolution price:</div>
+            <div>2000</div>
+        </div>
+    </div>
+    <div v-if='!isResolved' class="market-state-container">
+        <div  class="market-unresolved">Unresolved</div>
     </div>
 
 </template>
@@ -29,9 +41,25 @@ import { _getMarketInfo } from '../../contract-functions/ContractFunctions.js';
 </script>
 
 <style scoped>
+    .outer-container {
+        display: grid;
+        gap: 8px;
+        grid-template-rows: repeat(2, 1fr);
+        max-height: 70px;
+        border:#17783b 1.2px solid;
+        border-radius: 5px;
+        padding: 9px;
+    }
     .market-state-container {
         display: flex;
         justify-content: flex-end;
+    }
+
+    .resolved-market-container {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(2, 1fr);
+        gap: 7px;
     }
 
     .market-resolved {
@@ -41,13 +69,22 @@ import { _getMarketInfo } from '../../contract-functions/ContractFunctions.js';
         padding: 5px;
         font-size: 12px;
         color:#cecece;
+        max-height: 15px;
+    }
+
+    .winning-outcome-container {
+        display: flex;
+        justify-content: space-between;
+        font-size: 12px;
+        color:#cecece;
     }
     .market-unresolved {
         background-color:#7e2525;
         border: none;
         border-radius: 5px;
         padding: 5px;
-        font-size: 12px;
+        font-size: 11px;
         color:#cecece;
+        max-height: 15px;
     }
 </style>

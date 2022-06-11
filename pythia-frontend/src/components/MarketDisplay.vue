@@ -35,7 +35,7 @@ export default {
     }
     .market-info-space {
         display: grid;
-        gap: 30px;
+        gap: 50px;
         grid-template-columns: 5fr 3fr;
         background-color: #0b1723;
         padding: 20px;
@@ -44,7 +44,6 @@ export default {
 
     .state-and-buy-container {
         display: grid;
-        gap: 68px;
-        grid-template-rows: 1fr 9fr;
+        grid-template-rows: 1fr 2fr;
     }
 </style>
