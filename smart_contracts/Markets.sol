@@ -492,37 +492,37 @@ contract Markets is KeeperCompatibleInterface{
 
         //money waged on each outcome in the market
         uint256[2] memory _moneyWaged = markets[_marketId].moneyWaged;
-
         //the player
         Player memory _player = markets[_marketId].players[_playerAddress];
-
         //the winning outcome of the market
         uint256 _winningOutcome = markets[_marketId].winningOutcome;
 
-        //total amount of money waged on losing outcomes
-        uint256 _loserMoney = (
-            _moneyWaged.sumArr() -
-            _moneyWaged[_winningOutcome]
-        );
 
+        //total amount of money waged on losing outcomes
+        uint256 _totalLoserMoney = (
+            _moneyWaged[1 - _winningOutcome]
+        );
         //the amount money waged by the player on the winning outcomes
         uint256 _winOutcomeMoney = (
             _player.moneyWaged[_winningOutcome]
         );
-
         //total amount of winning shares owned by th player
         uint256 _winSharesOwned = (
             _player.sharesOwned[_winningOutcome]
         );
-
+        //total win shares
+        uint256 _totalWinShares = (
+            markets[_marketId].sharesOwned[_winningOutcome]
+        );
         //denominator > 0
         require( _winSharesOwned > 0);
 
         return (
             (
-                (MULTIPLIER * _loserMoney) / _winSharesOwned
-            ) +
-             _winOutcomeMoney
+                _winSharesOwned * _totalLoserMoney +
+                _totalWinShares * _winOutcomeMoney
+            ) /
+            _totalWinShares
         );
     }
 

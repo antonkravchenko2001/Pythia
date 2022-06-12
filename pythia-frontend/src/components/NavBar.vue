@@ -20,7 +20,6 @@ import LoginUi from './subcomponents/LoginUi.vue'
 
         computed: {
             isLoggedIn(){
-                console.log(this.$store);
                 if(this.$store.state.user){
                     return true;
                 }

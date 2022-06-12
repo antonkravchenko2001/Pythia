@@ -83,8 +83,6 @@ export default {
                 _resolutionDate: dateToUnix(this.marketParams.resolveDate),
                 _wageDeadline: dateToUnix(this.marketParams.wageDeadline)
             }
-
-            console.log(createOptions);
             try{
                 await _createMarket(createOptions)
             } catch(error){
@@ -167,7 +165,6 @@ export default {
         color: #cecece;
         font-size: 13px;
         padding: 15px;
-        box-shadow: 1px 1px 8px #121212;
         font-family: 'Montserrat';
     }
     .create-market-button:hover{

@@ -5,11 +5,11 @@
         </div>
         <div class="winning-outcome-container">
             <div>Winning Outcome:</div>
-            <div>0</div>
+            <div>{{winningOutcome}}</div>
         </div>
         <div class="winning-outcome-container">
             <div>Resolution price:</div>
-            <div>2000</div>
+            <div>{{resolvePrice}}</div>
         </div>
     </div>
     <div v-if='!isResolved' class="market-state-container">
@@ -25,7 +25,9 @@ import { _getMarketInfo } from '../../contract-functions/ContractFunctions.js';
     export default {
         data(){
             return {
-                isResolved: false
+                isResolved: false,
+                winningOutcome: 0,
+                resolvePrice: 0
             }
         },
         async created(){
@@ -35,6 +37,8 @@ import { _getMarketInfo } from '../../contract-functions/ContractFunctions.js';
                         .marketId
                         .toString();
             const marketInfo = await _getMarketInfo(_marketId);
+            this.winningOutcome = marketInfo.winningOutcome
+            this.resolvePrice = marketInfo.resolvePrice
             this.isResolved = marketInfo.resolved;
         }
     };

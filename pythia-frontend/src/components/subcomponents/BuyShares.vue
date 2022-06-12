@@ -2,7 +2,7 @@
     <div v-if='$store.state.user' class="buy-shares-outer">
         <div class="buy-withdraw-buttons">
             <button class="buy-button" ref='buy' name='buy'  @click="click('buy')" :class="{'buy-button-active': buttons.buy}">Wage Money</button>
-            <button v-if='resolved' class="withdraw-button" ref='withdraw' name='withdraw'  @click="click('withdraw')"  :class="{'withdraw-button-active': buttons.withdraw}">Withdraw</button>
+            <button v-if='withDrawInfo.resolved' class="withdraw-button" ref='withdraw' name='withdraw'  @click="click('withdraw')"  :class="{'withdraw-button-active': buttons.withdraw}">Withdraw</button>
         </div>
         <div v-if='buttons.buy' class="buy-shares-inner">
             <div class="share-type">No</div>
@@ -12,8 +12,8 @@
             </div><div class="market-stats yes-annot">
                 <span>90%</span>
             </div>
-            <input type='number' class='buy-shares-input' v-model='buyInfo.moneyTowage[0]'/>
-            <input type='number' class='buy-shares-input' v-model='buyInfo.moneyTowage[1]'/>
+            <input type='number' class='buy-shares-input' v-model='buyInfo.moneyToWage[0]'/>
+            <input type='number' class='buy-shares-input' v-model='buyInfo.moneyToWage[1]'/>
             <div class="grid-spec dynamic-stats">
                 <div class="dynamic-stats-title">Shares bought</div>
                 <div class="dynamic-stats-group">
@@ -28,10 +28,10 @@
 
         <div  v-if='buttons.withdraw' class="withdraw-money-inner">
             <div class="withdraw-money-stats">
-                <div>Percent of winning shares</div><div class="withdraw-money-stat-values">10%</div>
-                <div>Percent of winning money</div><div class="withdraw-money-stat-values">10%</div>
-                <div>Money won</div><div class="withdraw-money-stat-values">12%</div>
-                <div>Expert score</div><div class="withdraw-money-stat-values">1500</div>
+                <div>Percent of winning shares</div><div class="withdraw-money-stat-values">{{withDrawInfo.winMoneyPercent}}%</div>
+                <div>Percent of winning money</div><div class="withdraw-money-stat-values">{{withDrawInfo.winSharesPercent}}%</div>
+                <div>Money won</div><div class="withdraw-money-stat-values">{{withDrawInfo.moneyWon}}</div>
+                <div>Expert score</div><div class="withdraw-money-stat-values">{{withDrawInfo.expertScore}}</div>
             </div>
             <div class="withdraw-button-div">
                 <button class="withdraw-button-submit">Withdraw</button>
@@ -41,13 +41,13 @@
 </template>
 
 <script>
-    import { _wageMoney} from '../../contract-functions/ContractFunctions';
+import { _wageMoney, _getExpertScore, _getMarketInfo, _getPlayerInfo, _getReward} from '../../contract-functions/ContractFunctions';
     export default {
         data(){
             return {
                 buyInfo: {
                     odds: [0, 0],
-                    moneyTowage: [0, 0],
+                    moneyToWage: [0, 0],
                     sharesToBuy: [0, 0],
                 },
                 withDrawInfo: {
@@ -87,27 +87,46 @@
                 await _wageMoney(
                     {
                         _marketId,
-                        _moneyToWage: this.buyInfo.moneyTowage
+                        _moneyToWage: this.buyInfo.moneyToWage
                     }
                 )
            }
         },
         async created(){
-            // const marketId = this
-            //                 .$route
-            //                 .params
-            //                 .marketId
-            //                 .toString();
-            // const playerAddress = this
-            //                       .$store
-            //                       .state
-            //                       .user
-            //                       .get('ethAddress');
-            // const playerInfo = await _getPlayerInfo(playerAddress, marketId);
-            // const marketInfo = await _getMarketInfo(marketId);
+            const marketId = this
+                            .$route
+                            .params
+                            .marketId
+                            .toString();
+            const playerAddress = this
+                                  .$store
+                                  .state
+                                  .user
+                                  .get('ethAddress');
+            const marketInfo = await _getMarketInfo(marketId);
+            const playerInfo = await _getPlayerInfo(playerAddress, marketId);
 
-            // this.withDrawInfo.expertScore = playerInfo
-            // await _getExpertScore(playerAddress, marketId);
+            if(marketInfo.resolved){
+
+                const winningOutcome = parseInt(marketInfo.winningOutcome);
+
+                const playerWinMoney = playerInfo.moneyWaged[winningOutcome];
+                const winMoney = marketInfo.moneyWaged[winningOutcome];
+
+                const playerWinShares = playerInfo.sharesOwned[winningOutcome];
+                const winShares = marketInfo.sharesOwned[winningOutcome];
+
+                this.withDrawInfo.expertScore = await _getExpertScore(playerAddress, marketId);
+                this.withDrawInfo.moneyWon = await _getReward(playerAddress, marketId);
+
+                this.withDrawInfo.winMoneyPercent = Math.round(1000 * playerWinMoney / winMoney) / 10
+                this.withDrawInfo.winSharesPercent = Math.round(1000 * playerWinShares / winShares) / 10
+
+                this.withDrawInfo.resolved = marketInfo.resolved
+
+                this.withDrawInfo.withdrawed = playerInfo.withdrawed
+
+            }
         }
     }
 </script>

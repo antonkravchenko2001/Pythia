@@ -149,7 +149,6 @@
                     resolvePrice: marketInfo.resolvePrice
                 }
             };
-            console.log(options);
             await Moralis.Cloud.run(
                 'setMarket',
                 options

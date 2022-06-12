@@ -426,7 +426,7 @@ export const marketsABI = [
 		"type": "function"
 	}
 ];
-export const marketsAddress = '0x0e41D88af498F6aebB934a1e928FC310516F76A6';
+export const marketsAddress = '0x77f10A700420CC77CfB990bFbe5396685Fc3f534';
 export const ERC20ABI = [
 	{
 		"anonymous": false,

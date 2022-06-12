@@ -6,7 +6,7 @@
 <style>
   html, body {
     height: 100vh;
-    background-color: #0e2438;
+    background-color: #0b1e2f;
     margin:0px;
     font-family: ui-sans-serif;
   }

@@ -62,7 +62,6 @@ export const _getMarketInfo = async(_marketId) => {
             "getAsset",
             {priceFeed: _marketInfo[0]}
         );
-        console.log(asset);
         asset = asset.get('asset');
 
         let marketInfo = {
@@ -158,6 +157,27 @@ export const _getExpertScore = async(_player, _marketId) => {
 
 }
 
+export const _getReward = async(_player, _marketId) => {
+    let options = {
+        chain: chain,
+        address: marketsAddress,
+        function_name: "_calcReward",
+        abi: marketsABI,
+        params: {
+            _marketId,
+            _playerAddress: _player
+        },
+    }
+
+    const _reward = await Moralis.Web3API.native.runContractFunction(
+        options
+    );
+
+    console.log(_reward);
+    return weiToEth(_reward);
+
+}
+
 
 //send methods
 
@@ -241,54 +261,6 @@ export let _wageMoney = async(params) =>  {
     try{
         await Moralis.executeFunction(options);
         console.log('money waged');
-    } catch(error){
-        console.error(error);
-    }
-}
-
-export let marketCreated = async() =>{
-    const options = {
-        chain: chain,
-        abi: marketsABI,
-        contractAddress: marketsAddress,
-        topic: 'MarketCreated',
-    }
-    try{
-        const event = await Moralis.Web3API.native.getContractEvents(options);
-        console.log(event);
-        return event;
-    } catch(error){
-        console.error(error);
-    }
-}
-
-export let deposited = async() =>{
-    const options = {
-        chain: chain,
-        abi: marketsABI,
-        contractAddress: marketsAddress,
-        topic: 'Deposited',
-    }
-    try{
-        const event = await Moralis.Web3API.native.getContractEvents(options);
-        console.log(event);
-        return event;
-    } catch(error){
-        console.error(error);
-    }
-}
-
-export let withdrawed = async() =>{
-    const options = {
-        chain: chain,
-        abi: marketsABI,
-        contractAddress: marketsAddress,
-        topic: 'Withdrawed'
-    }
-    try{
-        const event = await Moralis.Web3API.native.getContractEvents(options);
-        console.log(event);
-        return event;
     } catch(error){
         console.error(error);
     }

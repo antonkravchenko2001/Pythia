@@ -2,16 +2,19 @@
     <div class='outer-container'>
         <div class="home-content-container">
             <CreateMarket />
+            <MarketsDashboard/>
         </div>
     </div>
 </template>
 
 <script>
 import CreateMarket from './subcomponents/CreateMarket.vue'
+import MarketsDashboard from './subcomponents/MarketsDashboard.vue'
 
 export default {
     components :{
         CreateMarket,
+        MarketsDashboard
     }
 }
 </script>
@@ -24,7 +27,6 @@ export default {
     }
    
    .home-content-container {
-       background-color: #0d1c2b;
        width: 75%;
        height: 100%;
 
