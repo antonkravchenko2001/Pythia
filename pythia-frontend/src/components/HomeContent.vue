@@ -1,7 +1,7 @@
 <template>
+    <CreateMarket />
     <div class='outer-container'>
         <div class="home-content-container">
-            <CreateMarket />
             <MarketsDashboard/>
         </div>
     </div>

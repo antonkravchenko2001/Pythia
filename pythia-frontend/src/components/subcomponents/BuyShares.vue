@@ -28,20 +28,27 @@
 
         <div  v-if='buttons.withdraw' class="withdraw-money-inner">
             <div class="withdraw-money-stats">
-                <div>Percent of winning shares</div><div class="withdraw-money-stat-values">{{withDrawInfo.winMoneyPercent}}%</div>
-                <div>Percent of winning money</div><div class="withdraw-money-stat-values">{{withDrawInfo.winSharesPercent}}%</div>
+                <div>% of winning shares</div><div class="withdraw-money-stat-values">{{withDrawInfo.winMoneyPercent}}%</div>
+                <div>% of winning money</div><div class="withdraw-money-stat-values">{{withDrawInfo.winSharesPercent}}%</div>
                 <div>Money won</div><div class="withdraw-money-stat-values">{{withDrawInfo.moneyWon}}</div>
                 <div>Expert score</div><div class="withdraw-money-stat-values">{{withDrawInfo.expertScore}}</div>
             </div>
             <div class="withdraw-button-div">
-                <button class="withdraw-button-submit">Withdraw</button>
+                <button class="withdraw-button-submit" @click="withDrawWinnings()">Withdraw</button>
             </div>
         </div>
     </div>
 </template>
 
 <script>
-import { _wageMoney, _getExpertScore, _getMarketInfo, _getPlayerInfo, _getReward} from '../../contract-functions/ContractFunctions';
+import { 
+    _wageMoney,
+    _getExpertScore,
+    _getMarketInfo,
+    _getPlayerInfo,
+    _getReward,
+    _withdrawWinnings
+} from '../../contract-functions/ContractFunctions';
     export default {
         data(){
             return {
@@ -90,6 +97,18 @@ import { _wageMoney, _getExpertScore, _getMarketInfo, _getPlayerInfo, _getReward
                         _moneyToWage: this.buyInfo.moneyToWage
                     }
                 )
+           },
+           async withDrawWinnings(){
+                if(!this.withDrawInfo.withdrawed){
+                    const _marketId = this
+                    .$route
+                    .params
+                    .marketId
+                    .toString();
+                    _withdrawWinnings(_marketId);
+                    this.withDrawInfo.moneyWon = 0;
+                    this.withDrawInfo.withdrawed = true;
+                }
            }
         },
         async created(){
@@ -288,7 +307,7 @@ import { _wageMoney, _getExpertScore, _getMarketInfo, _getPlayerInfo, _getReward
 
    .withdraw-money-stats {
         display: grid;
-        grid-template-columns: 5fr 1fr;
+        grid-template-columns: 3fr 1fr;
         grid-template-rows: repeat(5,1fr);
         row-gap: 5px;
         column-gap: 10px;
@@ -302,6 +321,8 @@ import { _wageMoney, _getExpertScore, _getMarketInfo, _getPlayerInfo, _getReward
    .withdraw-button-div {
         display: flex;
         justify-content: center;
+        align-items: center;
+        height: 70px;
    }
 
    .withdraw-button-submit {

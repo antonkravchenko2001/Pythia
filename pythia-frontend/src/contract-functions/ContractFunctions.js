@@ -265,3 +265,21 @@ export let _wageMoney = async(params) =>  {
         console.error(error);
     }
 }
+
+export let _withdrawWinnings = async(_marketId) =>  {
+    const options = {
+        chain: chain,
+        contractAddress: marketsAddress,
+        functionName: "withdraw",
+        abi: marketsABI,
+        params: {_marketId}
+    };
+    try{
+        await Moralis.executeFunction(options);
+        console.log('money withdrawed');
+        return true;
+    } catch(error){
+        console.error(error);
+        return false;
+    }
+}

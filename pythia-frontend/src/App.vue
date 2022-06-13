@@ -34,6 +34,7 @@
   button{
     font-family: 'Montserrat';
     font-weight: 450;
+    cursor: pointer;
   }
 
   #app {

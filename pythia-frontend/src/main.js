@@ -5,6 +5,7 @@ import {serverUrl, appId} from './config.js'
 import router from './router'
 import { createStore } from 'vuex'
 
+Moralis.enableWeb3();
 
 Moralis.start({ serverUrl, appId });
 

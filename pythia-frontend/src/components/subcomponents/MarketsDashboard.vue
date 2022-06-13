@@ -5,17 +5,28 @@
             <i class="fa fa-search"></i>
         </div>
         <div class="markets-display">
-            <div class="market-info" v-for="market in markets" :key="market">
-                <div class="price-info">
-                    <div>{{market.get('asset')}}</div>
-                    <div>{{market.get('strikePrice')}}</div>
+            <div class="market-info unselectable" v-for="market in markets" :key="market" @click="$router.push(`/markets/${market.get('marketId')}`)">
+                <div class="item-container">
+                    <div class="item-type">
+                        <div>{{market.get('asset').toUpperCase()}}</div>
+                    </div>
+                    <div class="item-container">
+                        <div style="padding-right: 5px" class="item-type">Strike Price:</div>
+                        <div class="item-val">{{market.get('strikePrice')}}</div>
+                    </div>
                 </div>
                 <div>
-                    <div>{{market.get('description')}}</div>
+                    <div class="item-val">{{market.get('description')}}</div>
                 </div>
-                <div class="volume-info">
-                    <div style="padding-right:10px">Volume:</div>
-                    <div>{{market.get('volume')}} Dai</div> 
+                <div class="item-container">
+                    <div style="display: flex">
+                        <div class="item-type">Volume:</div>
+                        <div class="item-val">{{Math.round(market.get('volume') * 100) / 100}} Dai</div> 
+                    </div>
+                    <div>
+                        <div v-if="market.resolved" style="color:#4decc9c2">Resolved</div>
+                        <div v-if="!market.resolved" style="color:#ec4d4dc2">Unresolved</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -45,7 +56,7 @@
                         }
                     )
                 }
-            }
+            },
         },
         async created(){
             const markets = await Moralis.Cloud.run('getMarkets');
@@ -71,7 +82,6 @@
         padding-bottom: 10px;
         border-radius: 5px;
         color: #cecece;
-        font-weight: 350;
         font-family: 'Montserrat';
         box-shadow: none;
     }
@@ -104,7 +114,7 @@
 
     .market-info{
         display: grid;
-        grid-template-rows: 1fr 2fr 1fr;
+        grid-template-rows: 1fr 3fr 1fr;
         gap: 10px;
         background-color: #0c1827;
         padding:10px;
@@ -115,18 +125,31 @@
         font-size: 12px;
         font-family: 'Montserrat';
         font-weight: 350;
+        cursor: pointer;
     }
 
     .market-info:hover{
         box-shadow: 1px 1px 8px #121212;
     }
 
-    .price-info {
+    .item-container{
         display: flex;
         justify-content: space-between;
     }
-    .volume-info {
-        display: flex;
-        justify-content: flex-start;
+
+    .unselectable {
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    }
+
+    .item-type{
+        font-weight: 200;
+    }
+    
+    .item-val{
+        font-weight: 300;
     }
 </style>
