@@ -204,18 +204,18 @@ contract Markets is KeeperCompatibleInterface{
         //increment the num markets by 1
         numMarkets += 1;
 
-        // // transfer funds
-        // payToken.transferFrom(
-        //     msg.sender,
-        //     address(this),
-        //     _transferAmount
-        // );
+        // transfer funds
+        payToken.transferFrom(
+            msg.sender,
+            address(this),
+            _transferAmount
+        );
 
-        // linkToken.transferFrom(
-        //     msg.sender,
-        //     address(this),
-        //     KEEPER_FEE
-        // );
+        linkToken.transferFrom(
+            msg.sender,
+            address(this),
+            KEEPER_FEE
+        );
     }
 
     //waging money on a market
@@ -297,6 +297,10 @@ contract Markets is KeeperCompatibleInterface{
             _sharesToPurchase,
             _moneyToWage
         );
+    }
+
+    function getBalance() external view returns(uint256){
+        return payToken.balanceOf(address(this));
     }
 
     //withdrawing money from a market
@@ -421,6 +425,9 @@ contract Markets is KeeperCompatibleInterface{
 
                 //mark the market as resolved
                 markets[_marketId].resolved = true;
+
+                //set winning outcome
+                markets[_marketId].winningOutcome = _getWinningOutcome(_marketId);
 
                 //emit an event
                 emit MarketResolved(_marketId);

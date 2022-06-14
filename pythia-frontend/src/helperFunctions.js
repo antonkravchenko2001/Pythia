@@ -38,3 +38,11 @@ export const weiToEth = (weiString) => {
         )
     ));
 }
+
+export const toEth = (arr) => {
+    const res = [...arr];
+    for(let i = 0; i < arr.length; i++){
+        res[i] = Moralis.Units.ETH(`${arr[i]}`);
+    }
+    return res;
+}

@@ -49,7 +49,7 @@
 <script>
 
 import {_numMarkets } from '../../contract-functions/ContractFunctions.js'
-import {dateToUnix} from '../../helperFunctions.js'
+import {dateToUnix, toEth} from '../../helperFunctions.js'
 import {_createMarket} from '../../contract-functions/ContractFunctions.js'
 import Moralis from '../../main.js'
 export default {
@@ -76,8 +76,8 @@ export default {
             const marketId = await _numMarkets();
 
             const createOptions = {
-                _sharesOwned: this.marketParams.sharesOwned,
-                _moneyWaged: this.marketParams.moneyWaged,
+                _sharesOwned: toEth(this.marketParams.sharesOwned),
+                _moneyWaged: toEth(this.marketParams.moneyWaged),
                 _priceFeedAddress: assetFeed,
                 _strikePrice: Moralis.Units.ETH(`${this.marketParams.strikePrice}`),
                 _resolutionDate: dateToUnix(this.marketParams.resolveDate),
@@ -131,7 +131,7 @@ export default {
             }
             return false;
         }
-    }
+    },
 }
 </script>
 

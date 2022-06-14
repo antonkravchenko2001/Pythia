@@ -266,6 +266,19 @@ export const marketsABI = [
 	},
 	{
 		"inputs": [],
+		"name": "getBalance",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
 		"name": "getLinkFee",
 		"outputs": [
 			{
@@ -426,7 +439,7 @@ export const marketsABI = [
 		"type": "function"
 	}
 ];
-export const marketsAddress = '0x77f10A700420CC77CfB990bFbe5396685Fc3f534';
+export const marketsAddress = '0xEE3fa69A5D3112d46679671473408A583138b560';
 export const ERC20ABI = [
 	{
 		"anonymous": false,
