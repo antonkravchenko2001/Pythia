@@ -43,12 +43,7 @@ export const marketsABI = [
 		"inputs": [
 			{
 				"internalType": "address",
-				"name": "payesTokenAddress",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "linkTokenAddress",
+				"name": "payTokenAddress",
 				"type": "address"
 			},
 			{
@@ -278,19 +273,6 @@ export const marketsABI = [
 		"type": "function"
 	},
 	{
-		"inputs": [],
-		"name": "getLinkFee",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "pure",
-		"type": "function"
-	},
-	{
 		"inputs": [
 			{
 				"internalType": "uint256",
@@ -439,7 +421,7 @@ export const marketsABI = [
 		"type": "function"
 	}
 ];
-export const marketsAddress = '0xEE3fa69A5D3112d46679671473408A583138b560';
+export const marketsAddress = '0x9C44A28a2c2026Bce4C43778F1Cbcab8Ee691E1C';
 export const ERC20ABI = [
 	{
 		"anonymous": false,
@@ -626,5 +608,7 @@ export const ERC20ABI = [
 	}
 ];
 export const payTokenAddress = '0x04DF6e4121c27713ED22341E7c7Df330F56f289B';
-export const linkTokenAddress = '0xa36085F69e2889c224210F603D836748e7dC0088';
 export const chain = 'kovan';
+
+export const minShares = 5;
+export const minMoney = 5;

@@ -1,18 +1,18 @@
 <template>
-    <div v-if='isResolved' class='outer-container'>
+    <div v-if="marketData.marketInfo.resolved" class='outer-container'>
         <div class="market-state-container">
             <div class="market-resolved">Resolved</div>
         </div>
         <div class="winning-outcome-container">
             <div>Winning Outcome:</div>
-            <div>{{winningOutcome}}</div>
+            <div>{{marketData.marketInfo.winningOutcome}}</div>
         </div>
         <div class="winning-outcome-container">
             <div>Resolution price:</div>
-            <div>{{resolvePrice}}</div>
+            <div>{{marketData.marketInfo.resolvePrice}}</div>
         </div>
     </div>
-    <div v-if='!isResolved' class="market-state-container">
+    <div v-if="!marketData.marketInfo.resolved" class="market-state-container">
         <div  class="market-unresolved">Unresolved</div>
     </div>
 
@@ -20,27 +20,9 @@
 
 
 <script>
-import { _getMarketInfo } from '../../contract-functions/ContractFunctions.js';
 
     export default {
-        data(){
-            return {
-                isResolved: false,
-                winningOutcome: 0,
-                resolvePrice: 0
-            }
-        },
-        async created(){
-            const _marketId = this
-                        .$route
-                        .params
-                        .marketId
-                        .toString();
-            const marketInfo = await _getMarketInfo(_marketId);
-            this.winningOutcome = marketInfo.winningOutcome
-            this.resolvePrice = marketInfo.resolvePrice
-            this.isResolved = marketInfo.resolved;
-        }
+        props: ['marketData'],
     };
 </script>
 

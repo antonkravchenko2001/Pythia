@@ -21,7 +21,7 @@ export default {
  }
 
  .home-button:hover{
-     background-color: #406996;
+     background-color: #1b4870;
      color: #121212;
  }
 

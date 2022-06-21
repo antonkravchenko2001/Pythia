@@ -5,6 +5,8 @@ import {serverUrl, appId} from './config.js'
 import router from './router'
 import { createStore } from 'vuex'
 
+Moralis.enableWeb3();
+
 Moralis.start({ serverUrl, appId });
 
 export default Moralis;
@@ -13,7 +15,8 @@ export default Moralis;
 const store = createStore({
   state () {
     return {
-      user: Moralis.User.current()
+      user: Moralis.User.current(),
+      showForm: false
     }
   },
   mutations: {

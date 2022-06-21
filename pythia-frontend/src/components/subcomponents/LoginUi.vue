@@ -1,6 +1,12 @@
 <template>
-    <button v-if="!isLoggedIn" @click="logIn" class="login-button">Connect Wallet</button>
-    <button v-if="isLoggedIn" @click="logOut" class="login-button">Disconnect</button>
+    <button v-if="!isLoggedIn" @click="logIn" class="login-button">
+      <img src = "https://raw.githubusercontent.com/blakewood84/react-metamask/main/public/images/metamask.svg" alt="My Happy SVG" width='12' height='12'/>
+      Connect Wallet
+    </button>
+    <button v-if="isLoggedIn" @click="logOut" class="login-button">
+      <img src = "https://raw.githubusercontent.com/blakewood84/react-metamask/main/public/images/metamask.svg" alt="My Happy SVG" width='12' height='12'/>
+      Disconnect
+    </button>
 </template>
 
 <script>
@@ -19,7 +25,6 @@ export default {
   },
   computed: {
     isLoggedIn(){
-      console.log(this.$store);
       if(this.$store.state.user){
         return true;
       }
@@ -33,18 +38,20 @@ export default {
 <style scoped>
 
  .login-button {
-    background-color: #3ac4b4;
-    color:#121212;
-    border: solid 2px;
-    border-color: #32978b;
-    border-radius: 25px;
-    font-size: 12px;
+    background-color: #3a46c4;
+    box-shadow: 1px 1px 8px #121212;
+    color: #cecece;
+    border: none;
+    border-radius: 3px;
+    font-size: 11px;
     padding: 8px;
     font-family: 'MontSerrat';
     font-weight: 450;
- }
+    z-index: 5;
+    margin-left: 5px;
+}
 
  .login-button:hover{
-   background-color: #32978b;
+   background-color: #3a46c4;
  }
 </style>

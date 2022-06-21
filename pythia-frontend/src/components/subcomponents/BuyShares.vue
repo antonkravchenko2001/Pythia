@@ -2,7 +2,7 @@
     <div v-if='$store.state.user' class="buy-shares-outer">
         <div class="buy-withdraw-buttons">
             <button class="buy-button" ref='buy' name='buy'  @click="click('buy')" :class="{'buy-button-active': buttons.buy}">Wage Money</button>
-            <button v-if='withDrawInfo.resolved' class="withdraw-button" ref='withdraw' name='withdraw'  @click="click('withdraw')"  :class="{'withdraw-button-active': buttons.withdraw}">Withdraw</button>
+            <button v-if='marketData.marketInfo.resolved' class="withdraw-button" ref='withdraw' name='withdraw'  @click="click('withdraw')"  :class="{'withdraw-button-active': buttons.withdraw}">Withdraw</button>
         </div>
         <div v-if='buttons.buy' class="buy-shares-inner">
             <div class="share-type">No</div>
@@ -12,29 +12,29 @@
             </div><div class="market-stats yes-annot">
                 <span>90%</span>
             </div>
-            <input type='number' class='buy-shares-input' v-model='buyInfo.moneyToWage[0]'/>
-            <input type='number' class='buy-shares-input' v-model='buyInfo.moneyToWage[1]'/>
+            <input type='number' class='buy-shares-input' v-model='buyInfo.moneyToWage[0]' @keyup="calcShares(0)"/>
+            <input type='number' class='buy-shares-input' v-model='buyInfo.moneyToWage[1]' @keyup="calcShares(1)"/>
             <div class="grid-spec dynamic-stats">
                 <div class="dynamic-stats-title">Shares bought</div>
                 <div class="dynamic-stats-group">
-                    <div class="dynamic-stats-element">0.001</div>
-                    <div class="dynamic-stats-element">0.002</div>
+                    <div class="dynamic-stats-element">{{round(buyInfo.sharesToBuy[0])}}</div>
+                    <div class="dynamic-stats-element">{{round(buyInfo.sharesToBuy[1])}}</div>
                 </div>
             </div>
             <div class="grid-spec submit-button-div">
-                <button class="submit-button" @click="wageMoney">Submit</button>
+                <button class="submit-button" @click="wageMoney" :class="{unclickable: marketData.marketInfo.resolved}">Buy</button>
             </div>
         </div>
 
         <div  v-if='buttons.withdraw' class="withdraw-money-inner">
             <div class="withdraw-money-stats">
-                <div>% of winning shares</div><div class="withdraw-money-stat-values">{{withDrawInfo.winMoneyPercent}}%</div>
-                <div>% of winning money</div><div class="withdraw-money-stat-values">{{withDrawInfo.winSharesPercent}}%</div>
-                <div>Money won</div><div class="withdraw-money-stat-values">{{withDrawInfo.moneyWon}}</div>
-                <div>Expert score</div><div class="withdraw-money-stat-values">{{withDrawInfo.expertScore}}</div>
+                <div>% of winning shares</div><div class="withdraw-money-stat-values">{{round(winMoneyPercent)}}%</div>
+                <div>% of winning money</div><div class="withdraw-money-stat-values">{{round(winSharesPercent)}}%</div>
+                <div>Money won</div><div class="withdraw-money-stat-values">{{round(marketData.withDrawInfo.reward)}} Dai</div>
+                <div>Expert score</div><div class="withdraw-money-stat-values">{{round(marketData.withDrawInfo.expertScore)}}</div>
             </div>
             <div class="withdraw-button-div">
-                <button class="withdraw-button-submit" @click="withDrawWinnings()">Withdraw</button>
+                <button class="withdraw-button-submit" @click="withDrawWinnings()" :class="{unclickable: isWithdrawed || withdrawed}">Withdraw</button>
             </div>
         </div>
     </div>
@@ -43,27 +43,19 @@
 <script>
 import { 
     _wageMoney,
-    _getExpertScore,
-    _getMarketInfo,
-    _getPlayerInfo,
-    _getReward,
-    _withdrawWinnings
+    _withdrawWinnings,
+    _numSharesForPrice
 } from '../../contract-functions/ContractFunctions';
+import { roundNum } from '../../helperFunctions';
     export default {
+        props: ['marketData'],
         data(){
             return {
+                withdrawed: false,
                 buyInfo: {
                     odds: [0, 0],
                     moneyToWage: [0, 0],
                     sharesToBuy: [0, 0],
-                },
-                withDrawInfo: {
-                    resolved: false,
-                    withdrawed: false,
-                    winSharesPercent: 0,
-                    winMoneyPercent: 0,
-                    moneyWon: 0,
-                    expertScore: 0
                 },
                 buttons :{
                     buy: true,
@@ -83,6 +75,23 @@ import {
                     }
                 }
             },
+            round(num){
+                return roundNum(num)
+            },
+            async calcShares(i){
+                let shares = 0;
+                if(this.buyInfo.moneyToWage[i] > 0){
+                    const options = {
+                        _marketId: this.marketData.marketInfo.marketId,
+                        _outcome: `${i}`,
+                        _moneyToWage: this.buyInfo.moneyToWage[i].toString()
+                    }
+                    shares = await _numSharesForPrice(options);
+                    console.log(options);
+
+                }
+                this.buyInfo.sharesToBuy[i] = shares;
+            },
             async  wageMoney(){
                 const _marketId = this
                     .$route
@@ -99,54 +108,41 @@ import {
                 )
            },
            async withDrawWinnings(){
-                if(!this.withDrawInfo.withdrawed){
-                    const _marketId = this
-                    .$route
-                    .params
-                    .marketId
-                    .toString();
-                    _withdrawWinnings(_marketId);
-                    this.withDrawInfo.moneyWon = 0;
-                    this.withDrawInfo.withdrawed = true;
-                }
+                const _marketId = this
+                                .$route
+                                .params
+                                .marketId
+                                .toString();
+                await _withdrawWinnings(_marketId);
+                this.withdrawed = true;
            }
         },
-        async created(){
-            const marketId = this
-                            .$route
-                            .params
-                            .marketId
-                            .toString();
-            const playerAddress = this
-                                  .$store
-                                  .state
-                                  .user
-                                  .get('ethAddress');
-            const marketInfo = await _getMarketInfo(marketId);
-            const playerInfo = await _getPlayerInfo(playerAddress, marketId);
 
-            if(marketInfo.resolved){
-
-                const winningOutcome = parseInt(marketInfo.winningOutcome);
-
-                const playerWinMoney = playerInfo.moneyWaged[winningOutcome];
-                const winMoney = marketInfo.moneyWaged[winningOutcome];
-
-                const playerWinShares = playerInfo.sharesOwned[winningOutcome];
-                const winShares = marketInfo.sharesOwned[winningOutcome];
-
-                this.withDrawInfo.expertScore = await _getExpertScore(playerAddress, marketId);
-                this.withDrawInfo.moneyWon = await _getReward(playerAddress, marketId);
-
-                this.withDrawInfo.winMoneyPercent = Math.round(1000 * playerWinMoney / winMoney) / 10
-                this.withDrawInfo.winSharesPercent = Math.round(1000 * playerWinShares / winShares) / 10
-
-                this.withDrawInfo.resolved = marketInfo.resolved
-
-                this.withDrawInfo.withdrawed = playerInfo.withdrawed
-
+        computed :{
+            winMoneyPercent(){
+                console.log(this.marketData);
+                const winningOutcome = this.marketData.marketInfo.winningOutcome;
+                if(this.marketData.playerInfo !== null){
+                    return (
+                        this.marketData.playerInfo.moneyWaged[winningOutcome] * 100/
+                        this.marketData.marketInfo.moneyWaged[winningOutcome]
+                    )
+                } return 0
+            },
+            winSharesPercent(){
+                const winningOutcome = this.marketData.marketInfo.winningOutcome;
+                if(this.marketData.playerInfo !== null){
+                    return (
+                        this.marketData.playerInfo.sharesOwned[winningOutcome] * 100/
+                        this.marketData.marketInfo.sharesOwned[winningOutcome]
+                    )
+                } return 0
+            },
+            isWithdrawed(){
+                console.log(this.marketData.playerInfo.withdrawed)
+                return this.marketData.playerInfo.withdrawed
             }
-        }
+        },
     }
 </script>
 
@@ -164,7 +160,7 @@ import {
         grid-template-columns: repeat(2,1fr);
         background-color: #0e2438;
         padding:10px;
-        border: #79e2f2 1.2px solid;
+        border: #ad96ff 1.2px solid;
         border-radius: 5px;
     }
     .buy-withdraw-buttons {
@@ -183,7 +179,7 @@ import {
     }
 
     .withdraw-button-active {
-        color: #79e2f2;
+        color: #ad96ff;
         margin-bottom: 0px;
     }
 
@@ -199,7 +195,7 @@ import {
     }
 
     .buy-button-active {
-        color: #79e2f2;
+        color: #ad96ff;
         margin-bottom: 0px;
     }
 
@@ -218,7 +214,7 @@ import {
         font-weight: 300;
         font-size: 11px;
         border: 1.2px solid;
-        border-color: #79e2f2;
+        border-color: #ad96ff;
     }
 
     .share-type{
@@ -248,15 +244,16 @@ import {
 
     .submit-button-div {
         display: flex;
-        justify-content: flex-end;
+        justify-content: center;
     }
 
     .submit-button {
-        background: #3a9770;
-        border: #358262 1.5px solid;
+        background: #0d48aa;
+        border: none;
         box-shadow: 1px 1px 8px #121212;
         border-radius: 5px;
         color:#cecece;
+        width: 100%;
     }
 
     .submit-button:active{
@@ -296,10 +293,10 @@ import {
    }
 
    .withdraw-money-inner {
-        border:#79e2f2 1.2px solid;
+        border:#ad96ff 1.2px solid;
         display: flex;
         flex-direction: column;
-        justify-content: center;
+        justify-content: space-between;
         background-color: #0e2438;
         padding:10px;
         border-radius: 5px;
@@ -321,24 +318,35 @@ import {
    .withdraw-button-div {
         display: flex;
         justify-content: center;
-        align-items: center;
+        align-items: flex-end;
         height: 70px;
+
    }
 
    .withdraw-button-submit {
-        background-color:#7c3ec2;
+        background-color:#0d48aa;
         color:#cecece;
         border: none;
         padding-top: 3px;
         padding-bottom: 3px;
         border-radius: 5px;
         box-shadow: 1px 1px 8px #121212;
+        width: 100%;
    }
 
     .withdraw-button-submit:active {
         box-shadow: none;
-        background-color: #542c83;
+        background-color: #0d48aa;
 
+    }
+
+    .unclickable {
+        pointer-events: none;
+        cursor: not-allowed;
+        opacity: 0.65;
+        filter: alpha(opacity=65);
+        -webkit-box-shadow: none;
+        box-shadow: none;
     }
 
 

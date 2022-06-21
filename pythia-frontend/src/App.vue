@@ -11,14 +11,6 @@
     font-family: ui-sans-serif;
   }
 
-  input {
-    box-shadow: 0.1px 0.1px 5px #121212;
-  }
-
-  textarea {
-    box-shadow: 0.1px 0.1px 5px #121212;
-  }
-
   input:focus{
     outline: 1.5px;
     outline-color: #2968a7;
@@ -35,6 +27,19 @@
     font-family: 'Montserrat';
     font-weight: 450;
     cursor: pointer;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+
+  div {
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
   }
 
   #app {

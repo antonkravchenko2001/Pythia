@@ -3,25 +3,25 @@
         <div class="info-container">
             <div class="info-container">
                 <div class="item-name">Asset</div>
-                <div class="item-val">{{marketData.asset}}</div>
+                <div class="item-val">{{marketData.marketInfo.asset}}</div>
             </div>
             <div class="info-container">
                 <div class="item-name">Strike Price</div>
-                <div class="item-val">{{marketData.strikePrice}}</div>
+                <div class="item-val">{{marketData.marketInfo.strikePrice}}</div>
             </div>
         </div>
         <div class="info-container">
             <div class="info-container">
                 <div class="item-name">Wage Deadline</div>
-                <div class="item-val">{{marketData.wageDeadline}}</div>
+                <div class="item-val">{{marketData.marketInfo.wageDeadline}}</div>
             </div>
             <div class="info-container">
                 <div class="item-name">Resolve Date</div>
-                <div class="item-val">{{marketData.resolveDate}}</div>
+                <div class="item-val">{{marketData.marketInfo.resolveDate}}</div>
             </div>
         </div>
         <div class='item-val'>
-            {{marketData.description}}
+            {{marketData.marketInfo.description}}
         </div>
         <div class="field-with-buttons">
             <div class="button-container">
@@ -35,17 +35,17 @@
                 <div class="market-info-text">Yes</div>
                 <div class="market-info-text">Money Waged</div>
                 <div class="market-stats-component no-annot">
-                    {{marketData.moneyWaged[0]}}$
+                    {{marketData.marketInfo.moneyWaged[0]}}$
                 </div>
                 <div class="market-stats-component yes-annot">
-                    {{marketData.moneyWaged[1]}}$
+                    {{marketData.marketInfo.moneyWaged[1]}}$
                 </div>
                 <div class="market-info-text">Shares Owned</div>
                 <div class="market-stats-component no-annot">
-                    {{marketData.sharesOwned[0]}}
+                    {{marketData.marketInfo.sharesOwned[0]}}
                 </div>
                 <div class="market-stats-component yes-annot">
-                    {{marketData.sharesOwned[1]}}
+                    {{marketData.marketInfo.sharesOwned[1]}}
                 </div>
             </div>
             <div v-if='buttons.myPortfolio' class="item-val market-stats my-portfolio-dashboard">
@@ -55,17 +55,17 @@
                 <div class="market-info-text">Yes</div>
                 <div class="market-info-text">Money Waged</div>
                 <div class="market-stats-component no-annot">
-                    {{playerData.moneyWaged[0]}}$
+                    {{marketData.playerInfo.moneyWaged[0]}}$
                 </div>
                 <div class="market-stats-component yes-annot">
-                    {{playerData.moneyWaged[1]}}$
+                    {{marketData.playerInfo.moneyWaged[1]}}$
                 </div>
                 <div class="market-info-text">Shares Owned</div>
                 <div class="market-stats-component no-annot">
-                    {{playerData.sharesOwned[0]}}
+                    {{marketData.playerInfo.sharesOwned[0]}}
                 </div>
                 <div class="market-stats-component yes-annot">
-                    {{playerData.sharesOwned[1]}}
+                    {{marketData.playerInfo.sharesOwned[1]}}
                 </div>
             </div>
         </div>
@@ -73,25 +73,11 @@
 </template>
 
 <script>
-    import {_getMarketInfo, _getPlayerInfo} from '../../contract-functions/ContractFunctions.js'
-    import Moralis from '../../main.js'
 
     export default {
+        props: ['marketData'],
         data(){
             return {
-                marketData : {
-                    asset: '',
-                    strikePrice: 0,
-                    wageDeadline: '',
-                    resolveDate: '',
-                    description: '',
-                    sharesOwned: [0, 0],
-                    moneyWaged: [0, 0],
-                },
-                playerData: {
-                    sharesOwned: [0, 0],
-                    moneyWaged: [0, 0]
-                },
                 buttons: {
                     marketStats: true,
                     myPortfolio: false
@@ -112,57 +98,6 @@
                 }
             }
         },
-        async created(){
-
-            //get Market data from blockchain
-            const _marketId = this
-                            .$route
-                            .params
-                            .marketId
-                            .toString();
-            const marketInfo = await _getMarketInfo(_marketId);
-            this.marketData.asset = marketInfo.asset;
-            this.marketData.strikePrice = Math.round(marketInfo.strikePrice);
-            this.marketData.resolveDate = marketInfo.resolveDate;
-            this.marketData.wageDeadline = marketInfo.wageDeadline;
-            this.marketData.sharesOwned = marketInfo.sharesOwned;
-            this.marketData.moneyWaged = marketInfo.moneyWaged;
-
-            let marketDescription = await Moralis.Cloud.run(
-                'getMarkets',
-                {filters: {marketId: _marketId}}
-            );
-            this.marketData.description = marketDescription[0].get('description');
-
-            //update database with blockchain data
-            let options = {
-                filters: {marketId: _marketId},
-                values: {
-                    volume: marketInfo.moneyWaged.reduce(
-                        (acc, curr) => {return acc + curr;}
-                    ),
-                    volumeShares: marketInfo.sharesOwned.reduce(
-                        (acc, curr) => {return acc + curr;}
-                    ),
-                    resolved: marketInfo.resolved,
-                    winningOutcome: marketInfo.winningOutcome,
-                    resolvePrice: marketInfo.resolvePrice
-                }
-            };
-            await Moralis.Cloud.run(
-                'setMarket',
-                options
-            );
-            //get playerInfo
-            const _player = this
-                            .$store
-                            .state
-                            .user
-                            .get('ethAddress');
-            const playerInfo = await _getPlayerInfo(_player, _marketId);
-            this.playerData.moneyWaged = playerInfo.moneyWaged;
-            this.playerData.sharesOwned = playerInfo.sharesOwned;
-        }
     };
 </script>
 
@@ -224,7 +159,7 @@
     }
 
     .market {
-        color: #79e2f2;
+        color: #9287df;
         margin-bottom: 0px;
     }
 
@@ -238,7 +173,7 @@
     }
 
     .portfolio {
-        color: #79e2f2;
+        color: #9287df;
         margin-bottom: 0px;
     }
 
@@ -260,7 +195,7 @@
         align-items: center;
         background-color: #243b53;
         border: 1.2px solid;
-        border-color: #79e2f2;
+        border-color: #9287df;
         font-size: 13px;
     }
     .market-info-text {
@@ -270,22 +205,26 @@
     }
 
     .my-portfolio-dashboard {
-        border: #79e2f2 1.2px solid;
+        border: #9287df 1.2px solid;
 
     }
 
     .market-stats-dashboard {
-        border: #79e2f2 1.2px solid;
+        border: #9287df 1.2px solid;
 
     }
 
     .no-annot {
-        border: #ec4d4dc2 1.5px solid;
+        border: #ec4d4dc2 1.2px solid;
         color: #ec4d4dc2;
+        border-radius: 5px;
+        background: #571f1f91;;
     }
 
     .yes-annot {
-        border: #4decc9c2 1.5px solid;
+        border: #4decc9c2 1.2px solid;
         color: #4decc9c2;
+        border-radius: 5px;
+        background: #1a5447c2;
     }
 </style>

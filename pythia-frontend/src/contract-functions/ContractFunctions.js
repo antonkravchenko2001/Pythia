@@ -1,28 +1,9 @@
 import Moralis from '../main.js'
-import {marketsAddress, marketsABI, payTokenAddress, ERC20ABI, linkTokenAddress, chain} from '../config.js'
+import {marketsAddress, marketsABI, payTokenAddress, ERC20ABI, chain} from '../config.js'
 import {unixToDate, weiToEth} from '../helperFunctions.js'
 
 
 //call methods
-
-export const _getLinkFee = async() => {
-    const options = {
-        chain: chain,
-        address: marketsAddress,
-        function_name: "getLinkFee",
-        abi: marketsABI,
-        params: {},
-    };
-
-    try {
-        let linkFee = await Moralis.Web3API.native.runContractFunction(
-            options
-        );
-        return linkFee;
-    } catch (error){
-        console.error(error);
-    }
-}
 
 export const _numMarkets = async() => {
     const options = {
@@ -129,7 +110,7 @@ export const _numSharesForPrice = async(params) => {
         let numShares = await Moralis.Web3API.native.runContractFunction(
             options
         );
-        return numShares;
+        return parseFloat(numShares);
     } catch (error){
         console.error(error);
     }
@@ -181,26 +162,6 @@ export const _getReward = async(_player, _marketId) => {
 
 //send methods
 
-export const _approveLinkTransfer = async(_amount) => {
-    await Moralis.enableWeb3();
-    let options = {
-        chain: chain,
-        contractAddress: linkTokenAddress,
-        functionName: "approve",
-        abi: ERC20ABI,
-        params: {
-            spender: marketsAddress,
-            amount: _amount
-        },
-    };
-    try{
-        await Moralis.executeFunction(options);
-        console.log(`approved ${_amount} of link`)
-    } catch(error) {
-        console.error(error);
-    }
-}
-
 export const _approvePayTokenTransfer = async(_amount) => {
     await Moralis.enableWeb3();
     let options = {
@@ -223,11 +184,9 @@ export const _approvePayTokenTransfer = async(_amount) => {
 
 
 export const _createMarket = async(params) =>  {
-    const linkFee =  await _getLinkFee();
     const amount =  params._moneyWaged.reduce(
         (acc, curr) => {return acc + curr;}
     );
-    await _approveLinkTransfer(linkFee);
     await _approvePayTokenTransfer(amount);
 
     let options = {

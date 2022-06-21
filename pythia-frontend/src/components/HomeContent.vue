@@ -1,6 +1,6 @@
 <template>
     <CreateMarket />
-    <div class='outer-container'>
+    <div class='outer-container' :class="{'blur-class': $store.state.showForm}">
         <div class="home-content-container">
             <MarketsDashboard/>
         </div>
@@ -29,6 +29,11 @@ export default {
    .home-content-container {
        width: 75%;
        height: 100%;
+       top: 50%;
+       position: relative;
+    }
 
+    .blur-class {
+        filter: blur(5px);
     }
 </style>

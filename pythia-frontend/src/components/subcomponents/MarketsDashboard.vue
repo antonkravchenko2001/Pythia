@@ -24,8 +24,8 @@
                         <div class="item-val">{{Math.round(market.get('volume') * 100) / 100}} Dai</div> 
                     </div>
                     <div>
-                        <div v-if="market.resolved" style="color:#4decc9c2">Resolved</div>
-                        <div v-if="!market.resolved" style="color:#ec4d4dc2">Unresolved</div>
+                        <div v-if="market.get('resolved')" style="color:#4decc9c2">Resolved</div>
+                        <div v-if="!market.get('resolved')" style="color:#ec4d4dc2">Unresolved</div>
                     </div>
                 </div>
             </div>

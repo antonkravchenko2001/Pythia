@@ -1,19 +1,41 @@
 
 // saving market
 Moralis.Cloud.define("saveMarket",  async(request) => {
-    const Market = Moralis.Object.extend('Markets');
-    const market = new Market();
 
-    const features = request.params;
+    const query = new Moralis.Query('Markets');
 
-    for(const feat in features){
-        market.set(feat, features[feat]);
+    //filter data
+    const filters = request.params.filters;
+    let market = null;
+
+    //check that filters are not empty
+    if(filters != null){
+        for(const filter in filters){
+            query.equalTo(filter, filters[filter]);
+        }
+
+        //query result
+        market = await query.first();
+        logger.info(`this is market: ${market === null}`)
     }
 
-    logger.info('data saved');
+    //if market is null 
+    if(!market){
+        const Market = Moralis.Object.extend('Markets');
+        market = new Market();
+    }
+
+    //set values
+    const values = request.params.values;
+
+    for(const key in values){
+        market.set(key, values[key]);
+    }
 
     //save market
     await market.save();
+
+    logger.info('market saved');
 });
 
 //query Markets
@@ -39,27 +61,61 @@ Moralis.Cloud.define("getMarkets", async(request) => {
     return markets;
 });
 
-//update market
-Moralis.Cloud.define('setMarket', async(request) => {
-    const query = new Moralis.Query('Markets');
+//save player
+Moralis.Cloud.define('savePlayer', async(request) => {
+    const query = new Moralis.Query('Players');
 
     //filter data
     const filters = request.params.filters;
+    let player = null;
+
+    //check that filters are not empty
+    if(filters){
+        for(const filter in filters){
+            query.equalTo(filter, filters[filter]);
+        }
+
+        //query result
+        player = await query.first();
+    }
+
+    //if player is null 
+    if(!player){
+        const Player = Moralis.Object.extend('Players');
+        player = new Player();
+    }
+
+    //set values
+    const values = request.params.values;
+
+    for(const key in values){
+        player.set(key, values[key]);
+    }
+
+    //save player
+    await player.save();
+
+    logger.info('player saved');
+});
+
+
+//query Markets
+Moralis.Cloud.define("getPlayers", async(request) => {
+    const query = new Moralis.Query("Players");
+
+    //defined filter columns
+    const filters = request.params.filters;
+
+    //filter data
     for(const filter in filters){
         query.equalTo(filter, filters[filter]);
     }
 
-    //query result
-    const market = await query.first();
+    query.limit(20);
 
-    //updated values
-    const vals = request.params.values;
-    for(const val in  vals){
-        market.set(val, vals[val]);
-    }
-
-    //save update
-    await market.save();
+    //return results
+    const players = await query.find();
+    return players;
 });
 
 //query assets
