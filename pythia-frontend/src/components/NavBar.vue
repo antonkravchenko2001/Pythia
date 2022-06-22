@@ -4,7 +4,7 @@
            <NavButton path='/' text='Home' />
        </div>
        <div>
-           <NavButton path='about' text='About'/>
+           <NavButton path='guide' text='Guide'/>
        </div>
        <div>
            <LoginUi/>

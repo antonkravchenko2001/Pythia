@@ -11,10 +11,23 @@
     font-family: ui-sans-serif;
   }
 
+  input {
+    padding: 5px;
+  }
+
   input:focus{
     outline: 1.5px;
     outline-color: #2968a7;
     outline-style: solid;
+  }
+
+  input::placeholder{
+    font-weight: 350;
+    font-family: 'Montserrat';
+  }
+
+  textarea {
+    padding: 5px
   }
   
   textarea:focus{
@@ -45,4 +58,5 @@
   #app {
     height: 100%;
   }
+
 </style>

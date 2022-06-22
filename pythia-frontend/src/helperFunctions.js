@@ -57,7 +57,9 @@ export const roundNum = (num) => {
         return Math.round(num);
     } else if(num >= 10){
         return Math.round(num * 10) / 10
-    } else {
+    } else if(num >= 0.1) {
         return Math.round(num * 100) / 100
+    } else {
+        return Math.round(num * 1000) / 1000
     }
 }

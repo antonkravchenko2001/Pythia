@@ -91,6 +91,8 @@ export default {
         async loadPlayer(player, marketId){
 
             let playerInfo = await _getPlayerInfo(player, marketId);
+            playerInfo['player'] = player;
+            playerInfo['marketId'] = marketId;
 
             //update market
             const playerValues = {

@@ -7,15 +7,16 @@
         <div v-if='buttons.buy' class="buy-shares-inner">
             <div class="share-type">No</div>
             <div class="share-type">Yes</div>
-            <div class="market-stats no-annot">
-                <span>10%</span>
-            </div><div class="market-stats yes-annot">
-                <span>90%</span>
+            <div class="market-stats no-annot" :style="{background: `linear-gradient(to right, #571f1f91 ${getOdds[0]}%, transparent ${getOdds[0]}%, transparent)`}">
+                <span>{{getOdds[0]}}%</span>
+            </div>
+            <div class="market-stats yes-annot" :style="{background: `linear-gradient(to right, #1a5447c2 ${getOdds[1]}%, transparent ${getOdds[1]}%, transparent)`}">
+                <span>{{getOdds[1]}}%</span>
             </div>
             <input type='number' class='buy-shares-input' v-model='buyInfo.moneyToWage[0]' @keyup="calcShares(0)"/>
             <input type='number' class='buy-shares-input' v-model='buyInfo.moneyToWage[1]' @keyup="calcShares(1)"/>
             <div class="grid-spec dynamic-stats">
-                <div class="dynamic-stats-title">Shares bought</div>
+                <div class="dynamic-stats-title">Shares to receive</div>
                 <div class="dynamic-stats-group">
                     <div class="dynamic-stats-element">{{round(buyInfo.sharesToBuy[0])}}</div>
                     <div class="dynamic-stats-element">{{round(buyInfo.sharesToBuy[1])}}</div>
@@ -46,7 +47,8 @@ import {
     _withdrawWinnings,
     _numSharesForPrice
 } from '../../contract-functions/ContractFunctions';
-import { roundNum } from '../../helperFunctions';
+import { roundNum, ethToWei } from '../../helperFunctions';
+import Moralis from '../../main.js';
     export default {
         props: ['marketData'],
         data(){
@@ -84,10 +86,9 @@ import { roundNum } from '../../helperFunctions';
                     const options = {
                         _marketId: this.marketData.marketInfo.marketId,
                         _outcome: `${i}`,
-                        _moneyToWage: this.buyInfo.moneyToWage[i].toString()
+                        _moneyToWage: ethToWei([this.buyInfo.moneyToWage[i]])[0]
                     }
                     shares = await _numSharesForPrice(options);
-                    console.log(options);
 
                 }
                 this.buyInfo.sharesToBuy[i] = shares;
@@ -100,12 +101,16 @@ import { roundNum } from '../../helperFunctions';
                     .toString();
 
                 //wage Money
-                await _wageMoney(
-                    {
-                        _marketId,
-                        _moneyToWage: this.buyInfo.moneyToWage
-                    }
-                )
+                try{
+                    await _wageMoney(
+                        {
+                            _marketId,
+                            _moneyToWage: this.getMoneyToWage
+                        }
+                    )
+                } catch(error){
+                    return false;
+                }
            },
            async withDrawWinnings(){
                 const _marketId = this
@@ -113,12 +118,55 @@ import { roundNum } from '../../helperFunctions';
                                 .params
                                 .marketId
                                 .toString();
-                await _withdrawWinnings(_marketId);
+                try{
+                    await _withdrawWinnings(_marketId);
+                } catch(error){
+                    return false;
+                }
                 this.withdrawed = true;
+                Moralis.Cloud.run(
+                    'savePlayer',
+                    {
+                        filters: {
+                            player: this.marketData.playerInfo.player,
+                            marketId: this.marketData.playerInfo.player.marketId
+                        },
+                        values: {withdrawed: true}
+                    }
+                );
            }
         },
 
         computed :{
+            getMoneyToWage(){
+                return [
+                    ethToWei([this.buyInfo.moneyToWage[0]])[0].toString(),
+                    ethToWei([this.buyInfo.moneyToWage[1]])[0].toString()
+                ]
+            },
+            getOdds(){
+                const m0 = (
+                    this.marketData.marketInfo.moneyWaged[0] +
+                    this.buyInfo.moneyToWage[0]
+                );
+                const m1 = (
+                    this.marketData.marketInfo.moneyWaged[1] +
+                    this.buyInfo.moneyToWage[1]
+                );
+                const n0 = (
+                    this.marketData.marketInfo.sharesOwned[0] + 
+                    this.buyInfo.sharesToBuy[0]
+                );
+                const n1 = (
+                    this.marketData.marketInfo.sharesOwned[1] + 
+                    this.buyInfo.sharesToBuy[1]
+                );
+                const total = m0 / n1 + m1 / n0
+                return [
+                    roundNum(m0 * 100 / (total * n1)),
+                    roundNum(m1 * 100 / (total * n0)),
+                ]
+            },
             winMoneyPercent(){
                 console.log(this.marketData);
                 const winningOutcome = this.marketData.marketInfo.winningOutcome;

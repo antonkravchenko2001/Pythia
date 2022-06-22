@@ -44,7 +44,7 @@
             </div>
             <div class="button-group">
                 <button class='cancel-button' @click="cancel()">Cancel</button>
-                <button class="submit-button" @click="createMarket">Submit</button>
+                <button class="submit-button" @click="createMarket">Create Market</button>
             </div>
         </div>
     </div>
@@ -248,18 +248,17 @@ export default {
 
     .features-input {
         max-width: 75px;
-        background-color: #0a1b2a;
+        background-color: #0c2235;
     }
 
     .item-val {
         border: none;
         border-radius: 5px;
-        padding: 5px;
         border-radius: 5px;
         color: #cecece;
         font-size: 12px;
         font-family: 'Montserrat';
-        font-weight: 200;
+        font-weight: 250;
     }
 
     .colored-border {
@@ -285,7 +284,7 @@ export default {
         color:#cecece;
         border-radius: 5px;
         border:none;
-        background-color: #0a1b2a;
+        background-color: #0c2235;
         max-width: 75px;
         font-family: 'Montserrat';
         font-weight: 300;
@@ -323,24 +322,26 @@ export default {
 
    .description-area {
        width: 97%;
-       background-color: #0a1b2a;
+       background-color: #0c2235;
    }
 
 
    .button-group {
        display: flex;
-       justify-content: flex-end;
+       justify-content: space-between;
+       margin: 0px;
+       padding: 0px;
    }
 
    .submit-button{
-       background-color: #269858b3;
+       background-color: #154ab8;
        color: #cecece;
        padding-left: 15px;
        padding-right: 15px;
        border-radius: 15px;
-       margin-left:10px;
-       border: #0e3721b3 1.5px solid;
+       border: none;
        box-shadow: 0.1px 0.1px 5px #010b15;
+       width: 45%;
    }
 
    .cancel-button {
@@ -350,17 +351,16 @@ export default {
         padding-right: 15px;
         margin-right: 10px;
         border-radius: 15px;
-        border: #691d1dae 1.5px solid;
+        border: none;
         box-shadow: 0.1px 0.1px 5px #010b15;
+        width: 45%;
    }
 
    .cancel-button:active{
-       background-color: #691d1dae;
        box-shadow: none;
    }
 
    .submit-button:active{
-       background-color: #0e3721b3;
        box-shadow: none;
    }
 
@@ -369,7 +369,7 @@ export default {
    }
 
    .submit-button:hover{
-       background-color: #0e3721b3;
+       box-shadow: none;
    }
 
 

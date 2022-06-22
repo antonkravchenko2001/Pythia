@@ -1,6 +1,6 @@
 import Moralis from '../main.js'
 import {marketsAddress, marketsABI, payTokenAddress, ERC20ABI, chain} from '../config.js'
-import {unixToDate, weiToEth} from '../helperFunctions.js'
+import {unixToDate, weiToEth, roundNum} from '../helperFunctions.js'
 
 
 //call methods
@@ -110,7 +110,8 @@ export const _numSharesForPrice = async(params) => {
         let numShares = await Moralis.Web3API.native.runContractFunction(
             options
         );
-        return parseFloat(numShares);
+        numShares = roundNum(weiToEth(numShares));
+        return numShares;
     } catch (error){
         console.error(error);
     }

@@ -7,7 +7,7 @@
             </div>
             <div class="info-container">
                 <div class="item-name">Strike Price</div>
-                <div class="item-val">{{marketData.marketInfo.strikePrice}}</div>
+                <div class="item-val">{{round(marketData.marketInfo.strikePrice)}}</div>
             </div>
         </div>
         <div class="info-container">
@@ -35,17 +35,17 @@
                 <div class="market-info-text">Yes</div>
                 <div class="market-info-text">Money Waged</div>
                 <div class="market-stats-component no-annot">
-                    {{marketData.marketInfo.moneyWaged[0]}}$
+                    {{round(marketData.marketInfo.moneyWaged[0])}}$
                 </div>
                 <div class="market-stats-component yes-annot">
-                    {{marketData.marketInfo.moneyWaged[1]}}$
+                    {{round(marketData.marketInfo.moneyWaged[1])}}$
                 </div>
                 <div class="market-info-text">Shares Owned</div>
                 <div class="market-stats-component no-annot">
-                    {{marketData.marketInfo.sharesOwned[0]}}
+                    {{round(marketData.marketInfo.sharesOwned[0])}}
                 </div>
                 <div class="market-stats-component yes-annot">
-                    {{marketData.marketInfo.sharesOwned[1]}}
+                    {{round(marketData.marketInfo.sharesOwned[1])}}
                 </div>
             </div>
             <div v-if='buttons.myPortfolio' class="item-val market-stats my-portfolio-dashboard">
@@ -55,17 +55,17 @@
                 <div class="market-info-text">Yes</div>
                 <div class="market-info-text">Money Waged</div>
                 <div class="market-stats-component no-annot">
-                    {{marketData.playerInfo.moneyWaged[0]}}$
+                    {{round(marketData.playerInfo.moneyWaged[0])}}$
                 </div>
                 <div class="market-stats-component yes-annot">
-                    {{marketData.playerInfo.moneyWaged[1]}}$
+                    {{round(marketData.playerInfo.moneyWaged[1])}}$
                 </div>
                 <div class="market-info-text">Shares Owned</div>
                 <div class="market-stats-component no-annot">
-                    {{marketData.playerInfo.sharesOwned[0]}}
+                    {{round(marketData.playerInfo.sharesOwned[0])}}
                 </div>
                 <div class="market-stats-component yes-annot">
-                    {{marketData.playerInfo.sharesOwned[1]}}
+                    {{round(marketData.playerInfo.sharesOwned[1])}}
                 </div>
             </div>
         </div>
@@ -73,7 +73,7 @@
 </template>
 
 <script>
-
+    import { roundNum } from '../../helperFunctions';
     export default {
         props: ['marketData'],
         data(){
@@ -96,7 +96,10 @@
                         this.buttons.myPortfolio = false;
                     }
                 }
-            }
+            },
+            round(num){
+                return roundNum(num)
+            },
         },
     };
 </script>
@@ -218,7 +221,7 @@
         border: #ec4d4dc2 1.2px solid;
         color: #ec4d4dc2;
         border-radius: 5px;
-        background: #571f1f91;;
+        background: #571f1f91;
     }
 
     .yes-annot {

@@ -15,8 +15,8 @@ const routes = [
         component: MarketPage
     },
     {
-        path: '/about',
-        name: 'about',
+        path: '/guide',
+        name: 'guide',
         component: AboutPage
     },
 
