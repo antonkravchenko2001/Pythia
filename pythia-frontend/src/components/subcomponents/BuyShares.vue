@@ -5,16 +5,40 @@
             <button v-if='marketData.marketInfo.resolved' class="withdraw-button" ref='withdraw' name='withdraw'  @click="click('withdraw')"  :class="{'withdraw-button-active': buttons.withdraw}">Withdraw</button>
         </div>
         <div v-if='buttons.buy' class="buy-shares-inner">
-            <div class="share-type">No</div>
-            <div class="share-type">Yes</div>
+            <div>No</div>
+            <div>Yes</div>
             <div class="market-stats no-annot" :style="{background: `linear-gradient(to right, #571f1f91 ${getOdds[0]}%, transparent ${getOdds[0]}%, transparent)`}">
                 <span>{{getOdds[0]}}%</span>
             </div>
             <div class="market-stats yes-annot" :style="{background: `linear-gradient(to right, #1a5447c2 ${getOdds[1]}%, transparent ${getOdds[1]}%, transparent)`}">
                 <span>{{getOdds[1]}}%</span>
             </div>
-            <input type='number' class='buy-shares-input' v-model='buyInfo.moneyToWage[0]' @keyup="calcShares(0)"/>
-            <input type='number' class='buy-shares-input' v-model='buyInfo.moneyToWage[1]' @keyup="calcShares(1)"/>
+            <div>
+                <input
+                    type='number'
+                    class='buy-shares-input'
+                    placeholder='5'
+                    :class="{'incorrect-field': !formStatus.moneyToWage[0].correct}"
+                    v-model='buyInfo.moneyToWage[0]'
+                    @keyup="calcShares(0)"
+                />
+                <div v-if="!formStatus.moneyToWage[0].correct" class="error-message">
+                    {{formStatus.moneyToWage[0].message}}
+                </div>
+            </div>
+            <div>
+                <input 
+                    type='number'
+                    class='buy-shares-input'
+                    placeholder='5'
+                    :class="{'incorrect-field': !formStatus.moneyToWage[1].correct}"
+                    v-model='buyInfo.moneyToWage[1]'
+                    @keyup="calcShares(1)"
+                />
+                <div v-if="!formStatus.moneyToWage[1].correct" class='error-message'>
+                    {{formStatus.moneyToWage[1].message}}
+                </div>
+            </div>
             <div class="grid-spec dynamic-stats">
                 <div class="dynamic-stats-title">Shares to receive</div>
                 <div class="dynamic-stats-group">
@@ -47,7 +71,8 @@ import {
     _withdrawWinnings,
     _numSharesForPrice
 } from '../../contract-functions/ContractFunctions';
-import { roundNum, ethToWei } from '../../helperFunctions';
+import { roundNum, ethToWei} from '../../helperFunctions';
+import { minMoney } from '../../config';
 import Moralis from '../../main.js';
     export default {
         props: ['marketData'],
@@ -58,6 +83,18 @@ import Moralis from '../../main.js';
                     odds: [0, 0],
                     moneyToWage: [0, 0],
                     sharesToBuy: [0, 0],
+                },
+                formStatus: {
+                    moneyToWage: {
+                        0: {
+                            correct: true,
+                            message: ''
+                        },
+                        1: {
+                            correct: true,
+                            message: '',
+                        }
+                    }
                 },
                 buttons :{
                     buy: true,
@@ -80,13 +117,33 @@ import Moralis from '../../main.js';
             round(num){
                 return roundNum(num)
             },
+            validateMoneyWaged(){
+                for(let outcome=0; outcome < 2; outcome++){
+                    if(this.buyInfo.moneyToWage[outcome] < minMoney ){
+                        this.formStatus.moneyToWage[outcome].correct = false
+                        this.formStatus.moneyToWage[outcome].message = 'insufficient money'
+                    } else {
+                        this.formStatus.moneyToWage[outcome].correct = true
+                    }
+                }
+            },
+            getFormStatus(){
+                if(
+                    this.formStatus.moneyToWage[0].correct &
+                    this.formStatus.moneyToWage[1].correct
+                ){
+                    return true;
+                } else{
+                    return false;
+                }
+            },
             async calcShares(i){
                 let shares = 0;
                 if(this.buyInfo.moneyToWage[i] > 0){
                     const options = {
                         _marketId: this.marketData.marketInfo.marketId,
                         _outcome: `${i}`,
-                        _moneyToWage: ethToWei([this.buyInfo.moneyToWage[i]])[0]
+                        _moneyToWage: ethToWei(this.buyInfo.moneyToWage)[i]
                     }
                     shares = await _numSharesForPrice(options);
 
@@ -99,17 +156,25 @@ import Moralis from '../../main.js';
                     .params
                     .marketId
                     .toString();
-
-                //wage Money
-                try{
-                    await _wageMoney(
-                        {
-                            _marketId,
-                            _moneyToWage: this.getMoneyToWage
-                        }
-                    )
-                } catch(error){
-                    return false;
+                const _moneyToWage = ethToWei(this.buyInfo.moneyToWage);
+                console.log(_moneyToWage);
+                //validate money
+                this.validateMoneyWaged();
+                //get form status
+                let formStatus = this.getFormStatus();
+                console.log('form status', this.formStatus);
+                if(formStatus){
+                    //wage Money
+                    try{
+                        await _wageMoney(
+                            {
+                                _marketId,
+                                _moneyToWage
+                            }
+                        )
+                    } catch(error){
+                        return false;
+                    }
                 }
            },
            async withDrawWinnings(){
@@ -138,12 +203,6 @@ import Moralis from '../../main.js';
         },
 
         computed :{
-            getMoneyToWage(){
-                return [
-                    ethToWei([this.buyInfo.moneyToWage[0]])[0].toString(),
-                    ethToWei([this.buyInfo.moneyToWage[1]])[0].toString()
-                ]
-            },
             getOdds(){
                 const m0 = (
                     this.marketData.marketInfo.moneyWaged[0] +
@@ -198,13 +257,13 @@ import Moralis from '../../main.js';
     .buy-shares-outer {
         display: grid;
         grid-template-rows: 1fr 8fr;
-        color:#cecece;
+        color:#ffffff;
     }
 
     .buy-shares-inner {
         display: grid;
         gap: 10px;
-        grid-template-rows: 0.5fr 1.4fr 1fr 1.5fr 1fr;
+        grid-template-rows: repeat(5, max-content);
         grid-template-columns: repeat(2,1fr);
         background-color: #0e2438;
         padding:10px;
@@ -220,8 +279,7 @@ import Moralis from '../../main.js';
         background-color: #0b1723;
         margin-bottom: 5px;
         border: none;
-        color: #cecece;
-        font-size: 13px;
+        color: #ffffff;
         padding-left: 15px;
         padding-right: 15px;
     }
@@ -235,8 +293,7 @@ import Moralis from '../../main.js';
         background-color: #0b1723;
         margin-bottom: 5px;
         border: none;
-        color: #cecece;
-        font-size: 13px;
+        color: #ffffff;
         padding-left: 10px;
         padding-right: 10px;
 
@@ -260,39 +317,38 @@ import Moralis from '../../main.js';
 
     .buy-info {
         font-weight: 300;
-        font-size: 11px;
+        font-size: 12px;
         border: 1.2px solid;
         border-color: #ad96ff;
     }
 
-    .share-type{
-        font-size: 13px;
-    }
-
     .market-stats{
+        height: 35px;
         border-radius: 5px;
         display: flex;
         justify-content: center;
         align-items: center;
-        font-size: 13px;
         font-weight: 300;
         font-family: 'Montserrat';
     }
     .buy-shares-input {
-        max-width: 80px;
-        max-height: 40px;
+        max-width: 90px;
+        height: 20px;
         box-shadow: none;
-        font-size: 12px;
         background: #243b53;
-        color:#cecece;
+        color:#ffffff;
         font-weight: 200;
         font-family: 'Montserrat';
+        border-radius: 5px;
+        box-shadow: inset 1px 1px 5px #121212;
         border: none;
     }
 
     .submit-button-div {
         display: flex;
-        justify-content: center;
+        height: 45px;
+        flex-direction: column;
+        justify-content: flex-end;
     }
 
     .submit-button {
@@ -300,12 +356,13 @@ import Moralis from '../../main.js';
         border: none;
         box-shadow: 1px 1px 8px #121212;
         border-radius: 5px;
-        color:#cecece;
+        color:#ffffff;
         width: 100%;
+        height: 25px;
     }
 
     .submit-button:active{
-        background: #358262;
+        background: #1d67de;
         box-shadow: none;
     }
 
@@ -321,11 +378,11 @@ import Moralis from '../../main.js';
     }
 
     .dynamic-stats-title {
-        font-size: 11px
+        font-size: 12px
     }
 
     .dynamic-stats-element {
-        font-size:10px;
+        font-size:11px;
         font-weight: 200;
         margin-top: 5px;
     }
@@ -342,6 +399,8 @@ import Moralis from '../../main.js';
 
    .withdraw-money-inner {
         border:#ad96ff 1.2px solid;
+        width: 210px;
+        height: 200px;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
@@ -356,7 +415,7 @@ import Moralis from '../../main.js';
         grid-template-rows: repeat(5,1fr);
         row-gap: 5px;
         column-gap: 10px;
-        font-size: 10px;
+        font-size: 12px;
    }
 
    .withdraw-money-stat-values {
@@ -373,7 +432,8 @@ import Moralis from '../../main.js';
 
    .withdraw-button-submit {
         background-color:#0d48aa;
-        color:#cecece;
+        height:25px;
+        color:#ffffff;
         border: none;
         padding-top: 3px;
         padding-bottom: 3px;
@@ -396,6 +456,23 @@ import Moralis from '../../main.js';
         -webkit-box-shadow: none;
         box-shadow: none;
     }
+
+   .incorrect-field{
+        border: 1.2px solid #ff0505;
+        outline: none;
+   }
+
+   .incorrect-field:focus{
+        outline: none;
+   }
+
+
+   .error-message {
+      font-size: 10px;
+      font-family: 'Montserrat';
+      color: #ff0505;
+   }
+
 
 
 </style>

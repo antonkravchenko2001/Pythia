@@ -28,7 +28,7 @@ export default {
    
    .home-content-container {
        width: 75%;
-       height: 100%;
+       height:0%;
        top: 50%;
        position: relative;
     }

@@ -9,7 +9,7 @@
         </div>
         <div class="winning-outcome-container">
             <div>Resolution price:</div>
-            <div>{{marketData.marketInfo.resolvePrice}}</div>
+            <div>{{round(marketData.marketInfo.resolvePrice)}}</div>
         </div>
     </div>
     <div v-if="!marketData.marketInfo.resolved" class="market-state-container">
@@ -20,9 +20,14 @@
 
 
 <script>
-
+    import { roundNum } from '../../helperFunctions';
     export default {
         props: ['marketData'],
+        methods: {
+            round(num){
+                return roundNum(num);
+            }
+        }
     };
 </script>
 
@@ -53,24 +58,21 @@
         border: none;
         border-radius: 5px;
         padding: 5px;
-        font-size: 12px;
-        color:#cecece;
+        color:#ffffff;
         max-height: 15px;
     }
 
     .winning-outcome-container {
         display: flex;
         justify-content: space-between;
-        font-size: 12px;
-        color:#cecece;
+        color:#ffffff;
     }
     .market-unresolved {
         background-color:#7e2525;
         border: none;
         border-radius: 5px;
         padding: 5px;
-        font-size: 11px;
-        color:#cecece;
+        color:#ffffff;
         max-height: 15px;
     }
 </style>

@@ -6,7 +6,8 @@
 <style>
   html, body {
     height: 100vh;
-    background-color: #0b1e2f;
+    background: #0b1f2e;
+    background: linear-gradient(90deg, rgba(11,31,46,1) 0%, rgba(9,25,39,1) 53%, rgba(15,38,58,1) 100%);
     margin:0px;
     font-family: ui-sans-serif;
   }
@@ -22,8 +23,9 @@
   }
 
   input::placeholder{
-    font-weight: 350;
+    font-weight: 200;
     font-family: 'Montserrat';
+    color:#bebebe;
   }
 
   textarea {
@@ -34,6 +36,12 @@
     outline: 1.5px;
     outline-color: #2968a7;
     outline-style: solid;
+  }
+
+  textarea::placeholder{
+    font-weight: 200;
+    font-family: 'Montserrat';
+    color:#bebebe;
   }
 
   button{
@@ -58,5 +66,17 @@
   #app {
     height: 100%;
   }
+
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  /* Firefox */
+  input[type=number] {
+    -moz-appearance: textfield;
+  }
+
 
 </style>

@@ -40,10 +40,10 @@ export default {
  .login-button {
     background-color: #3a46c4;
     box-shadow: 1px 1px 8px #121212;
-    color: #cecece;
+    color: #ffffff;
     border: none;
     border-radius: 3px;
-    font-size: 11px;
+    font-size: 12px;
     padding: 8px;
     font-family: 'MontSerrat';
     font-weight: 450;

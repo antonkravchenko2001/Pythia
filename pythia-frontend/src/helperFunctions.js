@@ -9,9 +9,16 @@ export const unixToDate = (unixTimestamp) => {
 };
 
 //date to unix
-export const dateToUnix = (dateStr) => {
-    const date = new Date(dateStr);
-    const unixTimestamp = Math.floor(date.getTime() / 1000) + 50400;
+export const dateToUnix = (dateStr=null) => {
+    let date;
+    let unixTimestamp;
+    if(!dateStr){
+        date = new Date();
+        unixTimestamp = Math.floor(date.getTime() / 1000);
+    }else{
+        date = new Date(dateStr);
+        unixTimestamp = Math.floor(date.getTime() / 1000) + 50400;
+    }
     return unixTimestamp;
 }
 

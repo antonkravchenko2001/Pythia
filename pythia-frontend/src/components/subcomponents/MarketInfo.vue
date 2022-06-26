@@ -16,7 +16,7 @@
                 <div class="item-val">{{marketData.marketInfo.wageDeadline}}</div>
             </div>
             <div class="info-container">
-                <div class="item-name">Resolve Date</div>
+                <div class="item-name">Resolution Date</div>
                 <div class="item-val">{{marketData.marketInfo.resolveDate}}</div>
             </div>
         </div>
@@ -123,22 +123,20 @@
     .item-name {
         padding: 5px;
         border: none;
-        color: #cecece;
-        font-size: 12px;
+        color: #ffffff;
     }
     .item-val {
         border: none;
         padding: 5px;
         background-color: #0e2438;
-        color: #cecece;
-        font-size: 11px;
+        color: #ffffff;
         font-weight: 300;
         border-radius: 5px;
     }
 
     .colored-border {
         border: 1.5px solid;
-        border-color: #cecece
+        border-color: #ffffff
     }
 
     .field-with-buttons {
@@ -157,8 +155,7 @@
         background-color: #0b1723;
         margin-bottom: 5px;
         border: none;
-        color: #cecece;
-        font-size: 13px;
+        color: #ffffff;
     }
 
     .market {
@@ -170,8 +167,7 @@
         background-color: #0b1723;
         margin-bottom: 5px;
         border: none;
-        color: #cecece;
-        font-size: 13px;
+        color: #ffffff;
 
     }
 
@@ -196,15 +192,11 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        background-color: #243b53;
-        border: 1.2px solid;
-        border-color: #9287df;
-        font-size: 13px;
+        font-size: 14px;
     }
     .market-info-text {
         display: flex;
         align-items: center;
-        font-size: 12.5px
     }
 
     .my-portfolio-dashboard {

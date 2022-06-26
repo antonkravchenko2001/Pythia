@@ -13,9 +13,9 @@ export default {
  .home-button {
     background-color: #0d1820;
     padding: 25px;
-    color: #cecece;
+    color: #ffffff;
     border: None;
-    font-size: 13px;
+    font-size: 14px;
     font-family: 'MontSerrat';
     font-weight: 450;
  }

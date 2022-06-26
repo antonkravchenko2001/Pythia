@@ -1,13 +1,18 @@
 <template>
     <div class="nav-bar">
-       <div v-if="!isHome">
-           <NavButton path='/' text='Home' />
-       </div>
        <div>
-           <NavButton path='guide' text='Guide'/>
+            <img src="../../public/pythia-with-text.svg" width='100' height='60' fill="none"/>
        </div>
-       <div>
-           <LoginUi/>
+       <div class="nav-bar-inner">
+            <div v-if="!isHome">
+                <NavButton path='/' text='Home' />
+            </div>
+            <div>
+                <NavButton path='guide' text='Guide'/>
+            </div>
+            <div style="display:flex; justify-content:center; align-items:center">
+                <LoginUi/>
+            </div>
        </div>
     </div>
 </template>
@@ -42,9 +47,15 @@ import LoginUi from './subcomponents/LoginUi.vue'
     .nav-bar {
         display: flex;
         align-items: center;
-        justify-content: flex-end;
+        justify-content: space-between;
         background-color:  #0d1820;
         padding-left: 10px;
         padding-right: 10px;
+        box-shadow: 1px 1px 8px #000000;
+    }
+
+    .nav-bar-inner {
+        display: flex;
+        justify-content: flex-end;
     }
 </style>

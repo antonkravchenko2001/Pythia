@@ -11,7 +11,7 @@
                         <div>{{market.get('asset').toUpperCase()}}</div>
                     </div>
                     <div class="item-container">
-                        <div style="padding-right: 5px" class="item-type">Strike Price:</div>
+                        <div style="padding-right: 5px" class="item-type">Strike Price: </div>
                         <div class="item-val">{{market.get('strikePrice')}}</div>
                     </div>
                 </div>
@@ -20,7 +20,7 @@
                 </div>
                 <div class="item-container">
                     <div style="display: flex">
-                        <div class="item-type">Volume:</div>
+                        <div class="item-type">Volume: </div>
                         <div class="item-val">{{Math.round(market.get('volume') * 100) / 100}} Dai</div> 
                     </div>
                     <div>
@@ -100,8 +100,7 @@
         bottom: 26.5px;
         color: #8c8c8c;
         position: relative;
-        font-weight: 250;
-        font-size: 13px;
+        font-size: 12px;
         left: 10px;
     }
 
@@ -121,7 +120,7 @@
         border: #8925bc 1.2px solid;
         border-radius: 10px;
         box-shadow: 1px 1px 8px #121212;
-        color:#cecece;
+        color:#ffffff;
         font-size: 12px;
         font-family: 'Montserrat';
         font-weight: 350;

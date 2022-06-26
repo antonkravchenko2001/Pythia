@@ -167,6 +167,7 @@ export default {
         font-weight: 400;
     }
     .market-info-space {
+        font-size: 13px;
         display: grid;
         gap: 50px;
         grid-template-columns: 5fr 3fr;
