@@ -97,8 +97,14 @@ export default {
             //update market
             const playerValues = {
                 sharesOwned: playerInfo.sharesOwned,
-                moneyWaged: playerInfo.moneyWaged
+                moneyWaged: playerInfo.moneyWaged, 
+                reward: playerInfo.reward,
+                expertScore: playerInfo.expertScore,
+                withdrawed: playerInfo.withdrawed
             }
+
+            console.log('player info')
+            console.log(playerValues);
 
             await Moralis.Cloud.run(
                 'savePlayer', {

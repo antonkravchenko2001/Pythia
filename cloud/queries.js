@@ -91,7 +91,8 @@ Moralis.Cloud.define('savePlayer', async(request) => {
     for(const key in values){
         player.set(key, values[key]);
     }
-
+    logger.info('player');
+    logger.info(player);
     //save player
     await player.save();
 
@@ -137,3 +138,39 @@ Moralis.Cloud.define("getAsset", async (request) => {
     }
     return null;
 });
+
+
+//query top performers
+Moralis.Cloud.define(
+    'getTopPerformers',
+    async (request) => {
+        const query = new Moralis.Query('Players');
+        const pipeline = [
+            {
+                group: {
+                    objectId: "$player",
+                    reward: {$sum: "$reward" },
+                    expertScore: {$sum: '$expertScore'}
+                },
+            },
+            {
+                sort: {
+                    expertScore: -1,
+                    reward: -1
+                }
+            }
+        ];
+        results = await query.aggregate(pipeline, { useMasterKey: true });
+        return results;
+    }
+)
+
+//get assets
+Moralis.Cloud.define(
+    'getAssets',
+    async (request) => {
+        const query = new Moralis.Query('Assets');
+        const results = await query.find();
+        return results;
+    }
+)

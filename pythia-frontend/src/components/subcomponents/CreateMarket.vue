@@ -10,7 +10,7 @@
             </div>
             <div class="info-container">
                 <div>
-                    <div class="item-name">Asset</div>
+                    <div class="item-name">Asset pair</div>
                     <input 
                         type='text'
                         placeholder="eth/usd"
@@ -42,7 +42,7 @@
                     <input
                         type='text'
                         class="item-val features-input"
-                        placeholder='Wage Deadline'
+                        placeholder='mm/dd/yyyy'
                         :class="{'incorrect-field': !formStatus.wageDeadline.correct}"
                         v-model='marketParams.wageDeadline'
                     />
@@ -55,7 +55,7 @@
                     <input
                         type='text'
                         class="item-val features-input"
-                        placeholder='Resolution Date'
+                        placeholder='mm/dd/yyyy'
                         :class="{'incorrect-field': !formStatus.resolveDate.correct}"
                         v-model='marketParams.resolveDate' required
                     />
@@ -426,6 +426,7 @@ export default {
     .create-market-window {
         display: grid;
         padding: 20px;
+        width: 350px;
         gap: 10px;
         bottom: 50px;
         background-color: #122f4a;
@@ -438,8 +439,8 @@ export default {
 
     .create-market-div {
         display: flex;
-        max-height: 100vh;
-        min-height: 50vh;
+        max-height: 50vh;
+        min-height: 20vh;
         width: 100%;
         justify-content: center;
         align-items: center;
@@ -450,7 +451,7 @@ export default {
     .create-market-button{
         border-radius: 5px;
         border: solid 2px #57c080dc;
-        background-color: #0e2438;
+        background-color: #0b1f2e;
         color: #ffffff;
         font-size: 14px;
         padding: 20px;

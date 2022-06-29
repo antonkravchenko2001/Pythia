@@ -1,5 +1,8 @@
 <template>
     <div >
+        <div class="title">
+            Available Markets
+        </div>
         <div>
             <input class='search-bar' placeholder='Search Markets' v-model='searchInput' @keyup="findMarkets()"/>
             <i class="fa fa-search"></i>
@@ -71,6 +74,14 @@
         display: flex;
         justify-content: center;
     }
+
+    .title{
+        font-family: 'Montserrat';
+        font-weight: 500;
+        font-size: 20px;
+        color: #ffffff;
+        margin-bottom: 15px;
+    }
     .search-bar[data-v-5510c766] {
         width: calc(100% - 40px);
         background-color: #091420;
@@ -107,6 +118,7 @@
     .markets-display {
         display: grid;
         gap: 15px;
+        padding-bottom: 10px;
         grid-template-columns: repeat(3, 1fr);
         grid-template-rows: repeat(auto, 1fr);
     }
@@ -128,6 +140,11 @@
     }
 
     .market-info:hover{
+        background-color: #102135;
+        box-shadow: none;
+    }
+
+    .market-info:hover{
         box-shadow: 1px 1px 8px #121212;
     }
 
@@ -146,9 +163,11 @@
 
     .item-type{
         font-weight: 200;
+        padding-right: 5px;
     }
     
     .item-val{
         font-weight: 300;
+        padding-right: 5px;
     }
 </style>

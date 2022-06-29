@@ -12,7 +12,7 @@ export default {
 
  .home-button {
     background-color: #0d1820;
-    padding: 25px;
+    padding:10px;
     color: #ffffff;
     border: None;
     font-size: 14px;
@@ -21,8 +21,7 @@ export default {
  }
 
  .home-button:hover{
-     background-color: #1b4870;
-     color: #121212;
+     color: #4d7c9f;
  }
 
 </style>

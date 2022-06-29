@@ -175,6 +175,7 @@ import Moralis from '../../main.js';
                     } catch(error){
                         return false;
                     }
+                    
                 }
            },
            async withDrawWinnings(){
@@ -196,7 +197,11 @@ import Moralis from '../../main.js';
                             player: this.marketData.playerInfo.player,
                             marketId: this.marketData.playerInfo.player.marketId
                         },
-                        values: {withdrawed: true}
+                        values: {
+                            withdrawed: true,
+                            reward: this.marketData.withDrawInfo.reward,
+                            expertScore: this.marketData.withDrawInfo.expertScore
+                        }
                     }
                 );
            }

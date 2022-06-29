@@ -3,7 +3,7 @@
         <div class="info-container">
             <div class="info-container">
                 <div class="item-name">Asset</div>
-                <div class="item-val">{{marketData.marketInfo.asset}}</div>
+                <div class="item-val">{{marketData.marketInfo.asset.toUpperCase()}}</div>
             </div>
             <div class="info-container">
                 <div class="item-name">Strike Price</div>
