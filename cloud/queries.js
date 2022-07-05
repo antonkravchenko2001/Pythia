@@ -45,17 +45,19 @@ Moralis.Cloud.define("getMarkets", async(request) => {
     //defined filter columns
     const filters = request.params.filters;
 
-    logger.info(filter);
+    logger.info('filters',filters);
 
-    //filter data
-    if(filters['asset'] !== ''){
-        query.equalTo('asset', filters['asset']);
-    }
-    if(filters['volume']){
-        query.greaterThan('volume', filters['volume']);
-    } 
-    if(filters['wageDeadline']){
-        query.lessThan('wageDeadline', filters['wageDeadline']);
+    //filter datas
+    if(filters){
+        if(filters['asset'] !== 'All'){
+            query.equalTo('asset', filters['asset'].toLowerCase());
+        }
+        if(filters['volume'] !== 'All'){
+            query.greaterThan('volume', filters['volume']);
+        }
+        if(filters['wageDeadline'] !== 'All'){
+            query.lessThan('wageDeadline', filters['wageDeadline']);
+        }
     }
 
     //sort data by volume

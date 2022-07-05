@@ -13,31 +13,28 @@
             <div class="market-stats yes-annot" :style="{background: `linear-gradient(to right, #1a5447c2 ${getOdds[1]}%, transparent ${getOdds[1]}%, transparent)`}">
                 <span>{{getOdds[1]}}%</span>
             </div>
-            <div>
+            <div style="position:relative">
                 <input
                     type='number'
                     class='buy-shares-input'
-                    placeholder='5'
-                    :class="{'incorrect-field': !formStatus.moneyToWage[0].correct}"
+                    placeholder='0'
+                    :class="{'incorrect-field': !formStatus.moneyToWage.correct}"
                     v-model='buyInfo.moneyToWage[0]'
                     @keyup="calcShares(0)"
                 />
-                <div v-if="!formStatus.moneyToWage[0].correct" class="error-message">
-                    {{formStatus.moneyToWage[0].message}}
+                <div v-if="!formStatus.moneyToWage.correct" class="error-message">
+                    {{formStatus.moneyToWage.message}}
                 </div>
             </div>
             <div>
                 <input 
                     type='number'
                     class='buy-shares-input'
-                    placeholder='5'
-                    :class="{'incorrect-field': !formStatus.moneyToWage[1].correct}"
+                    placeholder='0'
+                    :class="{'incorrect-field': !formStatus.moneyToWage.correct}"
                     v-model='buyInfo.moneyToWage[1]'
                     @keyup="calcShares(1)"
                 />
-                <div v-if="!formStatus.moneyToWage[1].correct" class='error-message'>
-                    {{formStatus.moneyToWage[1].message}}
-                </div>
             </div>
             <div class="grid-spec dynamic-stats">
                 <div class="dynamic-stats-title">Shares to receive</div>
@@ -81,19 +78,14 @@ import Moralis from '../../main.js';
                 withdrawed: false,
                 buyInfo: {
                     odds: [0, 0],
-                    moneyToWage: [0, 0],
+                    moneyToWage: [null, null],
                     sharesToBuy: [0, 0],
                 },
                 formStatus: {
                     moneyToWage: {
-                        0: {
-                            correct: true,
-                            message: ''
-                        },
-                        1: {
-                            correct: true,
-                            message: '',
-                        }
+                        correct: true,
+                        message: ''
+
                     }
                 },
                 buttons :{
@@ -118,19 +110,20 @@ import Moralis from '../../main.js';
                 return roundNum(num)
             },
             validateMoneyWaged(){
-                for(let outcome=0; outcome < 2; outcome++){
-                    if(this.buyInfo.moneyToWage[outcome] < minMoney ){
-                        this.formStatus.moneyToWage[outcome].correct = false
-                        this.formStatus.moneyToWage[outcome].message = 'insufficient money'
-                    } else {
-                        this.formStatus.moneyToWage[outcome].correct = true
-                    }
+                const moneyToWage = this.buyInfo.moneyToWage.reduce(
+                        (acc, curr) => { return acc + curr; }
+                );
+                if(moneyToWage < minMoney){
+                    this.formStatus.moneyToWage.correct = false
+                    this.formStatus.moneyToWage.message = 'insufficient money'
+                } else {
+                    this.formStatus.moneyToWage.correct = true
                 }
             },
             getFormStatus(){
                 if(
-                    this.formStatus.moneyToWage[0].correct &
-                    this.formStatus.moneyToWage[1].correct
+                    this.formStatus.moneyToWage.correct &
+                    this.formStatus.moneyToWage.correct
                 ){
                     return true;
                 } else{
@@ -139,24 +132,30 @@ import Moralis from '../../main.js';
             },
             async calcShares(i){
                 let shares = 0;
-                if(this.buyInfo.moneyToWage[i] > 0){
+                this.buyInfo.sharesToBuy[i] = shares;
+                if(this.buyInfo.moneyToWage[i] == null){
+                    this.buyInfo.sharesToBuy[i] = 0;
+                }else if(this.buyInfo.moneyToWage[i] > 0){
                     const options = {
                         _marketId: this.marketData.marketInfo.marketId,
                         _outcome: `${i}`,
-                        _moneyToWage: ethToWei(this.buyInfo.moneyToWage)[i]
+                        _moneyToWage: ethToWei([this.buyInfo.moneyToWage[i]])[0]
                     }
                     shares = await _numSharesForPrice(options);
+                    this.buyInfo.sharesToBuy[i] = shares;
 
                 }
-                this.buyInfo.sharesToBuy[i] = shares;
             },
-            async  wageMoney(){
+            async wageMoney(){
+                console.log('money to wage', this.moneyToWage);
                 const _marketId = this
                     .$route
                     .params
                     .marketId
                     .toString();
-                const _moneyToWage = ethToWei(this.buyInfo.moneyToWage);
+                const moneyWage1 = this.buyInfo.moneyToWage[0] != null ? this.buyInfo.moneyToWage[0] : 0;
+                const moneyWage2 = this.buyInfo.moneyToWage[1] != null ? this.buyInfo.moneyToWage[1] : 0;
+                const _moneyToWage = ethToWei([moneyWage1, moneyWage2]);
                 console.log(_moneyToWage);
                 //validate money
                 this.validateMoneyWaged();
@@ -404,7 +403,7 @@ import Moralis from '../../main.js';
    .withdraw-money-inner {
         border:#ad96ff 1.2px solid;
         width: 210px;
-        height: 200px;
+        height: 180px;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
@@ -472,6 +471,8 @@ import Moralis from '../../main.js';
 
 
    .error-message {
+      position: absolute;
+      top: 100%;
       font-size: 10px;
       font-family: 'Montserrat';
       color: #ff0505;

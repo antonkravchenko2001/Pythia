@@ -1,5 +1,4 @@
 import Moralis from './main.js'
-import {minShares, minMoney} from './config.js'
 
 //unix to Date
 export const unixToDate = (unixTimestamp) => {
@@ -10,7 +9,6 @@ export const unixToDate = (unixTimestamp) => {
 
 export const dateToStr = (date) => {
     date = new Date(date);
-    console.log(date);
     return (
         date.getDate().toString() +
         '/' +
@@ -39,28 +37,6 @@ export const dateToUnix = (date=null) => {
 //wei to Eth
 export const weiToEth = (weiString) => {
     return parseFloat(Moralis.Units.FromWei(weiString, 18));
-}
-
-//check money
-export const checkMoney = (arr) => {
-    for(let i; i < arr.length; i++){
-        if(parseFloat(arr[i]) < minMoney){
-            console.log(`min money to buy is ${minMoney}`)
-            return false;
-        }
-    } 
-    return true;
-}
-
-//check shares
-export const checkShares = (arr) => {
-    for(let i; i < arr.length; i++){
-        if(arr[i] < minShares){
-            console.log(`min shares to buy is ${minShares}`)
-            return false;
-        }
-    } 
-    return true;
 }
 
 //transform from eth to wei denomination

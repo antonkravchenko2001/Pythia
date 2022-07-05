@@ -11,7 +11,7 @@
             <div class="market-description">
                 <div class="description-component">Will</div>
                 <div style="display: flex;flex-direction: column;justify-content: center;">
-                    <DropDown :objects="assetNames" height="100px" background="#0c2235" ref="dropdown"/>
+                    <DropDown defaultValue='ETH/USD' :objects="assetNames" height="100px" background="#16446c" ref="dropdown"/>
                 </div>
                 <div class="description-component">exceed</div>
                 <div class="description-component" style="position:relative">
@@ -86,7 +86,7 @@
                 <div style="position:relative">
                     <input 
                         type='number'
-                        class="market-stats-component no-annot"
+                        class="market-stats-component yes-annot"
                         placeholder='10'
                         :class="{'incorrect-field': !formStatus.moneyWaged[1].correct}"
                         v-model='marketParams.moneyWaged[1]'
@@ -195,7 +195,10 @@ export default {
         },
         validateStrikePrice(){
             const strikePrice = this.marketParams.strikePrice;
-            if(strikePrice < 0){
+            if(strikePrice == null){
+                this.formStatus.strikePrice.correct = false;
+                this.formStatus.strikePrice.message = 'strike price invalid';
+            }else if(strikePrice < 0){
                 this.formStatus.strikePrice.correct = false;
                 this.formStatus.strikePrice.message = 'strike price < 0';
             }else{
@@ -300,8 +303,8 @@ export default {
                     _wageDeadline
                 }
                 const marketId = await _numMarkets();
+                console.log('market_id', marketId);
                 try{
-                    console.log(createOptions);
                     await _createMarket(createOptions);
                 } catch(error){
                     console.error(error)
@@ -336,8 +339,6 @@ export default {
                     winningOutcome: 0
                 }
 
-                console.log(marketValues);
-
                 //save market
                 await Moralis.Cloud.run(
                     'saveMarket', {
@@ -365,11 +366,10 @@ export default {
                     }
                 );
                 console.log('player saved!')
+                //reload the page
+                this.$router.go();
             }
         },
-
-
-    
     },
     computed: {
         isLoggedIn(){
@@ -396,7 +396,7 @@ export default {
         grid-template-rows: repeat(5, max-content);
         z-index: 10;
         border-radius: 10px;
-        border: #3a98e1 1.5px solid;
+        outline: #3a98e1 1.5px solid;
         box-shadow: 1px 1px 8px #121212;
         color: #ffffff;
         font-family: 'Montserrat';
@@ -453,7 +453,7 @@ export default {
 
     .description-input {
         width: 90%;
-        background: #0c2235;
+        background: #16446c;
         color:#ffffff;
         font-family: 'Montserrat';
         border: none;
@@ -487,7 +487,8 @@ export default {
         color:#ffffff;
         border-radius: 5px;
         border:none;
-        background-color: #0c2235;
+        background-color: rgb(22, 68, 108);
+        box-shadow: 1px 1px 8px #121212;
         height: 25px;
         max-width: 75px;
         font-family: 'Montserrat';

@@ -23,7 +23,7 @@
   }
 
   input::placeholder{
-    font-weight: 300;
+    font-weight: 250;
     font-family: 'Montserrat';
     color:#ffffff;
   }
@@ -91,13 +91,13 @@
 
   /* Handle */
   div::-webkit-scrollbar-thumb {
-    background: #386599;
+    background: #7aaae1;
     border-radius: 5px;
     height:40px;
   }
 
   div::-webkit-scrollbar-thumb:active{
-    background: #223e5f;
+    background: #062243;
   }
 
   ::-webkit-calendar-picker-indicator {

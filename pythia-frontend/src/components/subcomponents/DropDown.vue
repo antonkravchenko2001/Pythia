@@ -1,8 +1,8 @@
 <template>
     <div :style="{'background': background, 'color': 'white'}" class="drop-down-container">
-        <div class="input">
+        <div class="input" @click="press()">
             {{input}}
-            <i class="fa-solid fa-caret-down" @click="press()"></i>
+            <i class="fa-solid fa-caret-down"></i>
         </div>
         <div v-if="!selected" :style="{'height': height, 'background': background, 'z-index': '10'}" class="dropdown">
             <div  v-for="obj in objects"   :key="obj" @click="select(obj)" class="dropdown-el">{{obj}}</div>
@@ -12,10 +12,10 @@
 
 <script>
     export default{
-        props: ['objects', 'height', 'background'],
+        props: ['defaultValue', 'objects', 'height', 'background'],
         data(){
             return {
-                input: '',
+                input: this.defaultValue,
                 selected: true
             }
         },
@@ -45,6 +45,7 @@
         font-family: 'Montserrat';
         font-size: 12px;
         position: relative;
+        justify-content: space-between;
         box-shadow: 1px 1px 5px #121212;
     }
     .input {
@@ -69,6 +70,6 @@
     }
 
     .dropdown-el:hover {
-        background: rgb(45, 78, 135);
+        background: rgb(9, 42, 72);
     }
 </style>

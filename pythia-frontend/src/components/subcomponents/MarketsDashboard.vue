@@ -4,18 +4,23 @@
             Available Markets
         </div>
         <div class="filters-container">
-            <div style="margin-right: 10px; font-size: 14px">Filter by</div>
+            <div style="margin-right: 10px; font-size: 14px">
+                Filter by
+                <i class="fa-solid fa-filter"></i>
+            </div>
             <div style="display:flex; justify-content:center; align-items:center">
                 <div style='margin-left:10px;font-size: 14px'>Volume:</div>
                 <DropDown 
+                    defaultValue="All"
                     :objects="getOptions(volumeOptions)"
                     height="80px"
                     background="#091420"
                     ref="volumeOptions"
-                    style='width: 60px; margin: 5px'
+                    style='width: 70px; margin: 5px'
                 />
                 <div style='margin-left:10px;font-size: 14px'>Asset:</div>
                 <DropDown 
+                    defaultValue="All"
                     :objects="assetNames"
                     height="80px"
                     background="#091420"
@@ -24,6 +29,7 @@
                 />
                 <div style="margin-left:10px;font-size: 14px">Wage Deadline:</div>
                 <DropDown 
+                    defaultValue="All"
                     :objects="getOptions(wageDeadlineOptions)"
                     height="80px"
                     background="#091420"
@@ -43,13 +49,13 @@
                     {{getWageDeadline(market)}}
                 </div>
                 <div class="item-container">
-                    <div style="display: flex">
+                    <div style="display: flex;align-items:center">
                         <div class="item-type">Volume: </div>
                         <div class="item-val">{{Math.round(market.get('volume') * 100) / 100}} Dai</div> 
                     </div>
                     <div>
-                        <div v-if="market.get('resolved')" style="color:#4decc9c2">Resolved</div>
-                        <div v-if="!market.get('resolved')" style="color:#ec4d4dc2">Unresolved</div>
+                        <div v-if="market.get('resolved')" class="resolved">Resolved</div>
+                        <div v-if="!market.get('resolved')" class='unresolved'>Unresolved</div>
                     </div>
                 </div>
             </div>
@@ -74,7 +80,10 @@
         },
         methods: {
             async findMarkets(){
-                const asset = this.$refs.assetNames.input.toLowerCase();
+                let asset = this.$refs.assetNames.input;
+                if(asset === ''){
+                    asset = null;
+                }
                 const volume = this.volumeOptions[this.$refs.volumeOptions.input];
                 const wageDeadline = this.wageDeadlineOptions[this.$refs.wageDeadlineOptions.input];
                 console.log(wageDeadline, volume, asset);
@@ -161,28 +170,22 @@
 
     .markets-display {
         display: grid;
-        gap: 15px;
+        gap: 20px;
         padding-bottom: 10px;
-        grid-template-columns: repeat(auto-fit, 270px);
-        grid-template-rows: repeat(auto-fit, 130px);
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        grid-template-rows: repeat(auto-fit, minmax(100px, 1fr));
     }
 
     .market-info{
         display: grid;
         grid-template-rows: 1fr 3fr 1fr;
         gap: 10px;
-        outline: 1.2px solid #935cff;
-        background: linear-gradient( 
-            90deg,
-            rgb(19 60 94) 0%,
-            rgb(12 38 61) 45%,
-            rgb(12 40 67) 100% 
-        );
+        outline: 1.5px solid #935cff;
         padding:10px;
         border-radius: 10px;
         box-shadow: 1px 1px 8px #121212;
         color:#ffffff;
-        font-size: 12px;
+        font-size: 13px;
         font-family: 'Montserrat';
         font-weight: 350;
         cursor: pointer;
@@ -211,19 +214,34 @@
     }
 
     .description{
-        background: #072841;
-        padding: 2px;
+        background: #0c3f66;
+        padding: 5px;
+        font-size: 13px;
         border-radius: 5px;
         box-shadow: 1px 1px 4px #121212;
     }
 
     .item-type{
-        font-weight: 200;
+        font-weight: 300;
         padding-right: 5px;
     }
     
     .item-val{
-        font-weight: 300;
+        font-weight: 400;
         padding-right: 5px;
+    }
+
+    .unresolved {
+        color: #e3616a;
+        background: #a606068f;
+        border-radius: 5px;
+        padding: 5px;
+    }
+
+    .resolved {
+        color: #63c89f;
+        background: #03855194;
+        border-radius: 5px;
+        padding: 5px;
     }
 </style>

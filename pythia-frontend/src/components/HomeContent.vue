@@ -37,6 +37,7 @@ export default {
         async loadAssets(){
             const assets = await Moralis.Cloud.run('getAssets');
             const assetNames = [];
+            assetNames.push('All');
             for(let asset of assets){
                 assetNames.push(asset.get('asset').toUpperCase())
             }
@@ -48,6 +49,7 @@ export default {
             let thisWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 7);
             let thisMonth = new Date(today.getFullYear(), today.getMonth() + 1, today.getDate());
             return {
+                'All': 'All',
                 '24h': today,
                 'this week': thisWeek,
                 'this month': thisMonth,
@@ -56,6 +58,7 @@ export default {
         async getFilters(){
             this.filters.assetNames = await this.loadAssets();
             this.filters.volumeOptions =  {
+                'All': 'All',
                 '> 100': 100,
                 '> 1000': 1000,
                 '> 10000': 100000

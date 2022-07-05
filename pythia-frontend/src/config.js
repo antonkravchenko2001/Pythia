@@ -600,5 +600,4 @@ export const chain = 'kovan';
 export const minSharesCreate = 10;
 export const minMoneyCreate = 10;
 
-export const minShares = 5;
 export const minMoney = 5;
