@@ -72,18 +72,7 @@ export default {
                     values: marketValues
                 }
             );
-            
-            //get description from database
-            let info = await Moralis.Cloud.run(
-                'getMarkets',
-                {
-                    filters: {marketId},
-                    values: marketValues
-                },
 
-            );
-
-            marketInfo['description'] = info[0].get('description');
             return marketInfo;
         },
 
@@ -104,7 +93,7 @@ export default {
             }
 
             console.log('player info')
-            console.log(playerValues);
+
 
             await Moralis.Cloud.run(
                 'savePlayer', {
@@ -176,7 +165,7 @@ export default {
         font-size: 13px;
         display: grid;
         gap: 50px;
-        grid-template-columns: 5fr 3fr;
+        grid-template-columns: 4.5fr 3fr;
         background-color: #0b1723;
         padding: 20px;
         box-shadow: 1px 1px 8px #121212;

@@ -45,16 +45,24 @@ Moralis.Cloud.define("getMarkets", async(request) => {
     //defined filter columns
     const filters = request.params.filters;
 
+    logger.info(filter);
+
     //filter data
-    for(const filter in filters){
-        query.equalTo(filter, filters[filter]);
+    if(filters['asset'] !== ''){
+        query.equalTo('asset', filters['asset']);
+    }
+    if(filters['volume']){
+        query.greaterThan('volume', filters['volume']);
+    } 
+    if(filters['wageDeadline']){
+        query.lessThan('wageDeadline', filters['wageDeadline']);
     }
 
     //sort data by volume
     query.descending("volume");
 
 
-    query.limit(20);
+    query.limit(25);
 
     //return results
     const markets = await query.find();
@@ -120,7 +128,7 @@ Moralis.Cloud.define("getPlayers", async(request) => {
 });
 
 //query assets
-Moralis.Cloud.define("getAsset", async (request) => {
+Moralis.Cloud.define("getAssets", async (request) => {
     const query = new Moralis.Query('Assets');
     const filters = request.params;
     let value = null;
@@ -132,7 +140,7 @@ Moralis.Cloud.define("getAsset", async (request) => {
         logger.info(value);
         query.equalTo(item, value);
     }
-    const results = await query.first();
+    const results = await query.find();
     if(results){
         return results;
     }
@@ -161,16 +169,6 @@ Moralis.Cloud.define(
             }
         ];
         results = await query.aggregate(pipeline, { useMasterKey: true });
-        return results;
-    }
-)
-
-//get assets
-Moralis.Cloud.define(
-    'getAssets',
-    async (request) => {
-        const query = new Moralis.Query('Assets');
-        const results = await query.find();
         return results;
     }
 )

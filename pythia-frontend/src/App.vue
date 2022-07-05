@@ -23,9 +23,9 @@
   }
 
   input::placeholder{
-    font-weight: 200;
+    font-weight: 300;
     font-family: 'Montserrat';
-    color:#bebebe;
+    color:#ffffff;
   }
 
   textarea {
@@ -77,6 +77,36 @@
   input[type=number] {
     -moz-appearance: textfield;
   }
+
+  div::-webkit-scrollbar {
+    width: 5px;
+    height:50px;
+  }
+
+  /* Track */
+  div::-webkit-scrollbar-track {
+    background: transparent;
+    margin: 5px;
+  }
+
+  /* Handle */
+  div::-webkit-scrollbar-thumb {
+    background: #386599;
+    border-radius: 5px;
+    height:40px;
+  }
+
+  div::-webkit-scrollbar-thumb:active{
+    background: #223e5f;
+  }
+
+  ::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+  }
+
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    display: none  !important;
+}
 
 
 </style>

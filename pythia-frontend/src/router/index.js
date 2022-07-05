@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory} from 'vue-router'
 import HomePage from '../views/HomePage.vue'
 import MarketPage from '../views/MarketPage.vue'
-import AboutPage from '../views/AboutPage.vue'
+import UserGuidePage from '../views/UserGuidePage.vue'
 import LeaderBoard from '../views/LeaderBoard.vue'
 import AssetsPage from '../views/AssetsPage.vue'
 
@@ -19,7 +19,7 @@ const routes = [
     {
         path: '/user-guide',
         name: 'user-guide',
-        component: AboutPage
+        component: UserGuidePage
     },
     {
         path: '/leaderboard',

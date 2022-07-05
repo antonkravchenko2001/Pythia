@@ -1,11 +1,15 @@
 <template>
     <div class="platform-description" :class="{'blur-class': condition}">
-        Pythia: harness Crypto to automate expert indentification
+        Pythia: harness Crypto technology to automate expert indentification
     </div>
-    <CreateMarket />
+    <CreateMarket :assetNames='filters.assetNames'/>
     <div class='outer-container' :class="{'blur-class': condition}">
         <div class="home-content-container">
-            <MarketsDashboard/>
+            <MarketsDashboard
+                :assetNames='filters.assetNames'
+                :volumeOptions='filters.volumeOptions'
+                :wageDeadlineOptions="filters.wageDeadlineOptions"
+            />
         </div>
     </div>
 </template>
@@ -13,11 +17,52 @@
 <script>
 import CreateMarket from './subcomponents/CreateMarket.vue'
 import MarketsDashboard from './subcomponents/MarketsDashboard.vue'
+import Moralis from '../main.js'
 
 export default {
     components :{
         CreateMarket,
         MarketsDashboard
+    },
+    data(){
+        return {
+            filters: {
+                assetNames: [],
+                volumeOptions: {},
+                wageDeadlineOptions: {},
+            }
+        }
+    },
+    methods: {
+        async loadAssets(){
+            const assets = await Moralis.Cloud.run('getAssets');
+            const assetNames = [];
+            for(let asset of assets){
+                assetNames.push(asset.get('asset').toUpperCase())
+            }
+            return assetNames;
+        },
+        wageDeadlineOptions(){
+            let today = new Date();
+            today = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+            let thisWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 7);
+            let thisMonth = new Date(today.getFullYear(), today.getMonth() + 1, today.getDate());
+            return {
+                '24h': today,
+                'this week': thisWeek,
+                'this month': thisMonth,
+            };
+        },
+        async getFilters(){
+            this.filters.assetNames = await this.loadAssets();
+            this.filters.volumeOptions =  {
+                '> 100': 100,
+                '> 1000': 1000,
+                '> 10000': 100000
+            }
+
+            this.filters.wageDeadlineOptions = this.wageDeadlineOptions();
+        }
     },
     computed: {
         condition(){
@@ -26,6 +71,9 @@ export default {
                 this.$store.state.user
             );
         }
+    },
+    async created(){
+        await this.getFilters();
     }
 }
 </script>

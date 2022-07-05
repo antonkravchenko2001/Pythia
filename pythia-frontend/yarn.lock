@@ -6346,6 +6346,11 @@
     "hash-sum" "^2.0.0"
     "loader-utils" "^2.0.0"
 
+"vue-next-select@^2.10.4":
+  "integrity" "sha512-9Lg1mD2h9w6mm4gkXPyVMWhOdUPtA/JF9VrNyo6mqjkh4ktGLVQpNhygVBCg13RFHdEq3iqawjeFmp3FJq+CUw=="
+  "resolved" "https://registry.npmjs.org/vue-next-select/-/vue-next-select-2.10.4.tgz"
+  "version" "2.10.4"
+
 "vue-router@^4.0.15":
   "integrity" "sha512-xa+pIN9ZqORdIW1MkN2+d9Ui2pCM1b/UMgwYUCZOiFYHAvz/slKKBDha8DLrh5aCG/RibtrpyhKjKOZ85tYyWg=="
   "resolved" "https://registry.npmjs.org/vue-router/-/vue-router-4.0.15.tgz"

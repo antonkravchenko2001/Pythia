@@ -8,75 +8,59 @@
             <div>
                 <i class="fa-solid fa-xmark" @click="cancel"></i>
             </div>
-            <div class="info-container">
-                <div>
-                    <div class="item-name">Asset pair</div>
-                    <input 
-                        type='text'
-                        placeholder="eth/usd"
-                        class="item-val features-input"
-                        :class="{'incorrect-field': !formStatus.asset.correct}"
-                        v-model='marketParams.asset'
-                    />
-                    <div v-if="!formStatus.asset.correct" class="error-message">
-                        {{formStatus.asset.message}}
-                    </div>
+            <div class="market-description">
+                <div class="description-component">Will</div>
+                <div style="display: flex;flex-direction: column;justify-content: center;">
+                    <DropDown :objects="assetNames" height="100px" background="#0c2235" ref="dropdown"/>
                 </div>
-                <div>
-                    <div class="item-name">Strike Price</div>
+                <div class="description-component">exceed</div>
+                <div class="description-component" style="position:relative">
                     <input 
-                        type='number'
-                        class="item-val features-input"
-                        placeholder='1200'
-                        :class="{'incorrect-field': !formStatus.strikePrice.correct}"
+                        type="number"
+                        class='description-input'
+                        placeholder='2000'
                         v-model='marketParams.strikePrice'
+                        :class="{'incorrect-field': !formStatus.strikePrice.correct}"
                     />
                     <div v-if="!formStatus.strikePrice.correct" class="error-message">
                         {{formStatus.strikePrice.message}}
                     </div>
                 </div>
-            </div>
-            <div class="info-container">
-                <div>
-                    <div class="item-name">Wage Deadline</div>
-                    <input
-                        type='text'
-                        class="item-val features-input"
-                        placeholder='mm/dd/yyyy'
-                        :class="{'incorrect-field': !formStatus.wageDeadline.correct}"
-                        v-model='marketParams.wageDeadline'
-                    />
-                    <div v-if="!formStatus.wageDeadline.correct" class="error-message">
-                        {{formStatus.wageDeadline.message}}
-                    </div>
-                </div>
-                <div>
-                    <div class="item-name">Resolution Date</div>
-                    <input
-                        type='text'
-                        class="item-val features-input"
-                        placeholder='mm/dd/yyyy'
-                        :class="{'incorrect-field': !formStatus.resolveDate.correct}"
-                        v-model='marketParams.resolveDate' required
+                <div class="description-component">by</div>
+                <div class="description-component" style="position: relative">
+                    <input 
+                    type='date'
+                    class='description-input'
+                    :class="{'incorrect-field': !formStatus.resolveDate.correct}"
+                    v-model="marketParams.resolveDate"
                     />
                     <div v-if="!formStatus.resolveDate.correct" class="error-message">
                         {{formStatus.resolveDate.message}}
-                    </div>
+                    </div>  
+                    <i class="fa-solid fa-calendar" style="position: absolute"></i>
                 </div>
+                <div class="description-component">?</div>
             </div>
-            <div >
-                <div class="item-name">Description</div>
-                <textarea
-                    type='text'
-                    class='item-val description-area'
-                    placeholder='Enter the discription'
-                    :class="{'incorrect-field': !formStatus.description.correct}"
-                    v-model='marketParams.description' required
-                >
-                </textarea>
-                <div v-if="!formStatus.description.correct" class="error-message">
-                    {{formStatus.description.message}}
+            <div class="wage-deadline-container" style="position: relative">
+                <div class="description-component" >Wage deadline</div>
+                <div class="description-component" style="position: relative">
+                    <input 
+                        type='date'
+                        class='description-input'
+                        :class="{'incorrect-field': !formStatus.wageDeadline.correct}"
+                        v-model="marketParams.wageDeadline"
+                    />
+                    <div v-if="!formStatus.wageDeadline.correct" class="error-message">
+                        {{formStatus.wageDeadline.message}}
+                    </div>  
+                    <i class="fa-solid fa-calendar" style="position: absolute"></i>
                 </div>
+                <PopUpWindow 
+                    text='Deadline for waging money in this market' 
+                    background="#134876"
+                    width="120px"
+                    height="90px"
+                />
             </div>
             <div class="item-val market-stats">
                 <div>
@@ -84,8 +68,10 @@
                 <div class="market-info-text">No</div>
                 <div class="market-info-text">Yes</div>
 
-                <div class="market-info-text">Initial Money Waged</div>
-                <div>
+                <div class="market-info-text">
+                    Initial money waged
+                </div>
+                <div style="position:relative">
                     <input 
                         type='number'
                         class="market-stats-component no-annot"
@@ -97,7 +83,7 @@
                         {{formStatus.moneyWaged[0].message}}
                     </div>
                 </div>
-                <div>
+                <div style="position:relative">
                     <input 
                         type='number'
                         class="market-stats-component no-annot"
@@ -110,8 +96,10 @@
                     </div>
                 </div>
 
-                <div class="market-info-text">Initial Shares Owned</div>
-                <div>
+                <div class="market-info-text">
+                    Initial shares created
+                </div>
+                <div style="position:relative">
                     <input 
                         type='number'
                         class="market-stats-component no-annot"
@@ -119,11 +107,14 @@
                         :class="{'incorrect-field': !formStatus.sharesOwned[0].correct}"
                         v-model='marketParams.sharesOwned[0]'
                     />
-                    <div v-if="!formStatus.sharesOwned[0].correct" class="error-message">
+                    <div 
+                        v-if="!formStatus.sharesOwned[0].correct"
+                        class="error-message"
+                    >
                         {{formStatus.sharesOwned[0].message}}
                     </div>
                 </div>
-                <div>
+                <div style="position:relative">
                     <input 
                         type='number'
                         class="market-stats-component yes-annot"
@@ -146,11 +137,18 @@
 <script>
 
 import {_numMarkets } from '../../contract-functions/ContractFunctions.js'
-import {dateToUnix, ethToWei} from '../../helperFunctions.js'
+import {dateToUnix, ethToWei, unixToDate} from '../../helperFunctions.js'
 import {_createMarket} from '../../contract-functions/ContractFunctions.js'
 import {minMoneyCreate, minSharesCreate} from '../../config.js';
+import DropDown from './DropDown.vue';
+import PopUpWindow from './PopUpWindow.vue';
 import Moralis from '../../main.js'
 export default {
+    components: {
+        DropDown,
+        PopUpWindow
+    },
+    props: ['assetNames'],
     data() {
         return {
             marketParams: {
@@ -158,16 +156,13 @@ export default {
                 strikePrice: null,
                 wageDeadline: '',
                 resolveDate: '',
-                description: "",
                 moneyWaged: [null, null],
                 sharesOwned: [null, null]
             },
             formStatus: {
-                asset: {correct: true, message: ''},
                 strikePrice: {correct: true, message: ''},
                 wageDeadline: {correct: true, message: ''},
                 resolveDate: {correct: true, message: ''},
-                description: {correct: true, message: ''},
                 moneyWaged: {
                     0: {correct: true, message: ''},
                     1: {correct: true, message: ''},
@@ -189,20 +184,20 @@ export default {
             this.clicked=false;
             this.$store.state.showForm=false;
         },
-
-        validateAsset(asset){
-            if(!asset){
-                this.formStatus.asset.correct = false;
-                this.formStatus.asset.message = 'asset not found'
-            }else{
-                this.formStatus.asset.correct = true;
-            }
+        async getAsset(){
+            const assetName = this.$refs.dropdown.input;
+            const res = await Moralis.Cloud.run(
+                'getAssets', 
+                {asset: assetName}
+            )
+            let asset = res[0];
+            return asset;
         },
         validateStrikePrice(){
             const strikePrice = this.marketParams.strikePrice;
-            if(strikePrice <= 0){
+            if(strikePrice < 0){
                 this.formStatus.strikePrice.correct = false;
-                this.formStatus.strikePrice.message = 'strike price should be > 0';
+                this.formStatus.strikePrice.message = 'strike price < 0';
             }else{
                 this.formStatus.strikePrice.correct = true;
             }
@@ -210,7 +205,6 @@ export default {
         validateWageDeadline(){
             const today = dateToUnix();
             const wageDeadline = dateToUnix(this.marketParams.wageDeadline);
-            console.log(wageDeadline, today);
             if(wageDeadline < today){
                 this.formStatus.wageDeadline.correct = false;
                 this.formStatus.wageDeadline.message = 'wage deadline has passed'
@@ -221,23 +215,13 @@ export default {
         validateResolveDate(){
             const resolveDate = dateToUnix(this.marketParams.resolveDate);
             const wageDeadline = dateToUnix(this.marketParams.wageDeadline);
-            
             if(
-                (resolveDate < wageDeadline) || (!resolveDate)
+                (resolveDate < wageDeadline)
             ){
                 this.formStatus.resolveDate.correct = false;
                 this.formStatus.resolveDate.message = 'resolution < wage deadline';
             }else{
                 this.formStatus.resolveDate.correct = true;
-            }
-        },
-
-        validateDesciption(){
-            if(this.marketParams.description === ''){
-                this.formStatus.description.correct = false;
-                this.formStatus.description.message = 'description is empty'
-            }else{
-                this.formStatus.description.correct = true;
             }
         },
         validateMoneyWaged(){
@@ -262,11 +246,9 @@ export default {
         },
         getFormStatus(){
             if(
-                this.formStatus.asset.correct &
                 this.formStatus.strikePrice.correct &
                 this.formStatus.wageDeadline.correct &
                 this.formStatus.resolveDate.correct &
-                this.formStatus.description.correct &
                 this.formStatus.moneyWaged[0].correct &
                 this.formStatus.moneyWaged[1].correct &
                 this.formStatus.sharesOwned[0].correct &
@@ -277,61 +259,47 @@ export default {
                 return false;
             }
         },
+
         async createMarket(){
-
             //get asset
-            const asset = await Moralis.Cloud.run(
-                'getAsset',
-                {asset: this.marketParams.asset}
-            );
-
-            this.validateAsset(asset);
-
-            //get marketId
-            const marketId = await _numMarkets();
+            const asset =  await this.getAsset();
+            const assetName = asset.get('asset');
+            const priceFeed = asset.get('priceFeed');
 
             //get strike price
             const _strikePrice = this.marketParams.strikePrice;
-
             this.validateStrikePrice();
 
             //get money waged
             const _moneyWaged = this.marketParams.moneyWaged;
-
             this.validateMoneyWaged();
 
             //get shares owned
             const _sharesOwned = this.marketParams.sharesOwned;
-
             this.validateSharesOwned();
 
             //get wage deadline
-            const _wageDeadline = this.marketParams.wageDeadline;
-
+            const _wageDeadline = dateToUnix(this.marketParams.wageDeadline);
             this.validateWageDeadline();
 
             //get resolve date
-            const _resolutionDate= this.marketParams.resolveDate;
+            const _resolutionDate= dateToUnix(this.marketParams.resolveDate);
             this.validateResolveDate();
 
-            //get description
-            const description = this.marketParams.description;
-            this.validateDesciption();
-
+            //get form status
             const formStatus = this.getFormStatus();
-            console.log(this.formStatus)
             if(formStatus){
 
                 //create market
                 const createOptions = {
                     _sharesOwned: ethToWei(_sharesOwned),
                     _moneyWaged: ethToWei(_moneyWaged),
-                    _priceFeedAddress: asset.get('priceFeed'),
+                    _priceFeedAddress: priceFeed,
                     _strikePrice: ethToWei([_strikePrice])[0],
-                    _resolutionDate: dateToUnix(_resolutionDate),
-                    _wageDeadline: dateToUnix(_wageDeadline)
+                    _resolutionDate,
+                    _wageDeadline
                 }
-    
+                const marketId = await _numMarkets();
                 try{
                     console.log(createOptions);
                     await _createMarket(createOptions);
@@ -339,7 +307,6 @@ export default {
                     console.error(error)
                     return false;
                 }
-
                 //save results for player and market to the database
                 const volume = this
                             .marketParams
@@ -353,29 +320,23 @@ export default {
                                     .reduce(
                                         (acc, curr) => { return acc + curr; }
                                     );
-                const wageDeadline = new Date(
-                    dateToUnix(_wageDeadline) *
-                    1000
-                );
-                const resolveDate = new Date(
-                    dateToUnix(_resolutionDate) *
-                    1000
-                );
+
 
                 //save market
                 const marketValues = {
                     marketId,
-                    asset: asset.get('asset'),
-                    strikePrice: this.marketParams.strikePrice,
+                    asset: assetName,
+                    strikePrice: _strikePrice,
                     resolvePrice: 0,
-                    wageDeadline: wageDeadline,
-                    resolveDate: resolveDate,
-                    description: description,
+                    wageDeadline: unixToDate(_wageDeadline),
+                    resolveDate: unixToDate(_resolutionDate),
                     volume,
                     volumeShares,
                     resolved: false,
                     winningOutcome: 0
                 }
+
+                console.log(marketValues);
 
                 //save market
                 await Moralis.Cloud.run(
@@ -390,7 +351,7 @@ export default {
                 const playerValues = {
                     marketId,
                     player: this.$store.state.user.get('ethAddress'),
-                    strikePrice: this.marketParams.strikePrice,
+                    strikePrice: _strikePrice,
                     withdrawed: false,
                     expertScore: 0,
                     reward: 0,
@@ -417,7 +378,9 @@ export default {
             }
             return false;
         },
-    }
+    },
+
+
 }
 </script>
 
@@ -426,15 +389,19 @@ export default {
     .create-market-window {
         display: grid;
         padding: 20px;
-        width: 350px;
-        gap: 10px;
+        width: 450px;
+        gap: 25px;
         bottom: 50px;
-        background-color: #122f4a;
-        grid-template-rows: repeat(6, max-content);
+        background: linear-gradient(90deg, rgb(25 31 74) 0%, rgba(18,47,74,1) 75%, rgba(18,47,74,1) 100%);
+        grid-template-rows: repeat(5, max-content);
         z-index: 10;
         border-radius: 10px;
-        border: #8925bc 1.2px solid;
+        border: #3a98e1 1.5px solid;
         box-shadow: 1px 1px 8px #121212;
+        color: #ffffff;
+        font-family: 'Montserrat';
+        font-size: 12px;
+        position: relative;
     }
 
     .create-market-div {
@@ -470,51 +437,45 @@ export default {
         font-size: 20px;
     }
 
-
-    .info-container {
-        display: flex;
-        grid-column-start: 1;
-        justify-content: space-between;
+    .market-description {
+        display: grid;
+        grid-template-columns: max-content 1.5fr max-content 1.2fr max-content 1.7fr max-content;
+        gap: 7px;
     }
 
-    .item-name {
-        padding: 5px;
+    .description-component {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        position:relative;
+    }
+
+    .description-input {
+        width: 90%;
+        background: #0c2235;
+        color:#ffffff;
+        font-family: 'Montserrat';
         border: none;
-        color: #ffffff;
+        border-radius: 5px;
+        box-shadow: 1px 1px 5px #121212;
+    }
+
+    .description-component .fa-solid {
+        right: 5px;
         font-size: 13px;
-        font-family: 'Montserrat';
-        font-weight: 400;
     }
 
-    .features-input {
-        height: 20px;
-        width: 110px;
-        background-color: #0c2235;
-    }
-
-    .item-val {
-        border: none;
-        border-radius: 5px;
-        border-radius: 5px;
-        color: #cecece;
-        font-size: 12px;
-        font-family: 'Montserrat';
-        font-weight: 250;
-    }
-
-    .colored-border {
-        border: 1.5px solid;
-        border-color: #cecece
-    }
-
-    .button-container {
-        display: flex;
-        justify-content: flex-end;
+    .wage-deadline-container {
+        display: grid;
+        gap: 10px;
+        grid-template-columns: repeat(3, max-content);
+        width: 200px;
     }
 
     .market-stats {
        display: grid;
-       row-gap: 10px;
+       row-gap: 20px;
        column-gap: 7px;
        color: #ffffff;
         grid-template-columns: 3fr 2fr 2fr;
@@ -523,14 +484,14 @@ export default {
     }
 
     .market-stats-component {
-        color:#cecece;
+        color:#ffffff;
         border-radius: 5px;
         border:none;
         background-color: #0c2235;
         height: 25px;
         max-width: 75px;
         font-family: 'Montserrat';
-        font-weight: 300;
+        font-weight: 400;
         font-size: 13px;
     }
     .market-info-text {
@@ -539,15 +500,6 @@ export default {
         font-size: 12px;
         font-family: 'Montserrat';
         font-weight: 400;
-    }
-
-    .title {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-size: 14px;
-        color: #cecece;
-        font-family: 'Montserrat';
     }
 
 
@@ -563,11 +515,6 @@ export default {
        outline-style: solid;
    }
 
-   .description-area {
-       width: 97%;
-       background-color: #0c2235;
-   }
-
 
    .button-group {
        display: flex;
@@ -577,8 +524,8 @@ export default {
    }
 
    .submit-button{
-       background-color: #154ab8;
-       color: #cecece;
+       background-color: #2060e6;
+       color: #ffffff;
        padding-left: 15px;
        padding-right: 15px;
        border-radius: 15px;
@@ -616,9 +563,13 @@ export default {
 
 
    .error-message {
+      position:absolute;
+      width: 120%;
+      left: 0%;
       font-size: 10px;
       font-family: 'Montserrat';
       color: #ff0505;
+      top: 105%;
    }
 
 

@@ -4,21 +4,35 @@ import {minShares, minMoney} from './config.js'
 //unix to Date
 export const unixToDate = (unixTimestamp) => {
     let date = new Date(parseInt(unixTimestamp) * 1000);
-    return date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear();
+    return date;
     
 };
 
+export const dateToStr = (date) => {
+    date = new Date(date);
+    console.log(date);
+    return (
+        date.getDate().toString() +
+        '/' +
+        (date.getMonth() + 1).toString() +
+        '/' +
+        date.getFullYear().toString()
+    );
+}
+
 //date to unix
-export const dateToUnix = (dateStr=null) => {
-    let date;
+export const dateToUnix = (date=null) => {
     let unixTimestamp;
-    if(!dateStr){
+    if(!date){
         date = new Date();
         unixTimestamp = Math.floor(date.getTime() / 1000);
-    }else{
-        date = new Date(dateStr);
-        unixTimestamp = Math.floor(date.getTime() / 1000) + 50400;
     }
+    if(!(date instanceof Date)){
+        date = Date.parse(date);
+    }
+    date = new Date(date);
+    date.setUTCHours(12,0,0,0);
+    unixTimestamp = Math.floor(date.getTime() / 1000);
     return unixTimestamp;
 }
 

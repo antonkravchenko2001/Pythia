@@ -351,7 +351,6 @@ import Moralis from '../../main.js';
 
     .submit-button-div {
         display: flex;
-        height: 45px;
         flex-direction: column;
         justify-content: flex-end;
     }

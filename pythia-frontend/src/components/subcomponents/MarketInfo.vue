@@ -1,27 +1,25 @@
 <template>
     <div class="market-info">
         <div class="info-container">
-            <div class="info-container">
-                <div class="item-name">Asset</div>
-                <div class="item-val">{{marketData.marketInfo.asset.toUpperCase()}}</div>
-            </div>
-            <div class="info-container">
-                <div class="item-name">Strike Price</div>
-                <div class="item-val">{{round(marketData.marketInfo.strikePrice)}}</div>
-            </div>
+            Will 
+            <span class="description-item-val">
+                {{marketData.marketInfo.asset.toUpperCase()}}
+            </span>
+            exceed 
+            <span class="description-item-val">
+                {{marketData.marketInfo.strikePrice}} 
+            </span>
+            by 
+            <span class="description-item-val">
+                {{_dateToStr(marketData.marketInfo.resolveDate)}} 
+            </span>
+            ?
         </div>
-        <div class="info-container">
-            <div class="info-container">
-                <div class="item-name">Wage Deadline</div>
-                <div class="item-val">{{marketData.marketInfo.wageDeadline}}</div>
-            </div>
-            <div class="info-container">
-                <div class="item-name">Resolution Date</div>
-                <div class="item-val">{{marketData.marketInfo.resolveDate}}</div>
-            </div>
-        </div>
-        <div class='item-val'>
-            {{marketData.marketInfo.description}}
+        <div class="info-container" style="width:max-content">
+            Wage Deadline:
+            <span class='description-item-val'>
+                {{_dateToStr(marketData.marketInfo.wageDeadline)}}
+            </span>
         </div>
         <div class="field-with-buttons">
             <div class="button-container">
@@ -73,7 +71,7 @@
 </template>
 
 <script>
-    import { roundNum } from '../../helperFunctions';
+    import { roundNum, dateToStr } from '../../helperFunctions';
     export default {
         props: ['marketData'],
         data(){
@@ -98,8 +96,11 @@
                 }
             },
             round(num){
-                return roundNum(num)
+                return roundNum(num);
             },
+            _dateToStr(dateStr){
+                return dateToStr(dateStr);
+            }
         },
     };
 </script>
@@ -109,34 +110,52 @@
 
     .market-info {
         display: grid;
-        gap: 20px;
+        gap: 25px;
         grid-template-columns: 1fr;
-        grid-template-rows: 1fr 1fr 2fr 6fr;
-
-    }
-    .info-container {
-        display: flex;
-        grid-column-start: 1;
-        justify-content: space-between;
-    }
-
-    .item-name {
-        padding: 5px;
-        border: none;
+        grid-template-rows: 1fr 1fr 3.5fr;
+        font-family: 'Montserrat';
+        font-weight: 400;
+        font-size: 13px;
         color: #ffffff;
+
     }
     .item-val {
         border: none;
         padding: 5px;
-        background-color: #0e2438;
         color: #ffffff;
         font-weight: 300;
         border-radius: 5px;
+        border-radius: 1px 1px 5px #121212;
+        background: #0e2438;
+    }
+
+    .description-item-val {
+        border: none;
+        padding: 5px;
+        color: #ffffff;
+        font-weight: 300;
+        border-radius: 5px;
+        border-radius: 1px 1px 5px #121212;
+        background: #11324e;
+        margin-left: 5px;
+        margin-right: 5px;
+        border: 1.2px solid #9287df;
+    
+    }
+
+    .info-container{
+        background: #0e2438;
+        border-radius: 5px;
+        box-shadow: 1px 1px 5px #121212;
+        padding: 10px;
+        display: flex;
+        align-items: center;
+        font: 14px;
     }
 
     .colored-border {
         border: 1.5px solid;
-        border-color: #ffffff
+        border-color: #ffffff;
     }
 
     .field-with-buttons {
