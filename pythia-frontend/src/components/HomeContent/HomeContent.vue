@@ -3,7 +3,7 @@
         Pythia: harness Crypto technology to automate expert indentification
     </div>
     <CreateMarket :assetNames='filters.assetNames'/>
-    <div class='outer-container' :class="{'blur-class': condition}">
+    <div class='outer-container' :class="{'blur-class': condition, 'scroll-disable': this.$store.state.showForm}">
         <div class="home-content-container">
             <MarketsDashboard
                 :assetNames='filters.assetNames'
@@ -15,9 +15,9 @@
 </template>
 
 <script>
-import CreateMarket from './subcomponents/CreateMarket.vue'
-import MarketsDashboard from './subcomponents/MarketsDashboard.vue'
-import Moralis from '../main.js'
+import CreateMarket from './CreateMarket.vue'
+import MarketsDashboard from './MarketsDashboard.vue'
+import Moralis from '../../main.js'
 
 export default {
     components :{
@@ -114,5 +114,9 @@ export default {
         font-family: Arial, Helvetica, sans-serif;
         font-weight:800;
         text-shadow: 2px 2px #3f189a;
+    }
+
+    .scroll-disable {
+        overflow: hidden;
     }
 </style>

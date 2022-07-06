@@ -1,7 +1,10 @@
 <template>
     <div class="nav-bar">
        <div class="protocol-name-container">
-            <img src="../../public/pythia-providence-eye.svg" width='60' height='60' fill="none"/>
+            <div style="padding:5px">
+                <img src="../../../public/pythia-providence-eye.svg" width='57' height='57' fill="none"/>
+            </div>
+            <BetaVersionSymb/>
        </div>
        <div class="nav-bar-inner">
             <div v-if="!isHome">
@@ -24,8 +27,9 @@
 </template>
 
 <script>
-import NavButton from './subcomponents/NavButton.vue'
-import LoginUi from './subcomponents/LoginUi.vue'
+import NavButton from './NavButton.vue'
+import LoginUi from './LoginUi.vue'
+import BetaVersionSymb from './BetaVersionSymb.vue';
 
     export default {
 
@@ -42,9 +46,10 @@ import LoginUi from './subcomponents/LoginUi.vue'
             }
         },
         components: {
-            NavButton,
-            LoginUi,
-        }
+    NavButton,
+    LoginUi,
+    BetaVersionSymb
+}
     }
 </script>
 
@@ -67,6 +72,7 @@ import LoginUi from './subcomponents/LoginUi.vue'
 
     .protocol-name-container{
         display: flex;
+        align-items: center;
     }
 
     .protocol-name {

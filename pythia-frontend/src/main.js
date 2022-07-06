@@ -16,7 +16,7 @@ const store = createStore({
   state () {
     return {
       user: Moralis.User.current(),
-      showForm: false
+      showForm: false,
     }
   },
   mutations: {

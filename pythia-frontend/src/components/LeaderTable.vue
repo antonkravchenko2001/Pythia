@@ -17,7 +17,7 @@
 
 <script>
     import Moralis from "../main.js";
-    import { roundNum } from "@/helperFunctions.js";
+    import { roundNum } from "@/utils.js";
     
     export default {
         data(){

@@ -65,8 +65,8 @@
 
 <script>
     import Moralis from '../../main.js'
-    import DropDown from './DropDown.vue'
-    import { dateToStr } from '@/helperFunctions.js'
+    import DropDown from '../subcomponents/DropDown.vue'
+    import { dateToStr } from '@/utils.js'
     export default {
         components: {
             DropDown
@@ -172,8 +172,8 @@
         display: grid;
         gap: 20px;
         padding-bottom: 10px;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        grid-template-rows: repeat(auto-fit, minmax(100px, 1fr));
+        grid-template-columns: repeat(auto-fit, 300px);
+        grid-template-rows: repeat(auto-fit, minmax(140px, 1fr));
     }
 
     .market-info{
@@ -189,6 +189,7 @@
         font-family: 'Montserrat';
         font-weight: 350;
         cursor: pointer;
+        max-height: 140px;
     }
 
     .market-info:hover{

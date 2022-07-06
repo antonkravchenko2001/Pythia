@@ -15,7 +15,7 @@ export default {
     padding:10px;
     color: #ffffff;
     border: None;
-    font-size: 14px;
+    font-size: 13px;
     font-family: 'MontSerrat';
     font-weight: 450;
  }

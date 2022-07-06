@@ -21,16 +21,14 @@ export const dateToStr = (date) => {
 //date to unix
 export const dateToUnix = (date=null) => {
     let unixTimestamp;
-    if(!date){
+    if(date===null){
         date = new Date();
         unixTimestamp = Math.floor(date.getTime() / 1000);
+    }else {
+        date = new Date(Date.parse(date));
+        date.setUTCHours(12,0,0,0);
+        unixTimestamp = Math.floor(date.getTime() / 1000);
     }
-    if(!(date instanceof Date)){
-        date = Date.parse(date);
-    }
-    date = new Date(date);
-    date.setUTCHours(12,0,0,0);
-    unixTimestamp = Math.floor(date.getTime() / 1000);
     return unixTimestamp;
 }
 

@@ -5,7 +5,7 @@
 
 <script>
     import UserGuide from '@/components/UserGuide.vue'
-    import NavBar from '@/components/NavBar.vue'
+    import NavBar from '@/components/NavBar/NavBar.vue'
     export default {
         components: {
             UserGuide,

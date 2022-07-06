@@ -4,8 +4,8 @@
 </template>
 
 <script>
-import HomeContent from '../components/HomeContent.vue'
-import NavBar from '@/components/NavBar.vue'
+import HomeContent from '../components/HomeContent/HomeContent.vue'
+import NavBar from '@/components/NavBar/NavBar.vue'
 
 export default {
   components: {

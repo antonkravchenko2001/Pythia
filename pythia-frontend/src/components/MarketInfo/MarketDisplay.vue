@@ -11,11 +11,11 @@
 </template>
 
 <script>
-import MarketInfo from './subcomponents/MarketInfo.vue'
-import BuyShares from './subcomponents/BuyShares.vue'
-import MarketState from './subcomponents/MarketState.vue'
-import {_getMarketInfo, _getPlayerInfo, _getReward, _getExpertScore} from '../contract-functions/ContractFunctions.js'
-import Moralis from '../main.js'
+import MarketInfo from './MarketInfo.vue'
+import BuyShares from './BuyShares.vue'
+import MarketState from './MarketState.vue'
+import {_getMarketInfo, _getPlayerInfo, _getReward, _getExpertScore} from '../../contract-functions/ContractFunctions.js'
+import Moralis from '../../main.js'
 export default {
     components: {
         MarketInfo,
@@ -120,6 +120,7 @@ export default {
         }
     },
     async created() {
+        console.log('created component');
         const marketId = this
                         .$route
                         .params

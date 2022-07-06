@@ -68,7 +68,7 @@ import {
     _withdrawWinnings,
     _numSharesForPrice
 } from '../../contract-functions/ContractFunctions';
-import { roundNum, ethToWei} from '../../helperFunctions';
+import { roundNum, ethToWei} from '../../utils.js';
 import { minMoney } from '../../config';
 import Moralis from '../../main.js';
     export default {
@@ -203,7 +203,7 @@ import Moralis from '../../main.js';
                         }
                     }
                 );
-           }
+           },
         },
 
         computed :{

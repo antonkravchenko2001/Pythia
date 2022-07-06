@@ -71,7 +71,7 @@
 </template>
 
 <script>
-    import { roundNum, dateToStr } from '../../helperFunctions';
+    import { roundNum, dateToStr } from '../../utils.js';
     export default {
         props: ['marketData'],
         data(){

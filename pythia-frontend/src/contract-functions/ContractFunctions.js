@@ -1,6 +1,6 @@
 import Moralis from '../main.js'
 import {marketsAddress, marketsABI, payTokenAddress, ERC20ABI, chain} from '../config.js'
-import {unixToDate, weiToEth, roundNum} from '../helperFunctions.js'
+import {unixToDate, weiToEth, roundNum} from '../utils.js'
 
 
 //call methods

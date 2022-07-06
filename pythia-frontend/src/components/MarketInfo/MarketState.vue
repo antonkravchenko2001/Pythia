@@ -20,7 +20,7 @@
 
 
 <script>
-    import { roundNum } from '../../helperFunctions';
+    import { roundNum } from '../../utils.js';
     export default {
         props: ['marketData'],
         methods: {

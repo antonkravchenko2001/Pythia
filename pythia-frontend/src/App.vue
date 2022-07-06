@@ -65,6 +65,7 @@
 
   #app {
     height: 100%;
+    width: 100%;
   }
 
   input::-webkit-outer-spin-button,
@@ -106,7 +107,7 @@
 
   input[type="date"]::-webkit-calendar-picker-indicator {
     display: none  !important;
-}
+  }
 
 
 </style>
