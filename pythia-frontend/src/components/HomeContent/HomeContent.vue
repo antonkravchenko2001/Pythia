@@ -17,7 +17,7 @@
             />
         </div>
         <div v-if="$store.state.showForm" style="height: 88vh">
-            <CreateMarketForm :assetNames="assetNames"/>
+            <CreateMarketForm :assetNames="filters.assetNames.slice(1)"/>
         </div>
     </div>
 </template>
