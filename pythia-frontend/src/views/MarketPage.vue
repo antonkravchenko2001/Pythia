@@ -4,7 +4,7 @@
 </template>
 
 <script>
-import MarketDisplay from '../components/MarketInfo/MarketDisplay.vue'
+import MarketDisplay from '../components/Market/MarketDisplay.vue'
 import NavBar from '@/components/NavBar/NavBar.vue'
 
 export default {

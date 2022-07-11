@@ -44,4 +44,8 @@
         box-shadow: 1px 1px 5px #121212;
         color: #ffffff;
     }
+    .fa-circle-info {
+        color: white;
+        cursor: pointer;
+    }
 </style>

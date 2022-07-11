@@ -73,17 +73,17 @@ export const marketsABI = [
 			{
 				"indexed": false,
 				"internalType": "uint256[2]",
-				"name": "sharesBought",
+				"name": "moneyWaged",
 				"type": "uint256[2]"
 			},
 			{
 				"indexed": false,
 				"internalType": "uint256[2]",
-				"name": "moneyWaged",
+				"name": "sharesReceived",
 				"type": "uint256[2]"
 			}
 		],
-		"name": "Deposited",
+		"name": "DepositTransaction",
 		"type": "event"
 	},
 	{
@@ -93,23 +93,46 @@ export const marketsABI = [
 				"indexed": false,
 				"internalType": "uint256",
 				"name": "marketId",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "strikePrice",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "wageDeadline",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "resolutionDate",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "bool",
+				"name": "resolved",
+				"type": "bool"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "winningOutcome",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "resolutionPrice",
 				"type": "uint256"
 			}
 		],
 		"name": "MarketCreated",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "marketId",
-				"type": "uint256"
-			}
-		],
-		"name": "MarketResolved",
 		"type": "event"
 	},
 	{
@@ -174,7 +197,7 @@ export const marketsABI = [
 			{
 				"indexed": false,
 				"internalType": "uint256",
-				"name": "moneyWithdrawed",
+				"name": "reward",
 				"type": "uint256"
 			},
 			{
@@ -184,7 +207,7 @@ export const marketsABI = [
 				"type": "uint256"
 			}
 		],
-		"name": "Withdrawed",
+		"name": "WithdrawTransaction",
 		"type": "event"
 	},
 	{
@@ -408,7 +431,7 @@ export const marketsABI = [
 		"type": "function"
 	}
 ];
-export const marketsAddress = '0x2B7137d2941F0240C4378b3a015c0DD6Eb581e39';
+export const marketsAddress = '0x032E14Fa5fc708e8AEb2eb15088Fb440ab115FEB';
 export const ERC20ABI = [
 	{
 		"anonymous": false,

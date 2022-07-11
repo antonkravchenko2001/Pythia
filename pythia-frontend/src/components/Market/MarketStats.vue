@@ -11,7 +11,7 @@
             </span>
             by 
             <span class="description-item-val">
-                {{_dateToStr(marketData.marketInfo.resolveDate)}} 
+                {{_dateToStr(marketData.marketInfo.resolutionDate)}} 
             </span>
             ?
         </div>

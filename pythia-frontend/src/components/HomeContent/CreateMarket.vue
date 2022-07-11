@@ -1,9 +1,18 @@
 <template>
     <div class="create-market-div">
-        <button  v-if="!clicked & isLoggedIn" @click="click" class="create-market-button">
-            CREATE MARKET
-            <i class="fas fa-plus"></i>
-        </button>
+        <span style="position:relative">
+            <button  v-if="!clicked & isLoggedIn" @click="click" class="create-market-button">
+                CREATE MARKET
+            </button>
+            <span style="left: 170px; top: 37%;position: absolute;">
+                <PopUpWindow 
+                    text='Create market so that other can check their expertize by weging money on it' 
+                    background="#134876"
+                    width="150px"
+                    height="120px"
+                />
+            </span>
+        </span>
         <div v-if="clicked & isLoggedIn">
             <CreateMarketForm :assetNames="assetNames"/>
         </div>
@@ -14,8 +23,11 @@
 import { defineAsyncComponent } from 'vue'
 export default {
     components: {
-         CreateMarketForm: defineAsyncComponent(() =>
+        CreateMarketForm: defineAsyncComponent(() =>
             import('./CreateMarketForm.vue')
+        ),
+        PopUpWindow: defineAsyncComponent(() =>
+            import('../subcomponents/PopUpWindow.vue')
         )
     },
     props: ['assetNames'],
@@ -57,15 +69,15 @@ export default {
 
     .create-market-button{
         border-radius: 5px;
-        border: solid 2px #57c080dc;
-        background-color: #0b1f2e;
+        border: none;
+        background-color: #1d8e74dc;
         color: #ffffff;
         font-size: 14px;
         padding: 20px;
         font-family: 'Montserrat';
     }
     .create-market-button:hover{
-        background-color: #35794fdc;
+        background-color: #125b4adc;
     }
 
     .fas {

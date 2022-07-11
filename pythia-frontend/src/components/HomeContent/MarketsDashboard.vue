@@ -1,5 +1,5 @@
 <template>
-    <div >
+    <div>
         <div class="title">
             Available Markets
         </div>
@@ -40,7 +40,7 @@
             <button class='apply-button' @click="findMarkets()">Apply filters</button>
         </div>
         <div class="markets-display">
-            <div class="market-info unselectable" v-for="market in markets" :key="market" @click="$router.push(`/markets/${market.get('marketId')}`)">
+            <div class="market-info unselectable" v-for="market in markets" :key="market" @click="$router.push(`/markets/${market['marketId']}`)">
                 <div>
                     <div class="item-val description">{{getDescription(market)}}</div>
                 </div>
@@ -50,12 +50,12 @@
                 </div>
                 <div class="item-container">
                     <div style="display: flex;align-items:center">
-                        <div class="item-type">Volume: </div>
-                        <div class="item-val">{{Math.round(market.get('volume') * 100) / 100}} Dai</div> 
+                        <div class="item-type">TVL: </div>
+                        <div class="item-val">{{Math.round(market['tvl'] * 100) / 100}} Dai</div> 
                     </div>
                     <div>
-                        <div v-if="market.get('resolved')" class="resolved">Resolved</div>
-                        <div v-if="!market.get('resolved')" class='unresolved'>Unresolved</div>
+                        <div v-if="market['resolved']" class="resolved">Resolved</div>
+                        <div v-if="!market['resolved']" class='unresolved'>Unresolved</div>
                     </div>
                 </div>
             </div>
@@ -81,37 +81,32 @@
         methods: {
             async findMarkets(){
                 let asset = this.$refs.assetNames.input;
-                if(asset === ''){
-                    asset = null;
-                }
-                const volume = this.volumeOptions[this.$refs.volumeOptions.input];
+                const tvl = this.volumeOptions[this.$refs.volumeOptions.input];
                 const wageDeadline = this.wageDeadlineOptions[this.$refs.wageDeadlineOptions.input];
-                console.log(wageDeadline, volume, asset);
                 this.markets = await Moralis.Cloud.run(
                     'getMarkets', 
                     {
-                        filters: {
-                            asset,
-                            volume,
-                            wageDeadline
-                        }
+                        asset,
+                        tvl,
+                        wageDeadline
                     }
                 )
+                console.log(this.markets);
             },
             getOptions(obj){
                 return Object.keys(obj);
             },
             getWageDeadline(market){
-                return dateToStr(market.get('wageDeadline'));
+                return dateToStr(market['wageDeadline']);
             },
             getDescription(market){
                 return (
                     'Will' + ' ' +
-                    market.get('asset').toUpperCase() + ' ' +
+                    market['asset'].toUpperCase() + ' ' +
                     'exceed' + ' ' +
-                    market.get('strikePrice') + ' ' +
+                    market['strikePrice'] + ' ' +
                     'by' + ' ' + 
-                    dateToStr(market.get('resolveDate')) + ' ' + 
+                    dateToStr(market['resolutionDate']) + ' ' + 
                     '?'
                 );
             }
@@ -119,6 +114,7 @@
         async created(){
             const markets = await Moralis.Cloud.run('getMarkets');
             this.markets = markets;
+            console.log('market', markets);
         }
 
     }

@@ -1,6 +1,6 @@
 <template>
     <div class="create-market-window">
-        <div>
+        <div style="display: flex;justify-content: flex-end;">
             <i class="fa-solid fa-xmark" @click="cancel"></i>
         </div>
         <div class="market-description">
@@ -304,62 +304,35 @@
                         console.error(error)
                         return false;
                     }
-                    //save results for player and market to the database
-                    const volume = this
-                                .marketParams
-                                .moneyWaged
-                                .reduce(
-                                        (acc, curr) => { return acc + curr; }
-                                );
-                    const volumeShares = this
-                                        .marketParams
-                                        .sharesOwned
-                                        .reduce(
-                                            (acc, curr) => { return acc + curr; }
-                                        );
-
-
-                    //save market
-                    const marketValues = {
-                        marketId,
-                        asset: assetName,
-                        strikePrice: _strikePrice,
-                        resolvePrice: 0,
-                        wageDeadline: unixToDate(_wageDeadline),
-                        resolveDate: unixToDate(_resolutionDate),
-                        volume,
-                        volumeShares,
-                        resolved: false,
-                        winningOutcome: 0
-                    }
 
                     //save market
                     await Moralis.Cloud.run(
                         'saveMarket', {
-                            values: marketValues
+                            marketId,
+                            values: {
+                                marketId,
+                                asset: assetName,
+                                strikePrice: _strikePrice,
+                                wageDeadline: unixToDate(_wageDeadline),
+                                resolutionDate: unixToDate(_resolutionDate),
+                            }
                         }
                     );
                     console.log('market saved!')
 
-
-                    //save player
-                    const playerValues = {
-                        marketId,
-                        player: this.$store.state.user.get('ethAddress'),
-                        strikePrice: _strikePrice,
-                        withdrawed: false,
-                        expertScore: 0,
-                        reward: 0,
-                        sharesOwned: _sharesOwned,
-                        moneyWaged: _moneyWaged
-                    }
-
+                    //save deposit transaction
                     await Moralis.Cloud.run(
-                        'savePlayer', {
-                            values: playerValues
+                        'deposit', {
+                            marketId,
+                            player: this.$store.state.user.get('ethAddress'),
+                            moneyNo:  _moneyWaged[0],
+                            moneyYes: _moneyWaged[1],
+                            sharesNo: _sharesOwned[0],
+                            sharesYes: _sharesOwned[1]
                         }
                     );
                     console.log('player saved!')
+
                     //reload the page
                     this.$router.go();
                 }

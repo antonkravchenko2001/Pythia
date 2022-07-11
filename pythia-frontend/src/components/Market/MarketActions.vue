@@ -68,32 +68,11 @@ import {
     _withdrawWinnings,
     _numSharesForPrice
 } from '../../contract-functions/ContractFunctions';
-import { roundNum, ethToWei} from '../../utils.js';
+import { roundNum, ethToWei} from '../../utils';
 import { minMoney } from '../../config';
 import Moralis from '../../main.js';
     export default {
         props: ['marketData'],
-        data(){
-            return {
-                withdrawed: false,
-                buyInfo: {
-                    odds: [0, 0],
-                    moneyToWage: [null, null],
-                    sharesToBuy: [0, 0],
-                },
-                formStatus: {
-                    moneyToWage: {
-                        correct: true,
-                        message: ''
-
-                    }
-                },
-                buttons :{
-                    buy: true,
-                    withdraw: false
-                }
-            }
-        },
         methods: {
             click(btn) {
                 const buttonName = this.$refs[btn].name;
@@ -109,14 +88,40 @@ import Moralis from '../../main.js';
             round(num){
                 return roundNum(num)
             },
+            getMoneyToWage(){
+                let moneyToWage = []
+                for(const el of this.buyInfo.moneyToWage){
+                    if(!el){
+                        moneyToWage.push(0)
+                    }else{
+                        moneyToWage.push(el)
+                    }
+                }
+                return moneyToWage
+            },
+            async saveDeposit(moneyToWage, sharesToBuy){
+                const saveOptions = {
+                    marketId: this.marketData.marketInfo.marketId,
+                    player: this.marketData.playerInfo.player,
+                    moneyNo: moneyToWage[0],
+                    moneyYes: moneyToWage[1],
+                    sharesNo: sharesToBuy[0],
+                    sharesYes: sharesToBuy[1]
+                }
+
+                await Moralis.Cloud.run(
+                    'deposit',
+                    saveOptions
+                )
+            },
             validateMoneyWaged(){
-                const moneyToWage = this.buyInfo.moneyToWage.reduce(
+                let totalMoneyToWage = this.getMoneyToWage().reduce(
                         (acc, curr) => { return acc + curr; }
                 );
-                if(moneyToWage < minMoney){
+                if(totalMoneyToWage < minMoney){
                     this.formStatus.moneyToWage.correct = false
-                    this.formStatus.moneyToWage.message = 'insufficient money'
-                } else {
+                    this.formStatus.moneyToWage.message = `total wage amount must exceed ${minMoney} Dai`
+                }else{
                     this.formStatus.moneyToWage.correct = true
                 }
             },
@@ -132,52 +137,63 @@ import Moralis from '../../main.js';
             },
             async calcShares(i){
                 let shares = 0;
-                this.buyInfo.sharesToBuy[i] = shares;
-                if(this.buyInfo.moneyToWage[i] == null){
-                    this.buyInfo.sharesToBuy[i] = 0;
-                }else if(this.buyInfo.moneyToWage[i] > 0){
+                let moneyToWage = this.getMoneyToWage()[i];
+                if(moneyToWage > 0){
                     const options = {
                         _marketId: this.marketData.marketInfo.marketId,
                         _outcome: `${i}`,
-                        _moneyToWage: ethToWei([this.buyInfo.moneyToWage[i]])[0]
+                        _moneyToWage: ethToWei([moneyToWage])[0]
                     }
                     shares = await _numSharesForPrice(options);
-                    this.buyInfo.sharesToBuy[i] = shares;
 
                 }
+                this.buyInfo.sharesToBuy[i] = shares;
             },
             async wageMoney(){
-                console.log('money to wage', this.moneyToWage);
-                const _marketId = this
-                    .$route
-                    .params
-                    .marketId
-                    .toString();
-                const moneyWage1 = this.buyInfo.moneyToWage[0] != null ? this.buyInfo.moneyToWage[0] : 0;
-                const moneyWage2 = this.buyInfo.moneyToWage[1] != null ? this.buyInfo.moneyToWage[1] : 0;
-                const _moneyToWage = ethToWei([moneyWage1, moneyWage2]);
-                console.log(_moneyToWage);
-                //validate money
+
+                const moneyToWage = this.getMoneyToWage();
                 this.validateMoneyWaged();
-                //get form status
                 let formStatus = this.getFormStatus();
-                console.log('form status', this.formStatus);
                 if(formStatus){
                     //wage Money
+
+                    let shares0 = await this.calcShares(0);
+                    let shares1 = await this.calcShares(1);
                     try{
                         await _wageMoney(
                             {
-                                _marketId,
-                                _moneyToWage
+                                _marketId: this.marketData.marketInfo.marketId,
+                                _moneyToWage: ethToWei(moneyToWage)
                             }
                         )
                     } catch(error){
                         return false;
                     }
+
+                    //save player
+                    await this.saveDeposit(
+                        moneyToWage,
+                        [shares0, shares1]
+                    );
+
+                    //reload the page
+                    this.$router.go();
                     
                 }
-           },
-           async withDrawWinnings(){
+            },
+            async saveWithdraw(reward, expertScore){
+                const saveOptions = {
+                    marketId: this.marketData.marketInfo.marketId,
+                    player: this.marketData.playerInfo.player,
+                    reward,
+                    expertScore
+                }
+                await Moralis.Cloud.run(
+                    'withdraw',
+                    saveOptions
+                )
+            },
+            async withDrawWinnings(){
                 const _marketId = this
                                 .$route
                                 .params
@@ -189,23 +205,33 @@ import Moralis from '../../main.js';
                     return false;
                 }
                 this.withdrawed = true;
-                Moralis.Cloud.run(
-                    'savePlayer',
-                    {
-                        filters: {
-                            player: this.marketData.playerInfo.player,
-                            marketId: this.marketData.playerInfo.player.marketId
-                        },
-                        values: {
-                            withdrawed: true,
-                            reward: this.marketData.withDrawInfo.reward,
-                            expertScore: this.marketData.withDrawInfo.expertScore
-                        }
-                    }
-                );
-           },
-        },
 
+                await this.saveWithdraw(
+                    this.marketData.withDrawStats.reward,
+                    this.marketData.withDrawStats.expertScore
+                )
+            }
+        },
+        data(){
+            return {
+                withdrawed: false,
+                buyInfo: {
+                    odds: [0, 0],
+                    moneyToWage: [null, null],
+                    sharesToBuy: [null, null],
+                },
+                formStatus: {
+                    moneyToWage: {
+                        correct: true,
+                        message: ''
+                    }
+                },
+                buttons :{
+                    buy: true,
+                    withdraw: false
+                }
+            }
+        },
         computed :{
             getOdds(){
                 const m0 = (
@@ -350,6 +376,7 @@ import Moralis from '../../main.js';
 
     .submit-button-div {
         display: flex;
+        height: 45px;
         flex-direction: column;
         justify-content: flex-end;
     }
@@ -403,7 +430,7 @@ import Moralis from '../../main.js';
    .withdraw-money-inner {
         border:#ad96ff 1.2px solid;
         width: 210px;
-        height: 180px;
+        height: 200px;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
@@ -471,11 +498,13 @@ import Moralis from '../../main.js';
 
 
    .error-message {
-      position: absolute;
-      top: 100%;
+      position:absolute;
+      width: 200%;
+      left: 0%;
       font-size: 10px;
       font-family: 'Montserrat';
       color: #ff0505;
+      top: 99%;
    }
 
 

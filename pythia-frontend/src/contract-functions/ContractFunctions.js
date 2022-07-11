@@ -49,9 +49,9 @@ export const _getMarketInfo = async(_marketId) => {
             marketId: _marketId,
             asset,
             strikePrice: weiToEth(_marketInfo[1][0]),
-            resolvePrice: weiToEth(_marketInfo[1][1]),
+            resolutionPrice: weiToEth(_marketInfo[1][1]),
             wageDeadline: unixToDate(_marketInfo[2][0]),
-            resolveDate: unixToDate(_marketInfo[2][0]),
+            resolutionDate: unixToDate(_marketInfo[2][0]),
             sharesOwned: [weiToEth(_marketInfo[3][0]), weiToEth(_marketInfo[3][1])],
             moneyWaged: [weiToEth(_marketInfo[4][0]), weiToEth(_marketInfo[4][1])],
             resolved: _marketInfo[5],
@@ -129,13 +129,14 @@ export const _getExpertScore = async(_player, _marketId) => {
             _playerAddress: _player
         },
     }
-
-    const _expertScore = await Moralis.Web3API.native.runContractFunction(
-        options
-    );
-
-    console.log(_expertScore);
-    return weiToEth(_expertScore);
+    try{
+        const _expertScore = await Moralis.Web3API.native.runContractFunction(
+            options
+        );
+        return weiToEth(_expertScore);
+    }catch(error){
+        console.error(error);
+    }
 
 }
 
@@ -151,12 +152,14 @@ export const _getReward = async(_player, _marketId) => {
         },
     }
 
-    const _reward = await Moralis.Web3API.native.runContractFunction(
-        options
-    );
-
-    console.log(_reward);
-    return weiToEth(_reward);
+    try{
+        const _reward = await Moralis.Web3API.native.runContractFunction(
+            options
+        );
+        return weiToEth(_reward);
+    }catch(error){
+        console.error('could not compute expert score')
+    }
 
 }
 
@@ -197,12 +200,7 @@ export const _createMarket = async(params) =>  {
         abi: marketsABI,
         params: params
     };
-    try{
-        await Moralis.executeFunction(options);
-        console.log('market created')
-    } catch(error){
-        console.error(error);
-    }
+    await Moralis.executeFunction(options);
 
 }
 
