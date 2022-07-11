@@ -72,15 +72,27 @@ export const marketsABI = [
 			},
 			{
 				"indexed": false,
-				"internalType": "uint256[2]",
-				"name": "moneyWaged",
-				"type": "uint256[2]"
+				"internalType": "uint256",
+				"name": "moneyWagedNo",
+				"type": "uint256"
 			},
 			{
 				"indexed": false,
-				"internalType": "uint256[2]",
-				"name": "sharesReceived",
-				"type": "uint256[2]"
+				"internalType": "uint256",
+				"name": "moneyWagedYes",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "sharesReceivedNo",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "sharesRecievedYes",
+				"type": "uint256"
 			}
 		],
 		"name": "DepositTransaction",
@@ -431,7 +443,7 @@ export const marketsABI = [
 		"type": "function"
 	}
 ];
-export const marketsAddress = '0x032E14Fa5fc708e8AEb2eb15088Fb440ab115FEB';
+export const marketsAddress = '0xCB408927E88B66C3620DAd0760D1f49305f93Bab';
 export const ERC20ABI = [
 	{
 		"anonymous": false,
