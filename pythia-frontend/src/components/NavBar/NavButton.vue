@@ -11,7 +11,7 @@ export default {
 <style scoped>
 
  .home-button {
-    background-color: #0d1820;
+    background: transparent;
     padding:10px;
     color: #ffffff;
     border: None;

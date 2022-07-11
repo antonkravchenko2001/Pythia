@@ -18,6 +18,7 @@
                     type='number'
                     class='buy-shares-input'
                     placeholder='0'
+                    style="border-top-left-radius: 5px; border-bottom-left-radius:5px"
                     :class="{'incorrect-field': !formStatus.moneyToWage.correct}"
                     v-model='buyInfo.moneyToWage[0]'
                     @keyup="calcShares(0)"
@@ -30,6 +31,7 @@
                 <input 
                     type='number'
                     class='buy-shares-input'
+                    style="border-top-right-radius: 5px; border-bottom-right-radius:5px"
                     placeholder='0'
                     :class="{'incorrect-field': !formStatus.moneyToWage.correct}"
                     v-model='buyInfo.moneyToWage[1]'
@@ -292,12 +294,12 @@ import Moralis from '../../main.js';
 
     .buy-shares-inner {
         display: grid;
-        gap: 10px;
+        row-gap: 10px;
+        column-gap: 3px;
         grid-template-rows: repeat(5, max-content);
         grid-template-columns: repeat(2,1fr);
-        background-color: #0e2438;
+        background: #183957;
         padding:10px;
-        border: #ad96ff 1.2px solid;
         border-radius: 5px;
     }
     .buy-withdraw-buttons {
@@ -306,7 +308,7 @@ import Moralis from '../../main.js';
     }
 
     .withdraw-button {
-        background-color: #0b1723;
+        background-color: transparent;
         margin-bottom: 5px;
         border: none;
         color: #ffffff;
@@ -320,7 +322,7 @@ import Moralis from '../../main.js';
     }
 
     .buy-button {
-        background-color: #0b1723;
+        background-color: transparent;
         margin-bottom: 5px;
         border: none;
         color: #ffffff;
@@ -345,13 +347,6 @@ import Moralis from '../../main.js';
         /* background-color: #243b53; */
     }
 
-    .buy-info {
-        font-weight: 300;
-        font-size: 12px;
-        border: 1.2px solid;
-        border-color: #ad96ff;
-    }
-
     .market-stats{
         height: 35px;
         border-radius: 5px;
@@ -362,15 +357,13 @@ import Moralis from '../../main.js';
         font-family: 'Montserrat';
     }
     .buy-shares-input {
-        max-width: 90px;
+        max-width: 95px;
         height: 20px;
         box-shadow: none;
-        background: #243b53;
+        background: #375d84;
         color:#ffffff;
         font-weight: 200;
         font-family: 'Montserrat';
-        border-radius: 5px;
-        box-shadow: inset 1px 1px 5px #121212;
         border: none;
     }
 

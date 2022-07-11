@@ -1,15 +1,13 @@
 <template>
     <div class="create-market-window">
-        <div style="display: flex;justify-content: flex-end;">
-            <i class="fa-solid fa-xmark" @click="cancel"></i>
-        </div>
+        <i class="fa-solid fa-xmark" @click="cancel"></i>
         <div class="market-description">
-            <div class="description-component">Will</div>
+            Will
             <div style="display: flex;flex-direction: column;justify-content: center;">
                 <DropDown defaultValue='ETH/USD' :objects="assetNames" height="100px" background="#16446c" ref="dropdown"/>
             </div>
-            <div class="description-component">exceed</div>
-            <div class="description-component" style="position:relative">
+            exceed
+            <div style="position:relative">
                 <input 
                     type="number"
                     class='description-input'
@@ -21,8 +19,8 @@
                     {{formStatus.strikePrice.message}}
                 </div>
             </div>
-            <div class="description-component">by</div>
-            <div class="description-component" style="position: relative">
+            by
+            <div class="description-component">
                 <input 
                 type='date'
                 class='description-input'
@@ -34,9 +32,9 @@
                 </div>  
                 <i class="fa-solid fa-calendar" style="position: absolute"></i>
             </div>
-            <div class="description-component">?</div>
+            ?
         </div>
-        <div class="wage-deadline-container" style="position: relative">
+        <div class="wage-deadline-container">
             <div class="description-component" >Wage deadline</div>
             <div class="description-component" style="position: relative">
                 <input 
@@ -52,73 +50,78 @@
             </div>
             <PopUpWindow 
                 text='Deadline for waging money in this market' 
-                background="#134876"
+                background="#2e5e89"
                 width="120px"
-                height="90px"
+                height="70px"
             />
         </div>
-        <div class="item-val market-stats">
-            <div>
+        <div>
+            <div class="market-options">
+                <span>No</span>
+                <span>Yes</span>
             </div>
-            <div class="market-info-text">No</div>
-            <div class="market-info-text">Yes</div>
+            <div class="market-stats">
+                <div class="market-info-text">
+                    Initial money waged
+                </div>
+                <div style="position:relative">
+                    <input 
+                        type='number'
+                        class="market-stats-component"
+                        placeholder='10'
+                        style="border-top-left-radius: 5px; border-bottom-left-radius: 5px;"
+                        :class="{'incorrect-field': !formStatus.moneyWaged[0].correct}"
+                        v-model='marketParams.moneyWaged[0]'
+                    >
+                    <div v-if="!formStatus.moneyWaged[0].correct" class="error-message">
+                        {{formStatus.moneyWaged[0].message}}
+                    </div>
+                </div>
+                <div style="position:relative">
+                    <input 
+                        type='number'
+                        class="market-stats-component"
+                        placeholder='10'
+                        style="border-top-right-radius: 5px; border-bottom-right-radius: 5px;"
+                        :class="{'incorrect-field': !formStatus.moneyWaged[1].correct}"
+                        v-model='marketParams.moneyWaged[1]'
+                    />
+                    <div v-if="!formStatus.moneyWaged[1].correct" class="error-message">
+                        {{formStatus.moneyWaged[1].message}}
+                    </div>
+                </div>
 
-            <div class="market-info-text">
-                Initial money waged
-            </div>
-            <div style="position:relative">
-                <input 
-                    type='number'
-                    class="market-stats-component no-annot"
-                    placeholder='10'
-                    :class="{'incorrect-field': !formStatus.moneyWaged[0].correct}"
-                    v-model='marketParams.moneyWaged[0]'
-                >
-                <div v-if="!formStatus.moneyWaged[0].correct" class="error-message">
-                    {{formStatus.moneyWaged[0].message}}
+                <div class="market-info-text">
+                    Initial shares created
                 </div>
-            </div>
-            <div style="position:relative">
-                <input 
-                    type='number'
-                    class="market-stats-component yes-annot"
-                    placeholder='10'
-                    :class="{'incorrect-field': !formStatus.moneyWaged[1].correct}"
-                    v-model='marketParams.moneyWaged[1]'
-                />
-                <div v-if="!formStatus.moneyWaged[1].correct" class="error-message">
-                    {{formStatus.moneyWaged[1].message}}
+                <div style="position:relative">
+                    <input 
+                        type='number'
+                        class="market-stats-component"
+                        placeholder='10'
+                        style="border-top-left-radius: 5px; border-bottom-left-radius: 5px;"
+                        :class="{'incorrect-field': !formStatus.sharesOwned[0].correct}"
+                        v-model='marketParams.sharesOwned[0]'
+                    />
+                    <div 
+                        v-if="!formStatus.sharesOwned[0].correct"
+                        class="error-message"
+                    >
+                        {{formStatus.sharesOwned[0].message}}
+                    </div>
                 </div>
-            </div>
-
-            <div class="market-info-text">
-                Initial shares created
-            </div>
-            <div style="position:relative">
-                <input 
-                    type='number'
-                    class="market-stats-component no-annot"
-                    placeholder='10'
-                    :class="{'incorrect-field': !formStatus.sharesOwned[0].correct}"
-                    v-model='marketParams.sharesOwned[0]'
-                />
-                <div 
-                    v-if="!formStatus.sharesOwned[0].correct"
-                    class="error-message"
-                >
-                    {{formStatus.sharesOwned[0].message}}
-                </div>
-            </div>
-            <div style="position:relative">
-                <input 
-                    type='number'
-                    class="market-stats-component yes-annot"
-                    placeholder='10'
-                    :class="{'incorrect-field': !formStatus.sharesOwned[1].correct}"
-                    v-model='marketParams.sharesOwned[1]'
-                />
-                <div v-if="!formStatus.sharesOwned[1].correct" class="error-message">
-                    {{formStatus.sharesOwned[1].message}}
+                <div style="position:relative">
+                    <input 
+                        type='number'
+                        class="market-stats-component"
+                        style="border-top-right-radius: 5px; border-bottom-right-radius: 5px;"
+                        placeholder='10'
+                        :class="{'incorrect-field': !formStatus.sharesOwned[1].correct}"
+                        v-model='marketParams.sharesOwned[1]'
+                    />
+                    <div v-if="!formStatus.sharesOwned[1].correct" class="error-message">
+                        {{formStatus.sharesOwned[1].message}}
+                    </div>
                 </div>
             </div>
         </div>
@@ -347,23 +350,29 @@
         padding: 20px;
         width: 450px;
         gap: 25px;
-        bottom: calc((100vh - 400px) / 2);
         background: linear-gradient(90deg, rgb(25 31 74) 0%, rgba(18,47,74,1) 75%, rgba(18,47,74,1) 100%);
-        grid-template-rows: repeat(5, max-content);
-        z-index: 10;
+        grid-template-rows: repeat(4, max-content);
         border-radius: 10px;
-        outline: #3a98e1 1.5px solid;
         box-shadow: 1px 1px 8px #121212;
         color: #ffffff;
         font-family: 'Montserrat';
         font-size: 12px;
+        position: absolute;
+        top: 55%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .create-market-window .fa-xmark {
         position: relative;
     }
 
     .market-description {
         display: grid;
         grid-template-columns: max-content 1.5fr max-content 1.2fr max-content 1.7fr max-content;
+        align-items: center;
         gap: 7px;
+        position: relative;
     }
 
     .description-component {
@@ -399,19 +408,17 @@
     .market-stats {
        display: grid;
        row-gap: 25px;
-       column-gap: 25px;
+       column-gap: 2px;
        width: max-content;
        color: #ffffff;
        grid-template-columns: repeat(3,max-content);
-       grid-template-rows: 0.3fr 1fr 1fr;
+       grid-template-rows: repeat(2,1fr);
     }
 
     .market-stats-component {
         color:#ffffff;
-        border-radius: 5px;
         border:none;
         background-color: rgb(22, 68, 108);
-        box-shadow: 1px 1px 8px #121212;
         height: 25px;
         max-width: 75px;
         font-family: 'Montserrat';
@@ -424,20 +431,8 @@
         font-size: 12px;
         font-family: 'Montserrat';
         font-weight: 400;
+        margin-right: 10px;
     }
-
-
-   .yes-annot:focus {
-       outline: 1.5px;
-       outline-color: #4decc9c2;
-       outline-style: solid;
-   }
-
-   .no-annot:focus {
-       outline: 1.5px;
-       outline-color: #ec4d4dc2;
-       outline-style: solid;
-   }
 
 
    .button-group {
@@ -454,7 +449,7 @@
        margin-top: 10px;
        padding-right: 15px;
        border-radius: 15px;
-       height: 25px;
+       height: 30px;
        border: none;
        box-shadow: 0.1px 0.1px 5px #010b15;
        width: 100%;
@@ -495,6 +490,15 @@
       font-family: 'Montserrat';
       color: #ff0505;
       top: 99%;
+   }
+
+   .market-options{
+        display: flex;
+        gap: 67px;
+        position: relative;
+        left: 135px;
+        margin-bottom: 10px;
+        font-size: 14px;
    }
 
 </style>

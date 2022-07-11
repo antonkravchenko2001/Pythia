@@ -1,14 +1,10 @@
 <template>
     <div>
-        <div class="title">
+        <h3 class="title">
             Available Markets
-        </div>
+        </h3>
         <div class="filters-container">
-            <div style="margin-right: 10px; font-size: 14px">
-                Filter by
-                <i class="fa-solid fa-filter"></i>
-            </div>
-            <div style="display:flex; justify-content:center; align-items:center">
+            <div style="display:flex; align-items: center;">
                 <div style='margin-left:10px;font-size: 14px'>Volume:</div>
                 <DropDown 
                     defaultValue="All"
@@ -41,22 +37,15 @@
         </div>
         <div class="markets-display">
             <div class="market-info unselectable" v-for="market in markets" :key="market" @click="$router.push(`/markets/${market['marketId']}`)">
-                <div>
-                    <div class="item-val description">{{getDescription(market)}}</div>
-                </div>
-                <div>
+                <div class="description">{{getDescription(market)}}</div>
+                <div style="font-size:12; color:#cecece">
                     Wage Deadline:
                     {{getWageDeadline(market)}}
                 </div>
                 <div class="item-container">
-                    <div style="display: flex;align-items:center">
-                        <div class="item-type">TVL: </div>
-                        <div class="item-val">{{Math.round(market['tvl'] * 100) / 100}} Dai</div> 
-                    </div>
-                    <div>
-                        <div v-if="market['resolved']" class="resolved">Resolved</div>
-                        <div v-if="!market['resolved']" class='unresolved'>Unresolved</div>
-                    </div>
+                    <span style="display:flex; align-items: center;font-weight:400">TVL: {{Math.round(market['tvl'] * 100) / 100}} Dai</span>
+                    <div v-if="market['resolved']" class="resolved">Resolved</div>
+                    <div v-if="!market['resolved']" class='unresolved'>Unresolved</div>
                 </div>
             </div>
         </div>
@@ -153,15 +142,10 @@
 
     .title{
         font-family: 'Montserrat';
-        font-weight: 500;
-        font-size: 20px;
+        font-size: 24px;
         color: #ffffff;
         margin-bottom: 15px;
         border-radius: 5px;
-        width: max-content;
-        box-shadow: 1px 1px 5px #121212;
-        padding: 10px;
-        background: linear-gradient(90deg, rgb(35, 91, 138) 0%, rgba(18,47,74,1) 75%, rgb(23, 60, 94) 100%);
     }
 
     .markets-display {
@@ -176,9 +160,9 @@
         display: grid;
         grid-template-rows: 1fr 3fr 1fr;
         gap: 10px;
-        outline: 1.5px solid #935cff;
         padding:10px;
         border-radius: 10px;
+        background-color: #102438;
         box-shadow: 1px 1px 8px #121212;
         color:#ffffff;
         font-size: 13px;
@@ -189,12 +173,8 @@
     }
 
     .market-info:hover{
-        background-color: #102135;
+        background-color: #183452;
         box-shadow: none;
-    }
-
-    .market-info:hover{
-        box-shadow: 1px 1px 8px #121212;
     }
 
     .item-container{
@@ -211,34 +191,27 @@
     }
 
     .description{
-        background: #0c3f66;
-        padding: 5px;
-        font-size: 13px;
-        border-radius: 5px;
-        box-shadow: 1px 1px 4px #121212;
-    }
-
-    .item-type{
-        font-weight: 300;
-        padding-right: 5px;
-    }
-    
-    .item-val{
-        font-weight: 400;
-        padding-right: 5px;
+        font-size: 14px;
+        font-weight: 500;
     }
 
     .unresolved {
-        color: #e3616a;
-        background: #a606068f;
-        border-radius: 5px;
-        padding: 5px;
+        color: #ffffff;
+        background: #c92204bc;
+        border-radius: 15px;
+        padding-left: 10px;
+        padding-top:5px;
+        padding-right: 10px;
+        padding-bottom: 5px;
     }
 
     .resolved {
-        color: #63c89f;
+        color: #ffffff;
         background: #03855194;
-        border-radius: 5px;
-        padding: 5px;
+        border-radius: 15px;
+        padding-left: 10px;
+        padding-top:5px;
+        padding-right: 10px;
+        padding-bottom: 5px;
     }
 </style>

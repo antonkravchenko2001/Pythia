@@ -26,7 +26,7 @@
                 <button  ref='marketStats' name='marketStats'  @click="click('marketStats')" class="market-info-button" :class="{market: buttons.marketStats}" >Market Stats</button>
                 <button v-if='$store.state.user' ref='myPortfolio' name='myPortfolio' @click="click('myPortfolio')" class="portfolio-info-button" :class="{portfolio: buttons.myPortfolio}">My Portfolio</button>
             </div>
-            <div v-if='buttons.marketStats' class="item-val market-stats market-stats-dashboard">
+            <div v-if='buttons.marketStats' class="item-val market-stats">
                 <div>
                 </div>
                 <div class="market-info-text">No</div>
@@ -46,7 +46,7 @@
                     {{round(marketData.marketInfo.sharesOwned[1])}}
                 </div>
             </div>
-            <div v-if='buttons.myPortfolio' class="item-val market-stats my-portfolio-dashboard">
+            <div v-if='buttons.myPortfolio' class="item-val market-stats">
                 <div>
                 </div>
                 <div class="market-info-text">No</div>
@@ -144,7 +144,7 @@
     }
 
     .info-container{
-        background: #0e2438;
+        background: #183957;
         border-radius: 5px;
         box-shadow: 1px 1px 5px #121212;
         padding: 10px;
@@ -171,7 +171,7 @@
     }
 
     .market-info-button {
-        background-color: #0b1723;
+        background-color: transparent;
         margin-bottom: 5px;
         border: none;
         color: #ffffff;
@@ -183,7 +183,7 @@
     }
 
     .portfolio-info-button {
-        background-color: #0b1723;
+        background-color: transparent;
         margin-bottom: 5px;
         border: none;
         color: #ffffff;
@@ -197,6 +197,7 @@
 
     .market-stats {
        display: grid;
+       background: #183957;
        row-gap: 10px;
        column-gap: 10px;
        grid-template-columns: 2fr 2fr 2fr;
@@ -216,16 +217,6 @@
     .market-info-text {
         display: flex;
         align-items: center;
-    }
-
-    .my-portfolio-dashboard {
-        border: #9287df 1.2px solid;
-
-    }
-
-    .market-stats-dashboard {
-        border: #9287df 1.2px solid;
-
     }
 
     .no-annot {

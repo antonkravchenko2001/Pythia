@@ -135,7 +135,8 @@ export default {
         display: grid;
         gap: 50px;
         grid-template-columns: 4.5fr 3fr;
-        background-color: #0b1723;
+        background-color: #12273b;
+        border-radius: 5px;
         padding: 20px;
         box-shadow: 1px 1px 8px #121212;
     }

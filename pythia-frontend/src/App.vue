@@ -6,8 +6,7 @@
 <style>
   html, body {
     height: 100vh;
-    background: #0b1f2e;
-    background: linear-gradient(90deg, rgba(11,31,46,1) 0%, rgba(9,25,39,1) 53%, rgba(15,38,58,1) 100%);
+    background: linear-gradient(90deg, rgb(9, 25, 37) 0%, rgb(6, 18, 28) 53%, rgb(11, 29, 44) 100%);
     margin:0px;
     font-family: ui-sans-serif;
   }
@@ -23,9 +22,9 @@
   }
 
   input::placeholder{
-    font-weight: 250;
+    font-weight: 300;
     font-family: 'Montserrat';
-    color:#ffffff;
+    color:#cecece;
   }
 
   textarea {

@@ -1,27 +1,39 @@
 <template>
-    <div class="platform-description" :class="{'blur-class': condition}">
-        Pythia: harness Crypto technology to automate expert indentification
-    </div>
-    <CreateMarket :assetNames='filters.assetNames'/>
-    <div class='outer-container' :class="{'blur-class': condition, 'scroll-disable': this.$store.state.showForm}">
-        <div class="home-content-container">
+    <div style="display:flex; justify-content:center; height: 85vh;" :class="{'scroll-disable': $store.state.showForm}">
+        <div class='home-content' :class="{'blur-class': condition}">
+            <span>
+                <h1 class="platform-description" style="font-size:48px">
+                    Pythia
+                </h1>
+                <h3 class="platform-description" style='font-size:24px'>
+                    Harness Crypto technology to automate expert indentification
+                </h3>
+            </span>
+            <CreateMarketButton :assetNames='filters.assetNames'/>
             <MarketsDashboard
-                :assetNames='filters.assetNames'
-                :volumeOptions='filters.volumeOptions'
-                :wageDeadlineOptions="filters.wageDeadlineOptions"
+                    :assetNames='filters.assetNames'
+                    :volumeOptions='filters.volumeOptions'
+                    :wageDeadlineOptions="filters.wageDeadlineOptions"
             />
+        </div>
+        <div v-if="$store.state.showForm" style="height: 88vh">
+            <CreateMarketForm :assetNames="assetNames"/>
         </div>
     </div>
 </template>
 
 <script>
-import CreateMarket from './CreateMarket.vue'
+import { defineAsyncComponent } from 'vue'
+import CreateMarketButton from './CreateMarketButton.vue'
 import MarketsDashboard from './MarketsDashboard.vue'
 import Moralis from '../../main.js'
 
 export default {
     components :{
-        CreateMarket,
+        CreateMarketButton,
+        CreateMarketForm: defineAsyncComponent(() =>
+            import('./CreateMarketForm.vue')
+        ),
         MarketsDashboard
     },
     data(){
@@ -67,6 +79,13 @@ export default {
             this.filters.wageDeadlineOptions = this.wageDeadlineOptions();
         }
     },
+    watch: {
+        '$store.state.user': function(newVal){
+            if(!newVal){
+                this.$store.state.showForm = false;
+            }
+        }
+    },
     computed: {
         condition(){
             return (
@@ -82,37 +101,24 @@ export default {
 </script>
 
 <style scoped>
-   .outer-container {
-       display: flex;
-       justify-content: center;
-       height: 50%;
-    }
-   
-   .home-content-container {
-       width: 75%;
-       height:0%;
-       top: 50%;
-       position: relative;
+
+    .home-content{
+        width: 75%;
+        display: grid;
+        grid-template-rows: repeat(3, max-content);
+        gap: 25px;
     }
 
     .blur-class {
-        filter: blur(5px);
+        filter: blur(8px) brightness(40%);
     }
 
     .platform-description{
-        display: flex;
-        flex-wrap: wrap;
-        text-align:center;
-        width: 80%;
-        margin-left: 10%;
-        margin-top: 5%;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
+        text-align:left;
         color: #ffffff;
-        font-size: 48px;
         font-family: Arial, Helvetica, sans-serif;
         font-weight:800;
+        margin: 0px;
         text-shadow: 2px 2px #3f189a;
     }
 

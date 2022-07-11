@@ -46,10 +46,10 @@ import BetaVersionSymb from './BetaVersionSymb.vue';
             }
         },
         components: {
-    NavButton,
-    LoginUi,
-    BetaVersionSymb
-}
+            NavButton,
+            LoginUi,
+            BetaVersionSymb
+        }
     }
 </script>
 
@@ -59,10 +59,8 @@ import BetaVersionSymb from './BetaVersionSymb.vue';
         display: flex;
         align-items: center;
         justify-content: space-between;
-        background-color:  #0d1820;
         padding-left: 10px;
         padding-right: 10px;
-        box-shadow: 1px 1px 8px #000000;
     }
 
     .nav-bar-inner {

@@ -1,21 +1,18 @@
 <template>
     <div class="create-market-div">
         <span style="position:relative">
-            <button  v-if="!clicked & isLoggedIn" @click="click" class="create-market-button">
+            <button  v-if='isLoggedIn' @click="click" class="create-market-button">
                 CREATE MARKET
             </button>
-            <span style="left: 170px; top: 37%;position: absolute;">
+            <span v-if='isLoggedIn' style="left: 170px; top: 37%;position: absolute;">
                 <PopUpWindow 
-                    text='Create market so that other can check their expertize by weging money on it' 
-                    background="#134876"
+                    text='Create your own market so that other can check verify expertise by weging money on it' 
+                    background="#2e5e89"
                     width="150px"
-                    height="120px"
+                    height="70px"
                 />
             </span>
         </span>
-        <div v-if="clicked & isLoggedIn">
-            <CreateMarketForm :assetNames="assetNames"/>
-        </div>
     </div>
 </template>
 
@@ -23,9 +20,6 @@
 import { defineAsyncComponent } from 'vue'
 export default {
     components: {
-        CreateMarketForm: defineAsyncComponent(() =>
-            import('./CreateMarketForm.vue')
-        ),
         PopUpWindow: defineAsyncComponent(() =>
             import('../subcomponents/PopUpWindow.vue')
         )
@@ -43,13 +37,10 @@ export default {
     },
     computed: {
         isLoggedIn(){
-            if(this.$store.state.user){
+             if(this.$store.state.user){
                 return true;
             }
             return false;
-        },
-        clicked(){
-            return this.$store.state.showForm;
         }
     }
 }
@@ -63,7 +54,7 @@ export default {
         width: 100%;
         justify-content: center;
         align-items: center;
-        position: absolute;
+        position: relative;
         z-index: 5;
     }
 
