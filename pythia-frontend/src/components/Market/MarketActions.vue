@@ -359,7 +359,7 @@ import Moralis from '../../main.js';
     .buy-shares-input {
         max-width: 95px;
         height: 20px;
-        box-shadow: none;
+        box-shadow: inset 1px 1px 5px #0c2340;
         background: #375d84;
         color:#ffffff;
         font-weight: 200;
@@ -378,7 +378,7 @@ import Moralis from '../../main.js';
         background: #0d48aa;
         border: none;
         box-shadow: 1px 1px 8px #121212;
-        border-radius: 5px;
+        border-radius: 15px;
         color:#ffffff;
         width: 100%;
         height: 25px;

@@ -56,8 +56,8 @@
     .market-resolved {
         background-color:#17783b;
         border: none;
-        border-radius: 5px;
-        padding: 5px;
+        border-radius: 15px;
+        padding: 7px;
         color:#ffffff;
         max-height: 15px;
     }
@@ -70,8 +70,8 @@
     .market-unresolved {
         background-color:#7e2525;
         border: none;
-        border-radius: 5px;
-        padding: 5px;
+        border-radius: 15px;
+        padding: 7px;
         color:#ffffff;
         max-height: 15px;
     }

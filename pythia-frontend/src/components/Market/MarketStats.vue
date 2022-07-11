@@ -1,25 +1,23 @@
 <template>
     <div class="market-info">
-        <div class="info-container">
+        <div class="info-container" style="font-size: 14px">
             Will 
-            <span class="description-item-val">
+            <span>
                 {{marketData.marketInfo.asset.toUpperCase()}}
             </span>
             exceed 
-            <span class="description-item-val">
+            <span>
                 {{marketData.marketInfo.strikePrice}} 
             </span>
             by 
-            <span class="description-item-val">
+            <span>
                 {{_dateToStr(marketData.marketInfo.resolutionDate)}} 
             </span>
             ?
         </div>
-        <div class="info-container" style="width:max-content">
+        <div class="info-container" style="width:max-content; font-size: 12px;color: #cecece">
             Wage Deadline:
-            <span class='description-item-val'>
-                {{_dateToStr(marketData.marketInfo.wageDeadline)}}
-            </span>
+            {{_dateToStr(marketData.marketInfo.wageDeadline)}}
         </div>
         <div class="field-with-buttons">
             <div class="button-container">
@@ -146,11 +144,11 @@
     .info-container{
         background: #183957;
         border-radius: 5px;
-        box-shadow: 1px 1px 5px #121212;
         padding: 10px;
         display: flex;
         align-items: center;
         font: 14px;
+        gap: 5px;
     }
 
     .colored-border {
