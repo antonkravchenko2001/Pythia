@@ -199,19 +199,19 @@
         color: #ffffff;
         background: #c92204bc;
         border-radius: 15px;
-        padding-left: 10px;
-        padding-top:5px;
-        padding-right: 10px;
-        padding-bottom: 5px;
+        padding: 5px;
+        display: flex;
+        justify-content: center;
+        width: 80px;
     }
 
     .resolved {
         color: #ffffff;
-        background: #03855194;
+        background: #02d70894;
         border-radius: 15px;
-        padding-left: 10px;
-        padding-top:5px;
-        padding-right: 10px;
-        padding-bottom: 5px;
+        padding: 5px;
+        display: flex;
+        justify-content: center;
+        width: 80px;
     }
 </style>

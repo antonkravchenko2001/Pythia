@@ -54,8 +54,8 @@
             <div class="withdraw-money-stats">
                 <div>% of winning shares</div><div class="withdraw-money-stat-values">{{round(winMoneyPercent)}}%</div>
                 <div>% of winning money</div><div class="withdraw-money-stat-values">{{round(winSharesPercent)}}%</div>
-                <div>Money won</div><div class="withdraw-money-stat-values">{{round(marketData.withDrawInfo.reward)}} Dai</div>
-                <div>Expert score</div><div class="withdraw-money-stat-values">{{round(marketData.withDrawInfo.expertScore)}}</div>
+                <div>Money won</div><div class="withdraw-money-stat-values">{{round(marketData.withDrawStats.reward)}} Dai</div>
+                <div>Expert score</div><div class="withdraw-money-stat-values">{{round(marketData.withDrawStats.expertScore)}}</div>
             </div>
             <div class="withdraw-button-div">
                 <button class="withdraw-button-submit" @click="withDrawWinnings()" :class="{unclickable: isWithdrawed || withdrawed}">Withdraw</button>
@@ -76,6 +76,9 @@ import Moralis from '../../main.js';
     export default {
         props: ['marketData'],
         methods: {
+            delay(time) {
+                return new Promise(resolve => setTimeout(resolve, time));
+            },
             click(btn) {
                 const buttonName = this.$refs[btn].name;
                 if(!this.buttons[buttonName]){
@@ -150,6 +153,7 @@ import Moralis from '../../main.js';
 
                 }
                 this.buyInfo.sharesToBuy[i] = shares;
+                return shares;
             },
             async wageMoney(){
 
@@ -161,6 +165,7 @@ import Moralis from '../../main.js';
 
                     let shares0 = await this.calcShares(0);
                     let shares1 = await this.calcShares(1);
+                    console.log('shares to buy', shares0, shares1);
                     try{
                         await _wageMoney(
                             {
@@ -179,7 +184,11 @@ import Moralis from '../../main.js';
                     );
 
                     //reload the page
-                    this.$router.go();
+                    this
+                    .delay(1000)
+                    .then(
+                        () => this.$router.go()
+                    );
                     
                 }
             },

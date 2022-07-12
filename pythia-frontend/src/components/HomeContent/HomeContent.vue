@@ -107,6 +107,7 @@ export default {
         display: grid;
         grid-template-rows: repeat(3, max-content);
         gap: 25px;
+        z-index:10;
     }
 
     .blur-class {

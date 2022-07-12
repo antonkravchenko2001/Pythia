@@ -3,7 +3,6 @@ import HomePage from '../views/HomePage.vue'
 import MarketPage from '../views/MarketPage.vue'
 import UserGuidePage from '../views/UserGuidePage.vue'
 import LeaderBoard from '../views/LeaderBoard.vue'
-import AssetsPage from '../views/AssetsPage.vue'
 
 const routes = [
     {
@@ -26,11 +25,6 @@ const routes = [
         name: 'leaderboard',
         component: LeaderBoard
     },
-    {
-        path: '/assets',
-        name: 'assets',
-        component: AssetsPage
-    }
 
 ];
 

@@ -14,9 +14,6 @@
                  <NavButton path='/leaderboard' text='Leaderboard'/>
             </div>
             <div>
-                <NavButton path='/assets' text='Assets'/>
-            </div>
-            <div>
                 <NavButton path='/user-guide' text='User guide'/>
             </div>
             <div style="display:flex; justify-content:center; align-items:center">

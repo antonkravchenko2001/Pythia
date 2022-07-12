@@ -1,5 +1,5 @@
 <template>
-    <div class="create-market-window">
+    <div class="create-market-window" style="z-index:100">
         <i class="fa-solid fa-xmark" @click="cancel"></i>
         <div class="market-description">
             Will

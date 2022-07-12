@@ -1,17 +1,34 @@
 <template>
     <div class="leader-board">
-        <div class="player-info table-title">
-            <i class="fa-solid fa-hashtag"></i>
-            <div>Player's address</div>
-            <div>Expert points</div>
-            <div>Reward received</div>
-        </div>
-        <div v-for="(player, index) in ranking" :key="player" class="player-info table-content">
-            <div>{{index + 1}}</div>
-            <div>{{player.objectId}}</div>
-            <div>{{round(player.expertScore)}}</div>
-            <div>{{round(player.reward)}} Dai</div>
-        </div>
+        <h3 class="leader-board-title">
+            Leaderboard
+        </h3>
+        <table>
+            <tr>
+                <th>
+                    <i class="fa-solid fa-hashtag"></i>
+                </th>
+                <th>Player's address</th>
+                <th>Expert score</th>
+                <th>Reward received</th>
+                <th>Total Money waged</th>
+                <th>
+                    # markets that user waged money in
+                </th>
+            </tr>
+            <tr v-for="(player, index) in ranking" :key="player">
+                <td>
+                    <div class="colored-num" :style="{'background': backgroundNum(index + 1)}">
+                        {{index + 1}}
+                    </div>
+                </td>
+                <td style="font-size:13px">{{player.player}}</td>
+                <td>{{round(player.expertScore)}}</td>
+                <td>{{round(player.reward)}} DAI</td>
+                <td>{{round(player.totalMoneyWaged)}} DAI</td>
+                <td>{{round(player.numMarkets)}}</td>
+            </tr>
+        </table>
     </div>
 </template>
 
@@ -22,7 +39,8 @@
     export default {
         data(){
             return {
-                ranking: []
+                ranking: [],
+                colors: ['#dcba04', '#c0c0c0', '#cd7f32', '#124978']
             }
         },
         methods:{
@@ -33,7 +51,19 @@
                 const results = await Moralis.Cloud.run(
                     'getTopPerformers',
                 )
+                console.log(results);
                 this.ranking = results;
+            },
+            backgroundNum(idx){
+                if(idx == 1){
+                    return '#dcba04';
+                }else if(idx == 2){
+                    return '#c0c0c0';
+                }else if(idx == 3){
+                    return '#cd7f32';
+                }else{
+                    return '#124978';
+                }
             }
         },
     
@@ -46,47 +76,61 @@
 
 <style scoped>
     .leader-board {
-        display: grid;
-        grid-template-rows: repeat(auto-fill, 1fr);
-        gap: 3px;
-        width: 60%;
-        position: relative;
-        left: 20%;
-        top: 100px;
-        z-index: 2;
-        color: #ffffff;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .leader-board-title {
+        display:flex;
+        justify-content:flex-start;
+        width:85%;
+        color:#ffffff;
+        font-size: 24px;
         font-family: 'Montserrat';
+        font-weight: 500;
+
+    }
+
+    td {
+        text-align: left;
+        color: white;
         font-size: 13px;
+        font-weight: 350;
+        padding-top: 10px;
         padding-bottom: 10px;
-        
+        padding-right: 7px;
     }
-
-    .player-info {
-        display: grid;
-        grid-template-columns: 0.5fr 4fr 1fr 1fr;
-        gap: 5px;
-        padding: 10px;
-    }
-
-    .table-title {
-        background: linear-gradient(90deg, rgba(6,35,101,1) 0%, rgba(49,40,118,1) 65%, rgba(67,48,136,1) 100%);
-        color: #ffffff;
-        border: none;
-        box-shadow: 1px 1px 5px #081621;
+    th {
+        text-align: left;
+        color: #8f8d8d;
+        font-size: 13px;
         font-weight: 400;
     }
-
-    .table-content{
-        background: linear-gradient(90deg, rgba(6,35,101,1) 0%, rgba(49,40,118,1) 75%, rgba(67,48,136,1) 100%);
-        box-shadow: 1px 1px 5px #081621;
-        border: none;
-        font-weight:300;
-        color:#cecece;
+    
+    tr {
+        padding: 15px;
     }
 
-    .fa-solid, .fas {
-        font-family: "Font Awesome 6 Free";
-        font-weight: 510;
-        font-size: 13px;
+    table {
+        width: 85%;
+        padding: 5px;
+        background: #0d2537;
+        border: none;
+        border-radius: 5px;
+        box-shadow: 1px 1px 8px #121212;
+        align-items: center;
+        font-family: 'Montserrat';
+    }
+
+    .colored-num {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 14px;
+        border-radius: 50%;
+        width: 18px;
+        height: 17px;
+        font-family: monospace;
     }
 </style>

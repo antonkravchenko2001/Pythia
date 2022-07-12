@@ -6,7 +6,7 @@
 <style>
   html, body {
     height: 100vh;
-    background: linear-gradient(90deg, rgb(9, 25, 37) 0%, rgb(6, 18, 28) 53%, rgb(11, 29, 44) 100%);
+    background: linear-gradient(90deg, rgb(9, 25, 37) 0%, #06121c 53%, #0b1d2c 100%);
     margin:0px;
     font-family: ui-sans-serif;
   }

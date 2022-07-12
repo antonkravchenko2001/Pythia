@@ -443,7 +443,7 @@ export const marketsABI = [
 		"type": "function"
 	}
 ];
-export const marketsAddress = '0xCB408927E88B66C3620DAd0760D1f49305f93Bab';
+export const marketsAddress = '0x5Bf9937f4630140bec5e2945C95098B8E200655a';
 export const ERC20ABI = [
 	{
 		"anonymous": false,

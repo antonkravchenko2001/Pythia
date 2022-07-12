@@ -136,7 +136,7 @@ export default {
         display: grid;
         gap: 50px;
         grid-template-columns: 4.5fr 3fr;
-        background-color: #0e2132;
+        background-color: #0a1e30;
         border-radius: 5px;
         padding: 20px;
         box-shadow: 1px 1px 8px #121212;

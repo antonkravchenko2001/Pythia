@@ -9,7 +9,7 @@
         </div>
         <div class="winning-outcome-container">
             <div>Resolution price:</div>
-            <div>{{round(marketData.marketInfo.resolvePrice)}}</div>
+            <div>{{round(marketData.marketInfo.resolutionPrice)}}</div>
         </div>
     </div>
     <div v-if="!marketData.marketInfo.resolved" class="market-state-container">
@@ -37,7 +37,6 @@
         gap: 8px;
         grid-template-rows: repeat(2, 1fr);
         max-height: 70px;
-        border:#17783b 1.2px solid;
         border-radius: 5px;
         padding: 9px;
     }

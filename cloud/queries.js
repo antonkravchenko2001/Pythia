@@ -137,26 +137,6 @@ Moralis.Cloud.define('deposit', async(request) => {
     await deposit.save();
 });
 
-//query assets
-Moralis.Cloud.define("getAssets", async (request) => {
-    const query = new Moralis.Query('Assets');
-    const filters = request.params;
-    let value = null;
-    for (const item in filters) {
-        value = filters[item]
-        if(item === 'asset'){
-            value = value.toLowerCase().replace(/\s/g, '');
-        }
-        logger.info(value);
-        query.equalTo(item, value);
-    }
-    const results = await query.find();
-    if(results){
-        return results;
-    }
-    return null;
-});
-
 //save withrawal
 Moralis.Cloud.define(
     'withdraw',
@@ -177,32 +157,57 @@ Moralis.Cloud.define(
 Moralis.Cloud.define(
     'getTopPerformers',
     async (request) => {
-        const query = new Moralis.Query('Withdrawals');
+        const query = new Moralis.Query('Deposits');
         const pipeline = [
-
+            {
+                group: 
+                {
+                    objectId: {
+                        'player': '$player',
+                        'marketId': '$marketId'
+                    },
+                    totalMoneyWaged: {
+                        $sum: {
+                            $add: ['$moneyYes', '$moneyNo']
+                        }
+                    }
+                },
+            },
+            {
+                group: 
+                {
+                    objectId: {
+                        'player': '$_id.player'
+                    },
+                    totalMoneyWaged: {
+                        $sum: '$totalMoneyWaged'
+                    },
+                    numMarkets: {
+                        $sum: 1
+                    }
+                },
+            },
             {
                 lookup: {
-                    from: "Deposits",
-                    localField: "player",
+                    from: "Withdrawals",
+                    localField: "_id.player",
                     foreignField: "player",
                     as: "player",
                 },
             },
             {
-                project: {
-                    player: 1,
-                    totalMoneyWaged: {$add: ['$moneyYes', '$moneyNo']},
-                    reward: 1,
-                    expertScore: 1
+                unwind: {
+                  path: "$player"
                 }
             },
             {
-                group: {
-                    objectId: "$player",
-                    totalMoneyWaged: {$sum: '$totalMoneyWaged'},
-                    reward: {$sum: '$reward'},
-                    expertScore: {$sum: '$expertScore'}
-                },
+                project:{
+                    player: '$player.player',
+                    numMarkets: '$numMarkets',
+                    totalMoneyWaged: '$totalMoneyWaged',
+                    reward: '$player.reward',
+                    expertScore: '$player.expertScore'
+                }
             },
             {
                 sort: {
@@ -215,4 +220,24 @@ Moralis.Cloud.define(
         const results = await query.aggregate(pipeline, { useMasterKey: true });
         return results;
     }
-)
+);
+
+//query assets
+Moralis.Cloud.define("getAssets", async (request) => {
+    const query = new Moralis.Query('Assets');
+    const filters = request.params;
+    let value = null;
+    for (const item in filters) {
+        value = filters[item]
+        if(item === 'asset'){
+            value = value.toLowerCase().replace(/\s/g, '');
+        }
+        logger.info(value);
+        query.equalTo(item, value);
+    }
+    const results = await query.find();
+    if(results){
+        return results;
+    }
+    return null;
+});
