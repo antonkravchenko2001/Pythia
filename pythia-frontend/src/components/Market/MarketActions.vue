@@ -39,7 +39,7 @@
                 />
             </div>
             <div class="grid-spec dynamic-stats">
-                <div class="dynamic-stats-title">Shares to receive</div>
+                <div>Shares to receive</div>
                 <div class="dynamic-stats-group">
                     <div class="dynamic-stats-element">{{round(buyInfo.sharesToBuy[0])}}</div>
                     <div class="dynamic-stats-element">{{round(buyInfo.sharesToBuy[1])}}</div>
@@ -307,7 +307,7 @@ import Moralis from '../../main.js';
         column-gap: 3px;
         grid-template-rows: repeat(5, max-content);
         grid-template-columns: repeat(2,1fr);
-        background: #183957;
+        background: #13304a;
         padding:10px;
         border-radius: 5px;
     }
@@ -378,7 +378,6 @@ import Moralis from '../../main.js';
 
     .submit-button-div {
         display: flex;
-        height: 45px;
         flex-direction: column;
         justify-content: flex-end;
     }
@@ -402,6 +401,7 @@ import Moralis from '../../main.js';
         font-family: 'Montserrat';
         grid-template-rows:  repeat(2, 1fr);
         grid-template-columns: repeat(2, 1fr);
+        font-size:11px;
     }
 
     .dynamic-stats-group {
@@ -409,12 +409,7 @@ import Moralis from '../../main.js';
         justify-content: space-between;
     }
 
-    .dynamic-stats-title {
-        font-size: 12px
-    }
-
     .dynamic-stats-element {
-        font-size:11px;
         font-weight: 200;
         margin-top: 5px;
     }
@@ -430,13 +425,12 @@ import Moralis from '../../main.js';
    }
 
    .withdraw-money-inner {
-        border:#ad96ff 1.2px solid;
-        width: 210px;
-        height: 200px;
         display: flex;
+        height: 178px;
+        width: 210px;
         flex-direction: column;
         justify-content: space-between;
-        background-color: #0e2438;
+        background-color: #13304a;
         padding:10px;
         border-radius: 5px;
    }
@@ -469,7 +463,7 @@ import Moralis from '../../main.js';
         border: none;
         padding-top: 3px;
         padding-bottom: 3px;
-        border-radius: 5px;
+        border-radius: 15px;
         box-shadow: 1px 1px 8px #121212;
         width: 100%;
    }

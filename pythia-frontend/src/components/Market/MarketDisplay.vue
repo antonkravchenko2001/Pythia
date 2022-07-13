@@ -124,6 +124,7 @@ export default {
 <style scoped>
     .container-around {
         display: flex;
+        flex-direction: column;
         justify-content: center;
         align-items: center;
         position: relative;
@@ -135,7 +136,7 @@ export default {
         font-size: 13px;
         display: grid;
         gap: 50px;
-        grid-template-columns: 4.5fr 3fr;
+        grid-template-columns: 5fr 3fr;
         background-color: #0a1e30;
         border-radius: 5px;
         padding: 20px;

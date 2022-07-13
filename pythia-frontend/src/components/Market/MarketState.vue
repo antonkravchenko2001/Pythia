@@ -1,16 +1,14 @@
 <template>
-    <div v-if="marketData.marketInfo.resolved" class='outer-container'>
-        <div class="market-state-container">
+    <div v-if="marketData.marketInfo.resolved">
+        <span class="market-state-container">
+            <span class="winning-outcome-container" style="font-size:14px">
+                Correct answer: {{getWinOutcome}}
+            </span>
             <div class="market-resolved">Resolved</div>
-        </div>
-        <div class="winning-outcome-container">
-            <div>Winning Outcome:</div>
-            <div>{{marketData.marketInfo.winningOutcome}}</div>
-        </div>
-        <div class="winning-outcome-container">
-            <div>Resolution price:</div>
-            <div>{{round(marketData.marketInfo.resolutionPrice)}}</div>
-        </div>
+        </span>
+        <span class="winning-outcome-container"  style="font-size:12px;color:grey">
+            Resolution price: {{round(marketData.marketInfo.resolutionPrice)}}
+        </span>
     </div>
     <div v-if="!marketData.marketInfo.resolved" class="market-state-container">
         <div  class="market-unresolved">Unresolved</div>
@@ -27,22 +25,23 @@
             round(num){
                 return roundNum(num);
             }
+        },
+        computed: {
+            getWinOutcome(){
+                if(this.marketData.marketInfo.winningOutcome === 0){
+                    return 'No';
+                }else{
+                    return 'Yes';
+                }
+            }
         }
     };
 </script>
 
 <style scoped>
-    .outer-container {
-        display: grid;
-        gap: 8px;
-        grid-template-rows: repeat(2, 1fr);
-        max-height: 70px;
-        border-radius: 5px;
-        padding: 9px;
-    }
     .market-state-container {
         display: flex;
-        justify-content: flex-end;
+        justify-content: space-between;
     }
 
     .resolved-market-container {
@@ -53,12 +52,13 @@
     }
 
     .market-resolved {
-        background-color:#17783b;
-        border: none;
+        background-color: #17783b;
         border-radius: 15px;
-        padding: 7px;
-        color:#ffffff;
-        max-height: 15px;
+        padding: 5px;
+        width: 70px;
+        display: flex;
+        justify-content: center;
+        color: #ffffff;
     }
 
     .winning-outcome-container {

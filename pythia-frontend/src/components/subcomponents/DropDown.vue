@@ -2,7 +2,8 @@
     <div :style="{'background': background, 'color': 'white'}" class="drop-down-container">
         <div class="input" @click="press()">
             {{input}}
-            <i class="fa-solid fa-caret-down"></i>
+            <i v-if='selected' class="fa-solid fa-caret-down"></i>
+            <i v-if='!selected' class="fa-solid fa-caret-up"></i>
         </div>
         <div v-if="!selected" :style="{'height': height, 'background': background, 'z-index': '10'}" class="dropdown">
             <div  v-for="obj in objects"   :key="obj" @click="select(obj)" class="dropdown-el">{{obj}}</div>

@@ -10,7 +10,7 @@
                     defaultValue="All"
                     :objects="getOptions(volumeOptions)"
                     height="80px"
-                    background="#091420"
+                    background="#235284"
                     ref="volumeOptions"
                     style='width: 70px; margin: 5px'
                 />
@@ -19,7 +19,7 @@
                     defaultValue="All"
                     :objects="assetNames"
                     height="80px"
-                    background="#091420"
+                    background="#235284"
                     ref="assetNames"
                     style='width: 100px; margin: 5px'
                 />
@@ -28,7 +28,7 @@
                     defaultValue="All"
                     :objects="getOptions(wageDeadlineOptions)"
                     height="80px"
-                    background="#091420"
+                    background="#235284"
                     ref="wageDeadlineOptions"
                     style='width: 100px; margin: 5px'
                 />
@@ -118,7 +118,7 @@
         align-items: center;
         color: #ffffff;
         font-family: 'Montserrat';
-        background: linear-gradient(90deg, rgb(35, 91, 138) 0%, rgba(18,47,74,1) 75%, rgb(23, 60, 94) 100%);
+        background: linear-gradient(90deg, #15344f 0%, rgba(18,47,74,1) 75%, rgb(23, 60, 94) 100%);
         box-shadow: 1px 1px 5px #121212;
         border-radius: 5px;
         padding: 10px;

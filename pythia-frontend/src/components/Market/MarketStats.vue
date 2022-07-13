@@ -1,23 +1,25 @@
 <template>
     <div class="market-info">
-        <div class="info-container" style="font-size: 14px">
-            Will 
-            <span>
-                {{marketData.marketInfo.asset.toUpperCase()}}
-            </span>
-            exceed 
-            <span>
-                {{marketData.marketInfo.strikePrice}} 
-            </span>
-            by 
-            <span>
-                {{_dateToStr(marketData.marketInfo.resolutionDate)}} 
-            </span>
-            ?
-        </div>
-        <div class="info-container" style="width:max-content; font-size: 12px;color: #cecece">
-            Wage Deadline:
-            {{_dateToStr(marketData.marketInfo.wageDeadline)}}
+        <div style="border-radius:5px;padding:5px;background:#13304a">
+            <div style="font-size: 18px;font-weight:500;margin-bottom:15px;">
+                Will 
+                <span>
+                    {{marketData.marketInfo.asset.toUpperCase()}}
+                </span>
+                exceed 
+                <span>
+                    {{marketData.marketInfo.strikePrice}} 
+                </span>
+                by 
+                <span>
+                    {{_dateToStr(marketData.marketInfo.resolutionDate)}} 
+                </span>
+                ?
+            </div>
+            <div style="width:max-content; font-size: 13px;color: grey">
+                Wage Deadline:
+                {{_dateToStr(marketData.marketInfo.wageDeadline)}}
+            </div>
         </div>
         <div class="field-with-buttons">
             <div class="button-container">
@@ -107,10 +109,9 @@
 <style scoped>
 
     .market-info {
-        display: grid;
-        gap: 25px;
-        grid-template-columns: 1fr;
-        grid-template-rows: 1fr 1fr 3.5fr;
+        display: flex;
+        flex-direction:column;
+        justify-content: space-between;
         font-family: 'Montserrat';
         font-weight: 400;
         font-size: 13px;
@@ -139,16 +140,6 @@
         margin-right: 5px;
         border: 1.2px solid #9287df;
     
-    }
-
-    .info-container{
-        background: #183957;
-        border-radius: 5px;
-        padding: 10px;
-        display: flex;
-        align-items: center;
-        font: 14px;
-        gap: 5px;
     }
 
     .colored-border {
@@ -195,7 +186,7 @@
 
     .market-stats {
        display: grid;
-       background: #183957;
+       background: #13304a;
        row-gap: 10px;
        column-gap: 10px;
        grid-template-columns: 2fr 2fr 2fr;
@@ -211,6 +202,7 @@
         justify-content: center;
         align-items: center;
         font-size: 14px;
+        height: 50px;
     }
     .market-info-text {
         display: flex;
