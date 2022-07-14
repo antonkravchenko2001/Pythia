@@ -201,12 +201,35 @@ Moralis.Cloud.define(
                 }
             },
             {
+                group: 
+                {
+                    objectId: {
+                        'player': '$_id.player'
+                    },
+                    player: {
+                        $max: '$player.player'
+                    },
+                    totalMoneyWaged: {
+                        $max: '$totalMoneyWaged'
+                    },
+                    numMarkets: {
+                        $max: '$numMarkets'
+                    },
+                    expertScore: {
+                        $sum: '$player.expertScore'
+                    },
+                    reward: {
+                        $sum: '$player.reward'
+                    }
+                },
+            },
+            {
                 project:{
-                    player: '$player.player',
+                    player: '$player',
                     numMarkets: '$numMarkets',
                     totalMoneyWaged: '$totalMoneyWaged',
-                    reward: '$player.reward',
-                    expertScore: '$player.expertScore'
+                    reward: '$reward',
+                    expertScore: '$expertScore'
                 }
             },
             {

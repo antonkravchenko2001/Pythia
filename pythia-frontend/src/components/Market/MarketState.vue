@@ -1,7 +1,7 @@
 <template>
     <div v-if="marketData.marketInfo.resolved">
-        <span class="market-state-container">
-            <span class="winning-outcome-container" style="font-size:14px">
+        <span class="market-state-container" style="font-size:14pxp;justify-content:space-between;">
+            <span class="winning-outcome-container">
                 Correct answer: {{getWinOutcome}}
             </span>
             <div class="market-resolved">Resolved</div>
@@ -10,7 +10,7 @@
             Resolution price: {{round(marketData.marketInfo.resolutionPrice)}}
         </span>
     </div>
-    <div v-if="!marketData.marketInfo.resolved" class="market-state-container">
+    <div v-if="!marketData.marketInfo.resolved" class="market-state-container" style="justify-content:flex-end;">
         <div  class="market-unresolved">Unresolved</div>
     </div>
 
@@ -41,7 +41,6 @@
 <style scoped>
     .market-state-container {
         display: flex;
-        justify-content: space-between;
     }
 
     .resolved-market-container {
