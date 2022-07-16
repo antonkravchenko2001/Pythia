@@ -25,7 +25,7 @@
 
 <script>
 import NavButton from './NavButton.vue'
-import LoginUi from './LoginUi.vue'
+import LoginUi from '../subcomponents/LoginUi.vue'
 import BetaVersionSymb from './BetaVersionSymb.vue';
 
     export default {

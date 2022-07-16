@@ -57,12 +57,15 @@ export default {
         },
         wageDeadlineOptions(){
             let today = new Date();
-            today = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
-            let thisWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 7);
-            let thisMonth = new Date(today.getFullYear(), today.getMonth() + 1, today.getDate());
+            let nextDay = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 2);
+            nextDay.setUTCHours(12,0,0,0);
+            let thisWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 8);
+            thisWeek.setUTCHours(12,0,0,0);
+            let thisMonth = new Date(today.getFullYear(), today.getMonth() + 1, today.getDate() + 1);
+            thisMonth.setUTCHours(12,0,0,0);
             return {
                 'All': 'All',
-                '24h': today,
+                '24h': nextDay,
                 'this week': thisWeek,
                 'this month': thisMonth,
             };
@@ -77,6 +80,7 @@ export default {
             }
 
             this.filters.wageDeadlineOptions = this.wageDeadlineOptions();
+            console.log('wagedeadline options', this.filters.wageDeadlineOptions);
         }
     },
     watch: {

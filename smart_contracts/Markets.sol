@@ -13,32 +13,6 @@ contract Markets is KeeperCompatibleInterface{
 
     using MathContract for *;
 
-    // deposit event
-    event Deposited(
-        uint256 marketId,
-        address player,
-        uint256[2] sharesBought,
-        uint256[2] moneyWaged
-    );
-
-    // withdraw event
-    event Withdrawed(
-        uint256 marketId,
-        address player,
-        uint256 moneyWithdrawed,
-        uint256 expertScore
-    );
-
-    // market created event
-    event MarketCreated(
-        uint256 marketId
-    );
-
-    //market resolved event
-    event MarketResolved(
-        uint256 marketId
-    );
-
     //player within market representation
     struct Player{
         //the amount of shares owned by the player on each of the outcomes
@@ -81,18 +55,14 @@ contract Markets is KeeperCompatibleInterface{
     //multiplier used in computations
     uint256 constant MULTIPLIER = 10 ** 18;
     //alpha hyperparamter used in the price function for a market
-    uint256 constant ALPHA = 4;
+    uint256 constant ALPHA = 5;
     //the maximum amount of markets that can be resolved within one block
     uint256 constant MAX_MARKETS_UPDATE = 30;
-    //keepers fee
-    uint256 constant KEEPER_FEE = 10 ** 5;
     //maximum amount of markets that can be stored in the contract
     uint256 constant MAX_AMOUNT_MARKETS = 1000;
 
     //payToken
     IERC20 payToken;
-    //linkToken
-    IERC20 linkToken;
     //price feeder contract
     PriceFeeder priceFeeder;
 
@@ -102,14 +72,11 @@ contract Markets is KeeperCompatibleInterface{
     //mapping to store all the bets. The bet is identified by its betId
     mapping(uint256 => Market) markets;
 
-    //initialize pay and link stoken
     constructor(
         address payesTokenAddress,
-        address linkTokenAddress,
         address priceFeederAddress
     ) public {
         payToken = IERC20(payesTokenAddress);
-        linkToken = IERC20(linkTokenAddress);
         priceFeeder = PriceFeeder(priceFeederAddress);
     }
 
@@ -155,11 +122,6 @@ contract Markets is KeeperCompatibleInterface{
             payToken.balanceOf(msg.sender) > _transferAmount,
             "insufficient player funds in pay token"
         );
-        require(
-            linkToken.balanceOf(msg.sender) > KEEPER_FEE,
-            "insufficient player link funds"
-        );
-
 
         //initialize the market
         Market storage market = markets[numMarkets];
@@ -189,18 +151,6 @@ contract Markets is KeeperCompatibleInterface{
         // validate the market
         _validateMarket(numMarkets);
 
-
-        // emit event that market is created
-        emit MarketCreated(numMarkets);
-
-        //emit event that the money was deposited
-        emit Deposited(
-            numMarkets,
-            msg.sender,
-            _moneyWaged,
-            _sharesOwned
-        );
-
         //increment the num markets by 1
         numMarkets += 1;
 
@@ -211,11 +161,6 @@ contract Markets is KeeperCompatibleInterface{
             _transferAmount
         );
 
-        linkToken.transferFrom(
-            msg.sender,
-            address(this),
-            KEEPER_FEE
-        );
     }
 
     //waging money on a market
@@ -290,13 +235,6 @@ contract Markets is KeeperCompatibleInterface{
             _moneyToWage.sumArr()
         );
 
-        // emit deposit events
-        emit Deposited(
-            _marketId,
-            msg.sender,
-            _sharesToPurchase,
-            _moneyToWage
-        );
     }
 
     function getBalance() external view returns(uint256){
@@ -352,13 +290,6 @@ contract Markets is KeeperCompatibleInterface{
         //reward the player
         payToken.transfer(msg.sender, _rewardAmount);
 
-        //emit an event
-        emit Withdrawed(
-            _marketId,
-            msg.sender,
-            _rewardAmount,
-            _expertScore
-        );
     }
 
     //check events for resolution
@@ -428,9 +359,6 @@ contract Markets is KeeperCompatibleInterface{
 
                 //set winning outcome
                 markets[_marketId].winningOutcome = _getWinningOutcome(_marketId);
-
-                //emit an event
-                emit MarketResolved(_marketId);
             }
         }
     }
@@ -482,11 +410,6 @@ contract Markets is KeeperCompatibleInterface{
     //get num markets
     function getNumMarkets() external view returns(uint256){
         return numMarkets;
-    }
-
-    //get num markets
-    function getLinkFee() external pure returns(uint256){
-        return KEEPER_FEE;
     }
 
     //caclulating reward
@@ -621,12 +544,14 @@ contract Markets is KeeperCompatibleInterface{
         //ln((M1 + m1) * ONE / M1) * alpha * N2 / ONE
         return (
             (
-                (MathContract.one() *
-                (_moneyOutcome + _moneyToWage) /
-                _moneyOutcome).ln()
+                (
+                    MathContract.one() *
+                    (_moneyOutcome + _moneyToWage) /
+                    _moneyOutcome
+                ).ln()
             ) *
-            ALPHA *
             _sharesOppositeOutcome /
+            ALPHA /
             MathContract.one()
         );
     }

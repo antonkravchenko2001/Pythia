@@ -111,6 +111,7 @@
     .market-info {
         display: flex;
         flex-direction:column;
+        gap: 82px;
         justify-content: space-between;
         font-family: 'Montserrat';
         font-weight: 400;

@@ -3,7 +3,10 @@
       <img src = "https://raw.githubusercontent.com/blakewood84/react-metamask/main/public/images/metamask.svg" alt="My Happy SVG" width='12' height='12'/>
       Connect Wallet
     </button>
-    <button v-if="isLoggedIn" @click="logOut" class="login-button">
+    <button 
+      v-if="isLoggedIn"
+      @click="logOut"
+       class="login-button">
       <img src = "https://raw.githubusercontent.com/blakewood84/react-metamask/main/public/images/metamask.svg" alt="My Happy SVG" width='12' height='12'/>
       Disconnect
     </button>
@@ -38,7 +41,7 @@ export default {
 <style scoped>
 
  .login-button {
-    background-color: #3a46c4;
+    background: #3a46c4;
     box-shadow: 1px 1px 8px #121212;
     color: #ffffff;
     border: none;

@@ -116,6 +116,9 @@ Moralis.Cloud.define("getMarkets", async(request) => {
         );
     }
 
+    logger.info('match');
+    logger.info(m.wageDeadline);
+
     const results = await query.aggregate(pipeline, { useMasterKey: true });
     return results;
 });

@@ -5,12 +5,12 @@
             <button v-if='marketData.marketInfo.resolved' class="withdraw-button" ref='withdraw' name='withdraw'  @click="click('withdraw')"  :class="{'withdraw-button-active': buttons.withdraw}">Withdraw</button>
         </div>
         <div v-if='buttons.buy' class="buy-shares-inner">
-            <div>No</div>
-            <div>Yes</div>
             <div class="market-stats no-annot" :style="{background: `linear-gradient(to right, #571f1f91 ${getOdds[0]}%, transparent ${getOdds[0]}%, transparent)`}">
+                <span>No</span>
                 <span>{{getOdds[0]}}%</span>
             </div>
             <div class="market-stats yes-annot" :style="{background: `linear-gradient(to right, #1a5447c2 ${getOdds[1]}%, transparent ${getOdds[1]}%, transparent)`}">
+                <span>Yes</span>
                 <span>{{getOdds[1]}}%</span>
             </div>
             <div style="position:relative">
@@ -215,7 +215,6 @@ import Moralis from '../../main.js';
                 } catch(error){
                     return false;
                 }
-                this.withdrawed = true;
 
                 await this.saveWithdraw(
                     this.marketData.withDrawStats.reward,
@@ -287,7 +286,6 @@ import Moralis from '../../main.js';
                 } return 0
             },
             isWithdrawed(){
-                console.log(this.marketData.playerInfo.withdrawed)
                 return this.marketData.playerInfo.withdrawed
             }
         },
@@ -305,7 +303,6 @@ import Moralis from '../../main.js';
         display: grid;
         row-gap: 10px;
         column-gap: 3px;
-        grid-template-rows: repeat(5, max-content);
         grid-template-columns: repeat(2,1fr);
         background: #13304a;
         padding:10px;
@@ -360,7 +357,9 @@ import Moralis from '../../main.js';
         height: 35px;
         border-radius: 5px;
         display: flex;
-        justify-content: center;
+        padding-left:5px;
+        padding-right:5px;
+        justify-content: space-between;
         align-items: center;
         font-weight: 300;
         font-family: 'Montserrat';
@@ -368,7 +367,6 @@ import Moralis from '../../main.js';
     .buy-shares-input {
         max-width: 95px;
         height: 20px;
-        box-shadow: inset 1px 1px 5px #0c2340;
         background: #375d84;
         color:#ffffff;
         font-weight: 200;
