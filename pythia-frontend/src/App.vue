@@ -16,26 +16,15 @@
   }
 
   input:focus{
-    outline: 1.5px;
-    outline-color: #2968a7;
-    outline-style: solid;
+    outline-style: none;
   }
 
   input::placeholder{
     font-weight: 300;
     font-family: 'Montserrat';
-    color:#cecece;
+    color:#b2b2b2;
   }
 
-  textarea {
-    padding: 5px
-  }
-  
-  textarea:focus{
-    outline: 1.5px;
-    outline-color: #2968a7;
-    outline-style: solid;
-  }
 
   textarea::placeholder{
     font-weight: 200;

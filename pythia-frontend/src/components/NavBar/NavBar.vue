@@ -2,19 +2,19 @@
     <div class="nav-bar">
        <div class="protocol-name-container">
             <div style="padding:5px">
-                <img src="../../../public/pythia-providence-eye.svg" width='57' height='57' fill="none"/>
+                <img src="../../../public/pythia-icon.svg" width='57' height='57' fill="none"/>
             </div>
             <BetaVersionSymb/>
        </div>
        <div class="nav-bar-inner">
-            <div v-if="!isHome">
-                <NavButton path='/' text='Home' />
+            <div v-if="!(this.$route.name === 'home')">
+                <NavButton path='/' text='Home' type='internal' />
+            </div>
+            <div v-if="!(this.$route.name === 'leaderboard')">
+                 <NavButton path='/leaderboard' text='Leaderboard' type='internal'/>
             </div>
             <div>
-                 <NavButton path='/leaderboard' text='Leaderboard'/>
-            </div>
-            <div>
-                <NavButton path='/user-guide' text='User guide'/>
+                <NavButton :path="'https://pythia-1.gitbook.io/pythia/'" text='docs' type='external'/>
             </div>
             <div style="display:flex; justify-content:center; align-items:center">
                 <LoginUi/>
@@ -37,10 +37,6 @@ import BetaVersionSymb from './BetaVersionSymb.vue';
                 }
                 return false;
             },
-            isHome(){
-                let isHome = (this.$route.name === 'home');
-                return isHome;
-            }
         },
         components: {
             NavButton,

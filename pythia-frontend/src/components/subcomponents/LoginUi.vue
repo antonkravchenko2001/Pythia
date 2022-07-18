@@ -45,9 +45,12 @@ export default {
     box-shadow: 1px 1px 8px #121212;
     color: #ffffff;
     border: none;
-    border-radius: 3px;
+    border-radius: 15px;
     font-size: 12px;
-    padding: 8px;
+    padding-left: 12px;
+    padding-right: 12px;
+    padding-top: 8px;
+    padding-bottom: 8px;
     font-family: 'MontSerrat';
     font-weight: 450;
     z-index: 5;
