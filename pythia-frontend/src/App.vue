@@ -3,6 +3,18 @@
   <router-view/>
 </template>
 
+
+<script>
+    import { checkChain } from './utils';
+    export default {
+      async created(){
+          let chainCorrect = await checkChain();
+          this.$store.state.chainCorrect = chainCorrect;
+      }
+    }
+</script>
+
+
 <style>
   html, body {
     height: 100vh;

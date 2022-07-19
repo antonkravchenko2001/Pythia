@@ -5,9 +5,12 @@ import {serverUrl, appId} from './config.js'
 import router from './router'
 import { createStore } from 'vuex'
 
-Moralis.enableWeb3();
 
 Moralis.start({ serverUrl, appId });
+
+Moralis.onChainChanged(async function () {
+  window.location.reload();
+});
 
 export default Moralis;
 
@@ -17,6 +20,7 @@ const store = createStore({
     return {
       user: Moralis.User.current(),
       showForm: false,
+      chainCorrect: true
     }
   },
   mutations: {
@@ -26,8 +30,8 @@ const store = createStore({
     },
     async logOut(state) {
         await Moralis.User.logOut();
-        state.user = Moralis.User.current();
-    }
+        state.user = null;
+    },
 
   }
 })

@@ -7,7 +7,8 @@
             <span v-if='isLoggedIn' style="left: 170px; top: 37%;position: absolute;">
                 <PopUpWindow 
                     text='Create your own market so that other can check verify expertise by weging money on it' 
-                    background="#2e5e89"
+                    background="#121f2a"
+                    color="#afafaf"
                     width="150px"
                     height="70px"
                 />

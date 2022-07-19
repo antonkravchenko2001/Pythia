@@ -50,7 +50,8 @@
             </div>
             <PopUpWindow 
                 text='Deadline for waging money in this market' 
-                background="#2e5e89"
+                background="#121f2a"
+                color="#afafaf"
                 width="120px"
                 height="70px"
             />

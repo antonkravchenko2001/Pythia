@@ -1,4 +1,14 @@
 import Moralis from './main.js'
+import { chainId } from './config.js';
+
+//getting chain
+export const checkChain = async () => {
+    if(!Moralis.web3){
+        await Moralis.enableWeb3();
+    }
+    console.log(Moralis.web3.provider.chainId);
+    return Moralis.web3.provider.chainId === chainId;
+}
 
 //unix to Date
 export const unixToDate = (unixTimestamp) => {

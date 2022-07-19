@@ -5,7 +5,7 @@
         </h3>
         <div class="filters-container">
             <div style="display:flex; align-items: center;">
-                <div style='margin-left:10px;font-size: 14px'>Volume:</div>
+                <div style='margin-left:10px;font-size: 14px'>TVL:</div>
                 <DropDown 
                     defaultValue="All"
                     :objects="getOptions(volumeOptions)"

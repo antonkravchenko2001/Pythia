@@ -8,10 +8,14 @@
             </div>
         </div>
     </div>
+    <div v-if="!$store.state.chainCorrect">
+        <Alert background='#ff000080' color='white' message='Error:' text='Incorrect network, please switch to Kovan'/>
+    </div>
 </template>
 
 <script>
 import MarketStats from './MarketStats.vue'
+import { defineAsyncComponent } from 'vue'
 import MarketActions from './MarketActions.vue'
 import MarketState from './MarketState.vue'
 import {_getMarketInfo, _getPlayerInfo, _getReward, _getExpertScore} from '../../contract-functions/ContractFunctions.js'
@@ -20,7 +24,10 @@ export default {
     components: {
         MarketStats,
         MarketState,
-        MarketActions
+        MarketActions,
+        Alert: defineAsyncComponent(() =>
+            import('../subcomponents/AlertWindow.vue')
+        ),
     },
     data(){
         return {

@@ -521,6 +521,7 @@ export const ERC20ABI = [
 ];
 export const payTokenAddress = '0x04DF6e4121c27713ED22341E7c7Df330F56f289B';
 export const chain = 'kovan';
+export const chainId = "0x2a";
 
 export const minSharesCreate = 10;
 export const minMoneyCreate = 10;

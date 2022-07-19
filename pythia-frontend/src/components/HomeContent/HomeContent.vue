@@ -19,6 +19,9 @@
         <div v-if="$store.state.showForm" style="height: 88vh">
             <CreateMarketForm :assetNames="filters.assetNames.slice(1)"/>
         </div>
+        <div v-if="!$store.state.chainCorrect">
+            <Alert background='#ff000080' color='white' message='Error:' text='Incorrect network, please switch to Kovan'/>
+        </div>
     </div>
 </template>
 
@@ -33,6 +36,9 @@ export default {
         CreateMarketButton,
         CreateMarketForm: defineAsyncComponent(() =>
             import('./CreateMarketForm.vue')
+        ),
+        Alert: defineAsyncComponent(() =>
+            import('../subcomponents/AlertWindow.vue')
         ),
         MarketsDashboard
     },
