@@ -18,7 +18,7 @@
                 <DropDown 
                     defaultValue="All"
                     :objects="assetNames"
-                    height="80px"
+                    height="100px"
                     background="#235284"
                     ref="assetNames"
                     style='width: 100px; margin: 5px'
@@ -27,7 +27,7 @@
                 <DropDown 
                     defaultValue="All"
                     :objects="getOptions(wageDeadlineOptions)"
-                    height="80px"
+                    height="100px"
                     background="#235284"
                     ref="wageDeadlineOptions"
                     style='width: 100px; margin: 5px'

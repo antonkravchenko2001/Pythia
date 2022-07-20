@@ -47,12 +47,6 @@ Moralis.Cloud.define(
 Moralis.Cloud.define("getMarkets", async(request) => {
     const query = new Moralis.Query('Markets');
 
-    //filter date if needed
-    if(request.params.wageDeadline && (request.params.wageDeadline != 'All')){
-        const wageDeadline = new Date(request.params.wageDeadline.toISOString())
-        query.greaterThan('wageDeadline', wageDeadline);
-    }
-
     //create end filters
     let m = {};
     if(request.params.asset && (request.params.asset != 'All')){
@@ -62,9 +56,10 @@ Moralis.Cloud.define("getMarkets", async(request) => {
         m.tvl = {
             $gt: request.params.tvl
         };
-    }if(request.params.tvl && (request.params.tvl != 'All')){
+    }
+    if(request.params.wageDeadline && (request.params.wageDeadline != 'All')){
         m.wageDeadline = {
-            $gt: request.params.wageDeadline
+            $lt: request.params.wageDeadline.toString()
         };
     }
 
@@ -103,14 +98,10 @@ Moralis.Cloud.define("getMarkets", async(request) => {
                     $max: '$resolved'
                 },
                 'resolutionDate': {
-                    $max: {
-                        $toDate: '$resolutionDate'
-                    }
+                    $max: '$resolutionDate'
                 },
                 'wageDeadline': {
-                    $max: {
-                        $toDate: '$wageDeadline'
-                    }
+                    $max: '$wageDeadline'
                 },
             }
         },
