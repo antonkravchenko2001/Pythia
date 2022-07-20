@@ -45,7 +45,15 @@ Moralis.Cloud.define(
 
 //query Markets
 Moralis.Cloud.define("getMarkets", async(request) => {
-    const query = new Moralis.Query('Deposits');
+    const query = new Moralis.Query('Markets');
+
+    //filter date if needed
+    if(request.params.wageDeadline && (request.params.wageDeadline != 'All')){
+        const wageDeadline = new Date(request.params.wageDeadline.toISOString())
+        query.greaterThan('wageDeadline', wageDeadline);
+    }
+
+    //create end filters
     let m = {};
     if(request.params.asset && (request.params.asset != 'All')){
         m.asset = request.params.asset.toLowerCase();
@@ -54,17 +62,16 @@ Moralis.Cloud.define("getMarkets", async(request) => {
         m.tvl = {
             $gt: request.params.tvl
         };
-    }if(request.params.wageDeadline && (request.params.wageDeadline != 'All')){
+    }if(request.params.tvl && (request.params.tvl != 'All')){
         m.wageDeadline = {
-            $lt: request.params.wageDeadline
+            $gt: request.params.wageDeadline
         };
     }
 
-    // const filters = request.params;
     const pipeline = [
         {
             lookup: {
-              from: "Markets",
+              from: "Deposits",
               localField: "marketId",
               foreignField: "marketId",
               as: "deposits",
@@ -77,29 +84,33 @@ Moralis.Cloud.define("getMarkets", async(request) => {
         },
         {
             group: {
-                'objectId': '$marketId',
+                'objectId': '$deposits.marketId',
                 'marketId': {
-                    $max: '$marketId'
+                    $max: '$deposits.marketId'
                 },
                 'strikePrice': {
-                    $max: '$deposits.strikePrice'
+                    $max: '$strikePrice'
                 },
                 'tvl': {
                     $sum: {
-                        $add: ['$moneyYes', '$moneyNo']
+                        $add: ['$deposits.moneyYes', '$deposits.moneyNo']
                     }
                 },
                 'asset': {
-                    $max: '$deposits.asset'
+                    $max: '$asset'
                 },
                 'resolved': {
-                    $max: '$deposits.resolved'
+                    $max: '$resolved'
                 },
                 'resolutionDate': {
-                    $max: '$deposits.resolutionDate'
+                    $max: {
+                        $toDate: '$resolutionDate'
+                    }
                 },
                 'wageDeadline': {
-                    $max: '$deposits.wageDeadline'
+                    $max: {
+                        $toDate: '$wageDeadline'
+                    }
                 },
             }
         },
@@ -115,9 +126,6 @@ Moralis.Cloud.define("getMarkets", async(request) => {
             {match: m}
         );
     }
-
-    logger.info('match');
-    logger.info(m.wageDeadline);
 
     const results = await query.aggregate(pipeline, { useMasterKey: true });
     return results;

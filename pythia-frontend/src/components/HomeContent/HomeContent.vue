@@ -63,11 +63,11 @@ export default {
         },
         wageDeadlineOptions(){
             let today = new Date();
-            let nextDay = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 2);
+            let nextDay = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 2);
             nextDay.setUTCHours(12,0,0,0);
-            let thisWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 8);
+            let thisWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 8);
             thisWeek.setUTCHours(12,0,0,0);
-            let thisMonth = new Date(today.getFullYear(), today.getMonth() + 1, today.getDate() + 1);
+            let thisMonth = new Date(today.getFullYear(), today.getMonth() + 1, today.getDate() - 1);
             thisMonth.setUTCHours(12,0,0,0);
             return {
                 'All': 'All',
