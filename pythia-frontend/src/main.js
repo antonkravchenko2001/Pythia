@@ -25,11 +25,9 @@ const store = createStore({
   },
   mutations: {
     async logIn(state) {
-      await Moralis.authenticate();
       state.user = Moralis.User.current();
     },
     async logOut(state) {
-        await Moralis.User.logOut();
         state.user = null;
     },
 

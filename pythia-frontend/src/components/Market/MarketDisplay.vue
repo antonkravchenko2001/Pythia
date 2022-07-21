@@ -11,6 +11,10 @@
     <div v-if="!$store.state.chainCorrect">
         <Alert background='#ff000080' color='white' message='Error:' text='Incorrect network, please switch to Kovan'/>
     </div>
+    <div v-if="!marketExists">
+        <PageNotFound/>
+    </div>
+
 </template>
 
 <script>
@@ -28,10 +32,13 @@ export default {
         Alert: defineAsyncComponent(() =>
             import('../subcomponents/AlertWindow.vue')
         ),
+        PageNotFound: defineAsyncComponent(() => 
+            import('../subcomponents/PageNotFound.vue')
+        )
     },
     data(){
         return {
-            marketExists: false,
+            marketExists: true,
             marketData: {
                 marketInfo: null,
                 playerInfo: {

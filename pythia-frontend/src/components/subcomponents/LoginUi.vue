@@ -1,30 +1,45 @@
 <template>
-    <button v-if="!isLoggedIn" @click="logIn" class="login-button">
+    <button v-if="!isLoggedIn" @click="logIn" class="login-button" style="height:35px">
       <img src = "https://raw.githubusercontent.com/blakewood84/react-metamask/main/public/images/metamask.svg" alt="My Happy SVG" width='12' height='12'/>
       Connect Wallet
     </button>
-    <button 
-      v-if="isLoggedIn"
-      @click="logOut"
-       class="login-button">
-      <img src = "https://raw.githubusercontent.com/blakewood84/react-metamask/main/public/images/metamask.svg" alt="My Happy SVG" width='12' height='12'/>
-      Disconnect
-    </button>
+    <div v-if="isLoggedIn" class="login-container">
+       <span class="expert-score-display">
+        {{expertLevel}}
+       </span>
+       <button 
+        style="position: relative;right: 0px;top: 0px;height: 100%;"
+        @click="logOut"
+        class="login-button">
+        <img src = "https://raw.githubusercontent.com/blakewood84/react-metamask/main/public/images/metamask.svg" alt="My Happy SVG" width='12' height='12'/>
+        Disconnect
+      </button>
+    </div>
 </template>
 
 <script>
+import {determineExpertise} from '../../utils.js'
+import Moralis from '../../main.js'
 
 export default {
+  data(){
+    return {
+      expertLevel: 'Novice'
+    }
+  },
   methods: {
     async logIn(){
-      await this.$store.commit('logIn')
-      console.log('logged in')
+      await Moralis.authenticate();
+      await this.$store.commit('logIn');
+      let player = this.$store.state.user.get('ethAddress');
+      this.expertLevel = await determineExpertise(player);
     },
     async logOut(){
+      await Moralis.User.logOut();
       await this.$store.commit('logOut')
-      console.log('logged out');
 
-    }
+
+    },
   },
   computed: {
     isLoggedIn(){
@@ -40,6 +55,16 @@ export default {
 
 <style scoped>
 
+ .login-container {
+    display:flex;
+    justify-content: space-between;
+    position: relative;
+    background-color: #183362;
+    gap: 10px;
+    height: 35px;
+    border-radius: 15px;
+ }
+
  .login-button {
     background: #3a46c4;
     box-shadow: 1px 1px 8px #121212;
@@ -47,17 +72,21 @@ export default {
     border: none;
     border-radius: 15px;
     font-size: 12px;
-    padding-left: 12px;
-    padding-right: 12px;
-    padding-top: 8px;
-    padding-bottom: 8px;
-    font-family: 'MontSerrat';
-    font-weight: 450;
-    z-index: 5;
-    margin-left: 5px;
+    min-width:120px;
 }
 
  .login-button:hover{
    background-color: #3a46c4;
+ }
+
+ .expert-score-display{
+    color: #4cd9b2;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    font-size: 13px;
+    padding-left: 10px;
+    font-family: system-ui;
+    font-weight: 650;
  }
 </style>

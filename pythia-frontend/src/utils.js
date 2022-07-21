@@ -68,3 +68,22 @@ export const roundNum = (num) => {
         return Math.round(num * 1000) / 1000
     }
 }
+
+export const determineExpertise = async (player) => {
+    const results = await Moralis.Cloud.run(
+        'getTopPerformers',
+        player
+    )
+    const expertScore = results[0].expertScore;
+    if(expertScore < 100){
+        return 'Novice';
+    }else if(expertScore < 1000){
+        return 'Investor'
+    }else if(expertScore < 10000){
+        return 'Expert'
+    }else{
+        return 'Crypto grandmaster'
+    }
+
+
+}

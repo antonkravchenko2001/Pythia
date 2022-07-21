@@ -242,6 +242,14 @@ Moralis.Cloud.define(
                 }
             }
         ];
+        let m  = {};
+        if(request.params.player){
+            m.player = {
+                $eq: request.params.player
+            }
+            pipeline.push(m);
+        }
+
         const results = await query.aggregate(pipeline, { useMasterKey: true });
         return results;
     }
