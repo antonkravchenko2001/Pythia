@@ -163,7 +163,6 @@
         padding:10px;
         border-radius: 10px;
         background-color: #102438;
-        box-shadow: 1px 1px 8px #121212;
         color:#ffffff;
         font-size: 13px;
         font-family: 'Montserrat';

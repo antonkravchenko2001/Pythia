@@ -47,7 +47,6 @@
         font-size: 12px;
         position: relative;
         justify-content: space-between;
-        box-shadow: 1px 1px 5px #121212;
     }
     .input {
         padding: 5px;
@@ -63,7 +62,6 @@
         position:absolute;
         border-radius: 5px;
         top: 32px;
-        box-shadow: 1px 1px 5px #121212;
     }
 
     .dropdown-el{

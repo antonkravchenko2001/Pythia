@@ -46,7 +46,7 @@
         gap: 10%;
         max-width: max-content;
         min-width: 100%;
-        padding-top: 10%;
+        padding-top: 20%;
         padding-bottom: 5%;
         font-family: 'Montserrat';
         font-weight: 350;
