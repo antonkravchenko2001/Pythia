@@ -54,12 +54,12 @@ Moralis.Cloud.define("getMarkets", async(request) => {
     }
     if(request.params.tvl && (request.params.tvl != 'All')){
         m.tvl = {
-            $gt: request.params.tvl
+            $gte: request.params.tvl
         };
     }
     if(request.params.wageDeadline && (request.params.wageDeadline != 'All')){
         m.wageDeadline = {
-            $lt: request.params.wageDeadline.toString()
+            $lte: request.params.wageDeadline.toString()
         };
     }
 
