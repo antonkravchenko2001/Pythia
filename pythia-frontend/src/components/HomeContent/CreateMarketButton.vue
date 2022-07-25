@@ -1,16 +1,16 @@
 <template>
     <div class="create-market-div">
-        <span v-if='isLoggedIn' style="position:relative">
-            <button @click="click" class="create-market-button">
+        <span style="position:relative">
+            <button :disabled="!isLoggedIn" @click="click" class="create-market-button" :class="{'inactive-button': !isLoggedIn}">
                 CREATE MARKET
             </button>
             <span style="left: 170px; top: 37%;position: absolute;">
                 <PopUpWindow 
-                    text='Create your own market so that other can check verify expertise by weging money on it' 
+                    text='Connect wallet and create your own market so that others can check verify expertise by waging money on it' 
                     background="#121f2a"
                     color="#afafaf"
                     width="150px"
-                    height="70px"
+                    height="90px"
                 />
             </span>
         </span>
@@ -68,8 +68,13 @@ export default {
         padding: 20px;
         font-family: 'Montserrat';
     }
-    .create-market-button:hover{
+    .create-market-button:active{
         background-color: #125b4adc;
+    }
+
+    .inactive-button {
+        filter: brightness(40%);
+        pointer-events: none;
     }
 
     .fas {

@@ -69,6 +69,7 @@ export default {
             thisWeek.setUTCHours(12,0,0,0);
             let thisMonth = new Date(today.getFullYear(), today.getMonth() + 1, today.getDate() + 1);
             thisMonth.setUTCHours(12,0,0,0);
+            console.log(nextDay);
             return {
                 'All': 'All',
                 '24h': nextDay,
