@@ -17,7 +17,10 @@
 
 <style>
   html, body {
-    height: 100vh;
+    height: 100%;
+    width: 100%;
+    overflow-x: hidden;
+    padding: 0px;
     background: linear-gradient(90deg, rgb(9, 25, 37) 0%, #06121c 53%, #0b1d2c 100%);
     margin:0px;
     font-family: ui-sans-serif;

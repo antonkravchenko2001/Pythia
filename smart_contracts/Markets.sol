@@ -54,8 +54,6 @@ contract Markets is KeeperCompatibleInterface{
 
     //multiplier used in computations
     uint256 constant MULTIPLIER = 10 ** 18;
-    //alpha hyperparamter used in the price function for a market
-    uint256 constant ALPHA = 5;
     //the maximum amount of markets that can be resolved within one block
     uint256 constant MAX_MARKETS_UPDATE = 30;
     //maximum amount of markets that can be stored in the contract
@@ -540,8 +538,8 @@ contract Markets is KeeperCompatibleInterface{
             [1 - _outcome]
         );
 
-        //ln(1 + m1 / M1) * alpha * N2
-        //ln((M1 + m1) * ONE / M1) * alpha * N2 / ONE
+        //ln(1 + m1 / M1) * N2
+        //ln((M1 + m1) * ONE / M1) * N2 / ONE
         return (
             (
                 (
@@ -551,7 +549,6 @@ contract Markets is KeeperCompatibleInterface{
                 ).ln()
             ) *
             _sharesOppositeOutcome /
-            ALPHA /
             MathContract.one()
         );
     }
@@ -602,3 +599,4 @@ contract Markets is KeeperCompatibleInterface{
     }
 
 }
+

@@ -185,7 +185,7 @@ import Moralis from '../../main.js';
 
                     //reload the page
                     this
-                    .delay(1000)
+                    .delay(3000)
                     .then(
                         () => this.$router.go()
                     );

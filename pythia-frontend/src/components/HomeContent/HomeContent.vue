@@ -1,5 +1,5 @@
 <template>
-    <div style="display:flex; justify-content:center; height: 85vh;" :class="{'scroll-disable': $store.state.showForm}">
+    <div style="display:flex; justify-content:center; height: max-content;position:relative">
         <div class='home-content' :class="{'blur-class': condition}">
             <span>
                 <h1 class="platform-description" style="font-size:48px">
@@ -19,8 +19,8 @@
         <div v-if="$store.state.showForm" style="height: 88vh">
             <CreateMarketForm :assetNames="filters.assetNames.slice(1)"/>
         </div>
-        <div v-if="!$store.state.chainCorrect">
-            <Alert background='#ff000080' color='white' message='Error:' text='Incorrect network, please switch to Kovan'/>
+        <div v-if="!$store.state.chainCorrect" class="alert">
+            <Alert background='#ff000080' color='white' message='Error:' text='Incorrect network, please switch to Polygon'/>
         </div>
     </div>
 </template>
@@ -113,7 +113,8 @@ export default {
 <style scoped>
 
     .home-content{
-        width: 75%;
+        max-width: 97%;
+        min-width: 80%;
         display: grid;
         grid-template-rows: repeat(3, max-content);
         gap: 25px;
@@ -133,7 +134,11 @@ export default {
         text-shadow: 2px 2px #3f189a;
     }
 
-    .scroll-disable {
-        overflow: hidden;
+    .alert{
+        position: absolute;
+        width:max-content;
+        right:5px;
+        z-index:100;
+        top: 0px;
     }
 </style>

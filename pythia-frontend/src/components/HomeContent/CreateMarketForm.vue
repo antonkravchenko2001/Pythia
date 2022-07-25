@@ -181,9 +181,10 @@
             },
             async getAsset(){
                 const assetName = this.$refs.dropdown.input;
+                console.log(assetName);
                 const res = await Moralis.Cloud.run(
                     'getAssets', 
-                    {asset: assetName}
+                    {asset: assetName.toLowerCase()}
                 )
                 let asset = res[0];
                 return asset;
@@ -359,7 +360,7 @@
         font-family: 'Montserrat';
         font-size: 12px;
         position: absolute;
-        top: 55%;
+        top: 45vh;
         left: 50%;
         transform: translate(-50%, -50%);
     }

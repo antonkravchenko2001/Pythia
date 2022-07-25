@@ -21,9 +21,6 @@
         gap: 10px;
         padding: 10px;
         border-radius: 5px;
-        position: absolute;
-        right: 10px;
-        top: 10%;
     }
 
     .alert-text {

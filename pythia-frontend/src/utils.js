@@ -74,6 +74,9 @@ export const determineExpertise = async (player) => {
         'getTopPerformers',
         player
     )
+    if(!results[0]){
+        return 'Novice';
+    }
     const expertScore = results[0].expertScore;
     if(expertScore < 100){
         return 'Novice';

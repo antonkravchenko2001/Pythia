@@ -1,10 +1,10 @@
 <template>
     <div class="create-market-div">
-        <span style="position:relative">
-            <button  v-if='isLoggedIn' @click="click" class="create-market-button">
+        <span v-if='isLoggedIn' style="position:relative">
+            <button @click="click" class="create-market-button">
                 CREATE MARKET
             </button>
-            <span v-if='isLoggedIn' style="left: 170px; top: 37%;position: absolute;">
+            <span style="left: 170px; top: 37%;position: absolute;">
                 <PopUpWindow 
                     text='Create your own market so that other can check verify expertise by weging money on it' 
                     background="#121f2a"

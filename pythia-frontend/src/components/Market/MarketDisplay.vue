@@ -8,13 +8,12 @@
             </div>
         </div>
     </div>
-    <div v-if="!$store.state.chainCorrect">
-        <Alert background='#ff000080' color='white' message='Error:' text='Incorrect network, please switch to Kovan'/>
+    <div v-if="!$store.state.chainCorrect" class="alert">
+        <Alert background='#ff000080' color='white' message='Error:' text='Incorrect network, please switch to Polygon'/>
     </div>
     <div v-if="!marketExists">
         <PageNotFound/>
     </div>
-
 </template>
 
 <script>
@@ -160,5 +159,13 @@ export default {
     .state-and-buy-container {
         display: grid;
         grid-template-rows: 1fr 2fr;
+    }
+
+    .alert{
+        position: absolute;
+        width:max-content;
+        right:5px;
+        z-index:100;
+        top: 33px;
     }
 </style>

@@ -1,17 +1,24 @@
 <template>
-  <NavBar />
-  <HomeContent />
+  <div :class="{'scroll-disable': $store.state.showForm}">
+    <NavBar />
+    <HomeContent />
+    <FooterComp />
+  </div>
 </template>
 
 <script>
 import HomeContent from '../components/HomeContent/HomeContent.vue'
 import NavBar from '@/components/NavBar/NavBar.vue'
+import { defineAsyncComponent } from 'vue'
 import { checkChain } from '@/utils';
 
 export default {
   components: {
     HomeContent,
-    NavBar
+    NavBar,
+    FooterComp: defineAsyncComponent(() =>
+      import('../components/Footer/FooterComponent.vue')
+    ),
   },
   computed: {
     correctChain(){
@@ -29,3 +36,12 @@ export default {
   }
 }
 </script>
+
+
+<style>
+    .scroll-disable {
+        overflow: hidden;
+        height: 100vh;
+    }
+    
+</style>
