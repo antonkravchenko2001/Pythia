@@ -6,7 +6,7 @@
         </span>
         <ul class="no-bullets">
             <span class="list-title">Email</span>
-            <div style="user-select:text;cursor:default;padding:3px">antonkrvchnk57@gmail.com</div>
+            <div style="user-select:text;cursor:default;padding:3px">{{email}}</div>
         </ul>
         <ul class="no-bullets">
             <span class="list-title">Social media</span>
@@ -29,6 +29,7 @@
                 github: 'https://github.com/antonkravchenko2001/Pythia',
                 twitter: 'https://twitter.com/PythiaCompany',
                 linkedIn: 'https://www.linkedin.com/company/pythia-company/about/?viewAsMember=true',
+                email: 'support@pythia.company'
             }
         },
         methods: {
@@ -43,14 +44,14 @@
     .footer {
         display:flex;
         justify-content: center;
-        gap: 10%;
+        gap: 7%;
         max-width: max-content;
         min-width: 100%;
         padding-top: 20%;
         padding-bottom: 5%;
         font-family: 'Montserrat';
         font-weight: 350;
-        font-size: 12px;
+        font-size: 13px;
         color: #909090;
     }
 
@@ -62,6 +63,7 @@
 
     li {
         padding: 3px;
+        cursor: pointer;
     }
 
     li:hover {
@@ -69,7 +71,7 @@
     }
 
     .list-title {
-        font-size: 14px;
+        font-size: 15px;
         font-weight: 400;
         padding-left: 3px;
         padding-bottom: 5px;
