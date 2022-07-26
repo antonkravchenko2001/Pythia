@@ -14,7 +14,7 @@
                  <NavButton path='/leaderboard' text='Leaderboard' type='internal'/>
             </div>
             <div>
-                <NavButton :path="'https://pythia-1.gitbook.io/pythia/'" text='User docs' type='external'/>
+                <NavButton :path="'https://docs.pythia.company/'" text='User docs' type='external'/>
             </div>
             <div style="display:flex; justify-content:center; align-items:center">
                 <LoginUi/>
