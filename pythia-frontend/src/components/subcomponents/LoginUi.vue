@@ -67,12 +67,11 @@ export default {
 
  .login-button {
     background: #3a46c4;
-    box-shadow: 1px 1px 8px #121212;
     color: #ffffff;
     border: none;
     border-radius: 15px;
     font-size: 12px;
-    min-width:120px;
+    min-width:135px;
 }
 
  .login-button:hover{

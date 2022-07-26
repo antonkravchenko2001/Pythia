@@ -132,7 +132,6 @@ export default {
         font-family: Arial, Helvetica, sans-serif;
         font-weight:800;
         margin: 0px;
-        text-shadow: 2px 2px #3f189a;
     }
 
     .alert{

@@ -151,9 +151,8 @@ export default {
         gap: 50px;
         grid-template-columns: 5fr 3fr;
         background-color: #0a1e30;
-        border-radius: 5px;
+        border-radius: 15px;
         padding: 20px;
-        box-shadow: 1px 1px 8px #121212;
     }
 
     .state-and-buy-container {

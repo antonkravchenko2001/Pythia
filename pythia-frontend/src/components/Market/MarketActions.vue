@@ -62,6 +62,12 @@
             </div>
         </div>
     </div>
+    <div v-else style='max-width:230px'>
+        <h4 style="color:white;font-family:'Montserrat'">Connect wallet to make predictions and / or receive reward</h4>
+        <div style="display:flex;justify-content: center;align-items:center;min-height:100px">
+            <LoginUi/>
+        </div>
+    </div>
 </template>
 
 <script>
@@ -73,7 +79,11 @@ import {
 import { roundNum, ethToWei} from '../../utils';
 import { minMoney } from '../../config';
 import Moralis from '../../main.js';
+import LoginUi from '../subcomponents/LoginUi.vue';
     export default {
+        components: {
+            LoginUi
+        },
         props: ['marketData'],
         methods: {
             delay(time) {
@@ -383,7 +393,6 @@ import Moralis from '../../main.js';
     .submit-button {
         background: #0d48aa;
         border: none;
-        box-shadow: 1px 1px 8px #121212;
         border-radius: 15px;
         color:#ffffff;
         width: 100%;
@@ -462,7 +471,6 @@ import Moralis from '../../main.js';
         padding-top: 3px;
         padding-bottom: 3px;
         border-radius: 15px;
-        box-shadow: 1px 1px 8px #121212;
         width: 100%;
    }
 
