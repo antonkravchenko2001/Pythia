@@ -20,7 +20,7 @@
             <CreateMarketForm :assetNames="filters.assetNames.slice(1)"/>
         </div>
         <div v-if="!$store.state.chainCorrect" class="alert">
-            <Alert background='#ff000080' color='white' message='Error:' text='Incorrect network, please switch to Polygon'/>
+            <Alert background='#ff000080' color='white' message='Error:' text='Incorrect network, please switch to Kovan'/>
         </div>
     </div>
 </template>

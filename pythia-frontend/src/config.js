@@ -1,5 +1,5 @@
-export const serverUrl = 'https://jiissmcimlux.usemoralis.com:2053/server';
-export const appId = '3APgJrIFnjueQ1M3pmhJiSCxS31uI7OpDfCL1jag';
+export const serverUrl = 'https://uj5tozevki90.usemoralis.com:2053/server';
+export const appId = 'cKC95YPjyNN8qvLLqEEeGiYZwwc1qRZd8MqoBegb';
 export const marketsABI = [
 	{
 		"inputs": [
@@ -333,7 +333,7 @@ export const marketsABI = [
 		"type": "function"
 	}
 ];
-export const marketsAddress = '0xDfEc2EC7E96f54fD41B229122c30874e49c23a5F';
+export const marketsAddress = '0x2Cc6ceb084BBDb565fEf43eCA48C753b6b4E0D52';
 export const ERC20ABI = [
 	{
 		"anonymous": false,
@@ -519,11 +519,11 @@ export const ERC20ABI = [
 		"type": "function"
 	}
 ];
-export const payTokenAddress = '0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063';
-export const chain = 'polygon';
-export const chainId = "0x89";
+export const payTokenAddress = '0x04DF6e4121c27713ED22341E7c7Df330F56f289B';
+export const chain = 'kovan';
+export const chainId = "0x2a";
 
-export const minSharesCreate = 5;
-export const minMoneyCreate = 5;
+export const minSharesCreate = 10;
+export const minMoneyCreate = 10;
 
-export const minMoney = 2;
+export const minMoney = 5;
