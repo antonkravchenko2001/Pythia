@@ -25,6 +25,41 @@ Moralis.Cloud.define("saveMarket",  async(request) => {
     await market.save();
 });
 
+Moralis.Cloud.define(
+    'updateMarketStatus', async(request) => {
+
+        let options;
+        //filter markets
+        const query = new Moralis.Query('Markets');
+        const today = new Date();
+        today.setUTCHours(12,0,0,0);
+        query.equalTo('resolutionDate', today);
+        const markets = await query.find();
+        logger.info('markets that fit');
+        logger.info(markets[0]);
+
+        let _marketInfo;
+        let market;
+    
+        for(let _id in markets){
+            market = markets[_id];
+            options = {
+                chain: chain,
+                address: marketsAddress,
+                function_name: "getMarketInfo",
+                abi: marketsABI,
+                params: {_marketId: market.get('marketId')},
+            };
+            _marketInfo = await Moralis.Web3API.native.runContractFunction(
+                options
+            );
+            market.set('resolved', _marketInfo[5]);
+            await market.save();
+            logger.info('market updated');
+        }
+    }
+)
+
 
 Moralis.Cloud.define(
     'checkMarketExistence',
