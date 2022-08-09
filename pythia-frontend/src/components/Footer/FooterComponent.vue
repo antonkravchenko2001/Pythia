@@ -1,23 +1,32 @@
 <template>
-    <div class="footer">
-        <span style="display:flex;justify-content:center;align-items:center">
-            <img src="../../../public/pythia-icon.svg" width='120' height='100' fill="none"/>
-            <h1 class="title">Pythia</h1>
-        </span>
-        <ul class="no-bullets">
-            <span class="list-title">Email</span>
-            <div style="user-select:text;cursor:default;padding:3px">{{email}}</div>
-        </ul>
-        <ul class="no-bullets">
-            <span class="list-title">Social media</span>
-            <li @click="open('telegram')">Telegram</li>
-            <li @click="open('twitter')">Twitter</li>
-            <li @click="open('linkedIn')">LinkedIn</li>
-        </ul>
-        <ul class="no-bullets">
-            <span class="list-title">Other</span>
-            <li @click="open('github')">GitHub</li>
-        </ul>
+    <div style="width: 100%;display: flex;justify-content: center;">
+        <div class="footer">
+            <span style="display:flex;justify-content:center;align-items:center;gap:10px;">
+                <img src="../../../public/pythia-icon.svg" width='50' height='50' fill="none"/>
+                <h2 class="title">Pythia</h2>
+            </span>
+            <ul class="no-bullets">
+                <span class="list-title">Contact us</span>
+                <div style="user-select:text;cursor:default;padding:3px;color:white;margin-top:10px;">{{email}}</div>
+            </ul>
+            <div class="social-media-container">
+                <span class="list-title">Social media</span>
+                <span class="social-media" style="margin-top:10px;">
+                    <span style='cursor:pointer'>
+                        <img src="../../../public/logos/telegram.svg" width='20' height='20' fill="none" @click="open('telegram')"/>
+                    </span>
+                    <span style='cursor:pointer'>
+                        <img src="../../../public/logos/twitter.svg" width='20' height='20' fill="none" @click="open('twitter')"/>
+                    </span>
+                    <span style='cursor:pointer'>
+                        <img src="../../../public/logos/linkedin.svg" width='20' height='20' fill="none" @click="open('linkedin')"/>
+                    </span>
+                    <span style='cursor:pointer'>
+                        <img src="../../../public/logos/github.svg" width='20' height='20' fill="none" @click="open('github')"/>
+                    </span>
+                </span>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -28,7 +37,7 @@
                 telegram: 'https://t.me/+861c-md9WcVkZmQy',
                 github: 'https://github.com/antonkravchenko2001/Pythia',
                 twitter: 'https://twitter.com/PythiaCompany',
-                linkedIn: 'https://www.linkedin.com/company/pythia-company/about/?viewAsMember=true',
+                linkedin: 'https://www.linkedin.com/company/pythia-company/about/?viewAsMember=true',
                 email: 'support@pythia.company'
             }
         },
@@ -47,7 +56,7 @@
         gap: 10%;
         max-width: max-content;
         min-width: 100%;
-        padding-top: 20%;
+        margin-top: 10%;
         padding-bottom: 5%;
         font-family: 'Montserrat';
         font-weight: 350;
@@ -70,15 +79,28 @@
         text-decoration: underline;
     }
 
+    .social-media-container {
+        display:flex;
+        flex-direction: column;
+    }
+
+    .social-media {
+        padding: 3px;
+        display: grid;
+        gap: 20px;
+        grid-template-columns: repeat(4, 1fr);
+    }
+
     .list-title {
         font-size: 15px;
         font-weight: 400;
         padding-left: 3px;
         padding-bottom: 5px;
-        color:#ffffff;
+        color:#4F6F98;
     }
 
     .title {
-        color:#574eb8;
+        color:#ffffff;
+        font-size: 24px;
     }
 </style>

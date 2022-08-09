@@ -1,36 +1,14 @@
 <template>
-    <div class="create-market-div">
-        <span style="position:relative">
+        <span class="create-market-container">
             <button :disabled="!isLoggedIn" @click="click" class="create-market-button" :class="{'inactive-button': !isLoggedIn}">
-                CREATE MARKET
+                <i class="fa-solid fa-plus"></i>
+                Create new market
             </button>
-            <span style="left: 170px; top: 37%;position: absolute;">
-                <PopUpWindow 
-                    text='Connect wallet and create your own market so that others can check verify expertise by waging money on it' 
-                    background="#121f2a"
-                    color="#afafaf"
-                    width="150px"
-                    height="90px"
-                />
-            </span>
         </span>
-    </div>
 </template>
 
 <script>
-import { defineAsyncComponent } from 'vue'
 export default {
-    components: {
-        PopUpWindow: defineAsyncComponent(() =>
-            import('../subcomponents/PopUpWindow.vue')
-        )
-    },
-    props: ['assetNames'],
-    data(){
-        return {
-            assets: this.assetNames
-        }
-    },
     methods: {
         click(){
             this.$store.state.showForm = true;
@@ -48,28 +26,29 @@ export default {
 </script>
 
 <style scoped>
-    .create-market-div {
-        display: flex;
-        max-height: 50vh;
-        min-height: 20vh;
-        width: 100%;
-        justify-content: center;
-        align-items: center;
+
+    .create-market-container {
+        display:flex;
         position: relative;
-        z-index: 5;
+        align-items: center;
+        justify-content: space-between;
+        gap: 5px;
     }
 
     .create-market-button{
-        border-radius: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: space-evenly;
+        border-radius: 8px;
+        height: 35px;
+        width: 160px;
         border: none;
-        background-color: #1d8e74dc;
+        position:relative;
+        background-color: #177FFF;
+        font-weight: 400;
         color: #ffffff;
-        font-size: 14px;
-        padding: 20px;
+        font-size: 12px;
         font-family: 'Montserrat';
-    }
-    .create-market-button:active{
-        background-color: #125b4adc;
     }
 
     .inactive-button {

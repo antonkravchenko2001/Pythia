@@ -27,6 +27,35 @@ Moralis.Cloud.define("saveMarket",  async(request) => {
 
 
 Moralis.Cloud.define(
+    'updateMarketStatus', async(request) => {
+
+        let options;
+        //filter markets
+        const query = new Moralis.Query('Markets');
+        const today = new Date();
+        today.setUTCHours(12,0,0,0);
+        query.equalTo('resolutionDate', today);
+        const markets = await query.find();
+
+        let marketInfo;
+        let market;
+    
+        for(let _id in markets){
+            market = markets[_id];
+            marketInfo = await _getMarketInfo(
+                _id
+            );
+            market.set('resolved', marketInfo.resolved);
+            market.set('winningOutcome', marketInfo.winningOutcome)
+            market.set('resolutionPrice', marketInfo.resolutionPrice)
+            await market.save();
+            logger.info('market updated');
+        }
+    }
+)
+
+
+Moralis.Cloud.define(
     'checkMarketExistence',
     async(request) => {
         //intialize query and player objects
@@ -46,35 +75,27 @@ Moralis.Cloud.define(
 //query Markets
 Moralis.Cloud.define("getMarkets", async(request) => {
     const query = new Moralis.Query('Markets');
-
-    //create end filters
-    let m = {};
-    if(request.params.asset && (request.params.asset != 'All')){
-        m.asset = request.params.asset.toLowerCase();
+    if(request.params.creator){
+        logger.info('creator');
+        logger.info(request.params.creator);
+        query.equalTo("creator", request.params.creator);
     }
-    if(request.params.tvl && (request.params.tvl != 'All')){
-        m.tvl = {
-            $gte: request.params.tvl
-        };
-    }
-    if(request.params.wageDeadline && (request.params.wageDeadline != 'All')){
-        m.wageDeadline = {
-            $lte: request.params.wageDeadline.toString()
-        };
+    if(request.params.description || (!request.params.description === '')){
+        query.matches('description', request.params.description);
     }
 
     const pipeline = [
         {
             lookup: {
-              from: "Deposits",
-              localField: "marketId",
-              foreignField: "marketId",
-              as: "deposits",
+            from: "Deposits",
+            localField: "marketId",
+            foreignField: "marketId",
+            as: "deposits",
             },
         },
         {
             unwind: {
-              path: "$deposits"
+            path: "$deposits"
             }
         },
         {
@@ -107,16 +128,13 @@ Moralis.Cloud.define("getMarkets", async(request) => {
         },
         {
             sort: {
-              tvl: -1
+                resolved: 1,
+                tvl: -1,
+                resolutionDate: -1,
+                resolutionDate: -1
             }
         }
     ];
-
-    if(m !== {}){
-        pipeline.push(
-            {match: m}
-        );
-    }
 
     const results = await query.aggregate(pipeline, { useMasterKey: true });
     return results;

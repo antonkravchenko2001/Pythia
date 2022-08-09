@@ -1,93 +1,46 @@
 <template>
     <div style="display:flex; justify-content:center; height: max-content;position:relative">
         <div class='home-content' :class="{'blur-class': condition}">
-            <span>
-                <h1 class="platform-description" style="font-size:48px">
-                    Pythia
+            <span style="display:flex;flex-direction:column;gap:10px">
+                <h1 class="title">
+                    Available markets
                 </h1>
-                <h3 class="platform-description" style='font-size:24px'>
-                    Harness Crypto technology to automate expert indentification
+                <h3 class="description" style="width:50%">
+                    Predict events by waging money on available markets below or create your own to validate
+                    other's expertise
                 </h3>
             </span>
-            <CreateMarketButton :assetNames='filters.assetNames'/>
-            <MarketsDashboard
-                    :assetNames='filters.assetNames'
-                    :volumeOptions='filters.volumeOptions'
-                    :wageDeadlineOptions="filters.wageDeadlineOptions"
-            />
-        </div>
-        <div v-if="$store.state.showForm" style="height: 88vh">
-            <CreateMarketForm :assetNames="filters.assetNames.slice(1)"/>
-        </div>
-        <div v-if="!$store.state.chainCorrect" class="alert">
-            <Alert background='#ff000080' color='white' message='Error:' text='Incorrect network, please switch to Polygon'/>
+            <MarketsDashboard :assetNames='assetNames'/>
         </div>
     </div>
+    <CreateMarketForm v-if="$store.state.showForm" :assetNames="assetNames"/>
 </template>
 
 <script>
 import { defineAsyncComponent } from 'vue'
-import CreateMarketButton from './CreateMarketButton.vue'
 import MarketsDashboard from './MarketsDashboard.vue'
 import Moralis from '../../main.js'
 
 export default {
     components :{
-        CreateMarketButton,
         CreateMarketForm: defineAsyncComponent(() =>
             import('./CreateMarketForm.vue')
-        ),
-        Alert: defineAsyncComponent(() =>
-            import('../subcomponents/AlertWindow.vue')
         ),
         MarketsDashboard
     },
     data(){
         return {
-            filters: {
-                assetNames: [],
-                volumeOptions: {},
-                wageDeadlineOptions: {},
-            }
+            assetNames: []
         }
     },
     methods: {
         async loadAssets(){
             const assets = await Moralis.Cloud.run('getAssets');
             const assetNames = [];
-            assetNames.push('All');
             for(let asset of assets){
                 assetNames.push(asset.get('asset').toUpperCase())
             }
             return assetNames;
-        },
-        wageDeadlineOptions(){
-            let today = new Date();
-            let nextDay = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 2);
-            nextDay.setUTCHours(12,0,0,0);
-            let thisWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 8);
-            thisWeek.setUTCHours(12,0,0,0);
-            let thisMonth = new Date(today.getFullYear(), today.getMonth() + 1, today.getDate() + 1);
-            thisMonth.setUTCHours(12,0,0,0);
-            console.log(nextDay);
-            return {
-                'All': 'All',
-                '24h': nextDay,
-                'this week': thisWeek,
-                'this month': thisMonth,
-            };
-        },
-        async getFilters(){
-            this.filters.assetNames = await this.loadAssets();
-            this.filters.volumeOptions =  {
-                'All': 'All',
-                '> 100': 100,
-                '> 1000': 1000,
-                '> 10000': 100000
-            }
-
-            this.filters.wageDeadlineOptions = this.wageDeadlineOptions();
-            console.log('wagedeadline options', this.filters.wageDeadlineOptions);
         }
     },
     watch: {
@@ -106,7 +59,7 @@ export default {
         }
     },
     async created(){
-        await this.getFilters();
+        this.assetNames = await this.loadAssets();
     }
 }
 </script>
@@ -126,11 +79,21 @@ export default {
         filter: blur(8px) brightness(40%);
     }
 
-    .platform-description{
+    .title{
         text-align:left;
         color: #ffffff;
-        font-family: Arial, Helvetica, sans-serif;
-        font-weight:800;
+        font-family: 'Montserrat';
+        font-size: 28px;
+        font-weight:450;
+        margin: 0px;
+    }
+
+    .description{
+        text-align:left;
+        color: #959595;
+        font-family: 'Montserrat';
+        font-weight:200;
+        font-size: 15px;
         margin: 0px;
     }
 

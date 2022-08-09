@@ -8,7 +8,8 @@
             </div>
             exceed
             <div style="position:relative">
-                <input 
+                <input
+                    style="width:80%"
                     type="number"
                     class='description-input'
                     placeholder='2000'
@@ -350,7 +351,7 @@
     .create-market-window {
         display: grid;
         padding: 20px;
-        width: 450px;
+        width:450px;
         gap: 25px;
         background: linear-gradient(90deg, rgb(25 31 74) 0%, rgba(18,47,74,1) 75%, rgba(18,47,74,1) 100%);
         grid-template-rows: repeat(4, max-content);
@@ -358,9 +359,9 @@
         box-shadow: 1px 1px 8px #121212;
         color: #ffffff;
         font-family: 'Montserrat';
-        font-size: 12px;
+        font-size: 14px;
         position: absolute;
-        top: 45vh;
+        top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
     }
@@ -392,12 +393,10 @@
         font-family: 'Montserrat';
         border: none;
         border-radius: 5px;
-        box-shadow: 1px 1px 5px #121212;
     }
 
     .description-component .fa-solid {
         right: 5px;
-        font-size: 13px;
     }
 
     .wage-deadline-container {
@@ -425,12 +424,10 @@
         max-width: 75px;
         font-family: 'Montserrat';
         font-weight: 400;
-        font-size: 13px;
     }
     .market-info-text {
         display: flex;
         align-items: center;
-        font-size: 12px;
         font-family: 'Montserrat';
         font-weight: 400;
         margin-right: 10px;
@@ -453,7 +450,6 @@
        border-radius: 15px;
        height: 30px;
        border: none;
-       box-shadow: 0.1px 0.1px 5px #010b15;
        width: 100%;
    }
 
@@ -496,9 +492,9 @@
 
    .market-options{
         display: flex;
-        gap: 67px;
+        gap: 75px;
         position: relative;
-        left: 135px;
+        left: 156px;
         margin-bottom: 10px;
         font-size: 14px;
    }

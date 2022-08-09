@@ -52,9 +52,11 @@
 
     .market-resolved {
         background-color: #17783b;
+        display: flex;
+        justify-content: center;
         border-radius: 15px;
         padding: 5px;
-        width: 70px;
+        width: 90px;
         display: flex;
         justify-content: center;
         color: #ffffff;
@@ -67,8 +69,11 @@
     }
     .market-unresolved {
         background-color:#7e2525;
+        display: flex;
+        justify-content: center;
         border: none;
         border-radius: 15px;
+        width: 90px;
         padding: 7px;
         color:#ffffff;
         max-height: 15px;

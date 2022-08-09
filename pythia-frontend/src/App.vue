@@ -21,13 +21,16 @@
     width: 100%;
     overflow-x: hidden;
     padding: 0px;
-    background: linear-gradient(90deg, rgb(9, 25, 37) 0%, #06121c 53%, #0b1d2c 100%);
+    background: linear-gradient(90deg, rgb(11 30 44) 0%, #081723 53%, #0d2234 100%);
     margin:0px;
     font-family: ui-sans-serif;
   }
 
   input {
-    padding: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
   }
 
   input:focus{

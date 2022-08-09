@@ -1,6 +1,6 @@
 <template>
     <button v-if="!isLoggedIn" @click="logIn" class="login-button" style="height:35px">
-      <img src = "https://raw.githubusercontent.com/blakewood84/react-metamask/main/public/images/metamask.svg" alt="My Happy SVG" width='12' height='12'/>
+      <i class="fa-solid fa-wallet"></i>
       Connect Wallet
     </button>
     <div v-if="isLoggedIn" class="login-container">
@@ -11,7 +11,7 @@
         style="position: relative;right: 0px;top: 0px;height: 100%;"
         @click="logOut"
         class="login-button">
-        <img src = "https://raw.githubusercontent.com/blakewood84/react-metamask/main/public/images/metamask.svg" alt="My Happy SVG" width='12' height='12'/>
+        <i class="fa-solid fa-wallet"></i>
         Disconnect
       </button>
     </div>
@@ -59,15 +59,15 @@ export default {
     display:flex;
     justify-content: space-between;
     position: relative;
-    background-color: #183362;
+    background-color: #C0DDFF;
     gap: 10px;
     height: 35px;
     border-radius: 15px;
  }
 
  .login-button {
-    background: #3a46c4;
-    color: #ffffff;
+    background: #ffffff;
+    color: #000000;
     border: none;
     border-radius: 15px;
     font-size: 12px;
@@ -75,11 +75,11 @@ export default {
 }
 
  .login-button:hover{
-   background-color: #3a46c4;
+   background-color: #a0a0a0;
  }
 
  .expert-score-display{
-    color: #4cd9b2;
+    color: #3c3ab1;
     height: 100%;
     display: flex;
     align-items: center;

@@ -1,5 +1,5 @@
 <template>
-    <span :style="{'color': color, 'background': background}" class="alert">
+    <span :style="{'color': color, 'background': background}" class="alert-container">
         <i class="fa-solid fa-triangle-exclamation"></i>
         <span class="alert-text">{{message}}</span>
         <span class="alert-text">
@@ -15,19 +15,16 @@
 </script>
 
 <style scoped>
-    .alert {
+    .alert-container {
         display: flex;
         align-items: center;
         gap: 10px;
-        padding: 10px;
-        border-radius: 5px;
     }
 
     .alert-text {
         display: flex;
         align-items: center;
-        font-family: 'Montserrat';
+        font-family: monospace;
         font-size: 14px;
-        color: white;
     }
 </style>

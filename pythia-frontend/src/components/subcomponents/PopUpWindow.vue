@@ -1,7 +1,7 @@
 <template>
     <div>
-        <i @click='show=true' v-if='!show' class="fa-solid fa-circle-info" style="top:25%; position:relative"></i>
-        <span :style="{'background': background, 'color': color, 'width': width, 'height': height, 'position':'absolute'}" v-if='show' class="popup">
+        <i @click='show=true' class="fa-solid fa-circle-info"></i>
+        <span :style="{'background': background, 'color': color, 'width': width, 'height': height}" v-if='show' class="popup">
             {{text}}
             <i @click='show=false' class="fa-solid fa-circle-xmark"></i>
         </span>
@@ -33,9 +33,13 @@
         font-weight: 300;
         font-family: 'Montserrat';
         z-index: 10;
+        position: absolute;
+        top:0px;
+        right: 0px;
     }
 
     .fa-circle-info {
+        font-size: 14px;
         color: white;
         cursor: pointer;
     }
