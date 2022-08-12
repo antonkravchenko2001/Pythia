@@ -1,8 +1,8 @@
 <template>
-    <div v-if='$store.state.user' class="buy-shares-outer">
+    <div  class="buy-shares-outer">
         <div class="buy-withdraw-buttons">
-            <button class="buy-button" ref='buy' name='buy'  @click="click('buy')" :class="{'buy-button-active': buttons.buy}">Wage Money</button>
-            <button v-if='marketData.marketInfo.resolved' class="withdraw-button" ref='withdraw' name='withdraw'  @click="click('withdraw')"  :class="{'withdraw-button-active': buttons.withdraw}">Withdraw</button>
+            <button class="buy-button" ref='buy' name='buy'  @click="click('buy')" :class="{'buy-button-active': buttons.buy}">Predict</button>
+            <button v-if='marketData.marketInfo.resolved && $store.state.user' class="withdraw-button" ref='withdraw' name='withdraw'  @click="click('withdraw')"  :class="{'withdraw-button-active': buttons.withdraw}">Receive reward</button>
         </div>
         <div v-if='buttons.buy' class="buy-shares-inner">
             <div class="market-stats no-annot" :style="{background: `linear-gradient(to right, #571f1f91 ${getOdds[0]}%, transparent ${getOdds[0]}%, transparent)`}">
@@ -17,7 +17,7 @@
                 <input
                     type='number'
                     class='buy-shares-input'
-                    placeholder='0'
+                    placeholder='input money'
                     style="border-top-left-radius: 5px; border-bottom-left-radius:5px"
                     :class="{'incorrect-field': !formStatus.moneyToWage.correct}"
                     v-model='buyInfo.moneyToWage[0]'
@@ -32,7 +32,7 @@
                     type='number'
                     class='buy-shares-input'
                     style="border-top-right-radius: 5px; border-bottom-right-radius:5px"
-                    placeholder='0'
+                    placeholder='input money'
                     :class="{'incorrect-field': !formStatus.moneyToWage.correct}"
                     v-model='buyInfo.moneyToWage[1]'
                     @keyup="calcShares(1)"
@@ -46,11 +46,23 @@
                 </div>
             </div>
             <div class="grid-spec submit-button-div">
-                <button class="submit-button" @click="wageMoney" :class="{unclickable: marketData.marketInfo.resolved}">Buy</button>
+                <button 
+                    class="submit-button"
+                    @click="wageMoney" 
+                    :class="{
+                        unclickable: (
+                            marketData.marketInfo.resolved ||
+                            !$store.state.user ||
+                            !$store.state.chainCorrect
+                        )
+                    }"
+                >
+                    Buy
+                </button>
             </div>
         </div>
 
-        <div  v-if='buttons.withdraw' class="withdraw-money-inner">
+        <div  v-if='buttons.withdraw && $store.state.user' class="withdraw-money-inner">
             <div class="withdraw-money-stats">
                 <div>% of winning shares</div><div class="withdraw-money-stat-values">{{round(winMoneyPercent)}}%</div>
                 <div>% of winning money</div><div class="withdraw-money-stat-values">{{round(winSharesPercent)}}%</div>
@@ -58,14 +70,8 @@
                 <div>Expert score</div><div class="withdraw-money-stat-values">{{round(marketData.withDrawStats.expertScore)}}</div>
             </div>
             <div class="withdraw-button-div">
-                <button class="withdraw-button-submit" @click="withDrawWinnings()" :class="{unclickable: isWithdrawed || withdrawed}">Withdraw</button>
+                <button class="withdraw-button-submit" @click="withDrawWinnings()" :class="{unclickable: isWithdrawed || withdrawed}">Collect reward</button>
             </div>
-        </div>
-    </div>
-    <div v-else style='max-width:230px'>
-        <h4 style="color:white;font-family:'Montserrat'">Connect wallet to make predictions and / or receive reward</h4>
-        <div style="display:flex;justify-content: center;align-items:center;min-height:100px">
-            <LoginUi/>
         </div>
     </div>
 </template>
@@ -79,11 +85,7 @@ import {
 import { roundNum, ethToWei} from '../../utils';
 import { minMoney } from '../../config';
 import Moralis from '../../main.js';
-import LoginUi from '../subcomponents/LoginUi.vue';
     export default {
-        components: {
-            LoginUi
-        },
         props: ['marketData'],
         methods: {
             delay(time) {
@@ -314,7 +316,7 @@ import LoginUi from '../subcomponents/LoginUi.vue';
         row-gap: 10px;
         column-gap: 3px;
         grid-template-columns: repeat(2,1fr);
-        background: #13304a;
+        background: #102438;
         padding:10px;
         border-radius: 5px;
     }
@@ -437,7 +439,7 @@ import LoginUi from '../subcomponents/LoginUi.vue';
         width: 210px;
         flex-direction: column;
         justify-content: space-between;
-        background-color: #13304a;
+        background-color: #102438;
         padding:10px;
         border-radius: 5px;
    }
@@ -483,7 +485,7 @@ import LoginUi from '../subcomponents/LoginUi.vue';
     .unclickable {
         pointer-events: none;
         cursor: not-allowed;
-        opacity: 0.65;
+        opacity: 0.4;
         filter: alpha(opacity=65);
         -webkit-box-shadow: none;
         box-shadow: none;

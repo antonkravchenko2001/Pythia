@@ -1,52 +1,52 @@
 <template>
-    <div>
-        <h3 class="title">
-            Available Markets
-        </h3>
-        <div class="filters-container">
-            <div style="display:flex; align-items: center;">
-                <div style='margin-left:10px;font-size: 14px'>TVL:</div>
-                <DropDown 
-                    defaultValue="All"
-                    :objects="getOptions(volumeOptions)"
-                    height="80px"
-                    background="#235284"
-                    ref="volumeOptions"
-                    style='width: 70px; margin: 5px'
-                />
-                <div style='margin-left:10px;font-size: 14px'>Asset:</div>
-                <DropDown 
-                    defaultValue="All"
-                    :objects="assetNames"
-                    height="100px"
-                    background="#235284"
-                    ref="assetNames"
-                    style='width: 100px; margin: 5px'
-                />
-                <div style="margin-left:10px;font-size: 14px">Wage Deadline:</div>
-                <DropDown 
-                    defaultValue="All"
-                    :objects="getOptions(wageDeadlineOptions)"
-                    height="100px"
-                    background="#235284"
-                    ref="wageDeadlineOptions"
-                    style='width: 100px; margin: 5px'
+    <div class="dashboard-container">
+        <div style="display:flex;flex-direction:column;gap:10px">
+            <div v-if="!$store.state.chainCorrect" style="font-family:monospace">
+                <AlertWindow color='red' :text='incorrectChainMessage'/>
+            </div>
+            <div v-if="!$store.state.user" style="font-family:monospace">
+                <AlertWindow 
+                    color='yellow'
+                    text='Wallet not connected: connect wallet to make predictions and create new markets'
                 />
             </div>
-            <button class='apply-button' @click="findMarkets()">Apply filters</button>
         </div>
-        <div class="markets-display">
-            <div class="market-info unselectable" v-for="market in markets" :key="market" @click="$router.push(`/markets/${market['marketId']}`)">
-                <div class="description">{{getDescription(market)}}</div>
-                <div style="font-size:12; color:#cecece">
-                    Wage Deadline:
-                    {{getWageDeadline(market)}}
+        <div class="top-dashboard-group">
+            <div class="filters-container">
+                <div class="search-bar-container">
+                    <input class="search-bar"
+                        placeholder="type keywords to find markets"
+                        type='text'
+                        v-model='searchInput'
+                        @keyup="findMarkets"
+                    />
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
                 </div>
-                <div class="item-container">
-                    <span style="display:flex; align-items: center;font-weight:400">TVL: {{Math.round(market['tvl'] * 100) / 100}} Dai</span>
+                <span class='checkbox'>
+                    markets created by me
+                    <input type="checkbox" v-model='checkBox' @change='findMarkets'/>
+                </span>
+            </div>
+            <CreateMarketButton/>
+        </div>       
+        <div class="markets-display">
+            <div class="market-info unselectable" v-for="market in markets" :key="market">
+                <div style="display:flex;justify-content:space-between">
+                    <h3 class="asset-pair">{{market['asset'].toUpperCase()}}</h3>
                     <div v-if="market['resolved']" class="resolved">Resolved</div>
                     <div v-if="!market['resolved']" class='unresolved'>Unresolved</div>
                 </div>
+                <div style="font-size:12; color:#a3b7ce">
+                    Will exceed 
+                    <span style="font-size:15;color:white">{{market['strikePrice']}}</span>
+                     by 
+                    <span style="font-size:15;color:white">{{dateToString(market['resolutionDate'])}}</span>
+                </div>
+                <div style="display:flex;justify-content:space-between">
+                    <button class='predict-button' @click="$router.push(`/markets/${market['marketId']}`)">Make prediction</button>
+                    <span style="display:flex; align-items: center;font-weight:400">TVL: {{Math.round(market['tvl'] * 100) / 100}} Dai</span>
+                </div>
+
             </div>
         </div>
     </div>
@@ -54,30 +54,36 @@
 
 <script>
     import Moralis from '../../main.js'
-    import DropDown from '../subcomponents/DropDown.vue'
+    import CreateMarketButton from './CreateMarketButton.vue'
     import { dateToStr } from '@/utils.js'
-    export default {
+    import AlertWindow from '../subcomponents/AlertWindow.vue'
+    import {incorrectChainMessage} from '../../config.js'
+    export default { 
         components: {
-            DropDown
-        },
-        props: ['assetNames', 'volumeOptions', 'wageDeadlineOptions'],
+        CreateMarketButton,
+        AlertWindow
+    },
+        props: ['assetNames'],
         data(){
             return {
                 searchInput: '',
-                markets: {}
+                checkBox: false,
+                markets: {},
+                incorrectChainMessage
             }
         },
         methods: {
             async findMarkets(){
-                let asset = this.$refs.assetNames.input;
-                const tvl = this.volumeOptions[this.$refs.volumeOptions.input];
-                const wageDeadline = this.wageDeadlineOptions[this.$refs.wageDeadlineOptions.input];
+                let creator = null;
+                const description = this.searchInput;
+                if(this.checkBox){
+                    creator = this.$store.state.user.get('ethAddress');
+                }
                 this.markets = await Moralis.Cloud.run(
                     'getMarkets', 
                     {
-                        asset,
-                        tvl,
-                        wageDeadline
+                        creator,
+                        description
                     }
                 )
                 console.log(this.markets);
@@ -88,16 +94,8 @@
             getWageDeadline(market){
                 return dateToStr(market['wageDeadline']);
             },
-            getDescription(market){
-                return (
-                    'Will' + ' ' +
-                    market['asset'].toUpperCase() + ' ' +
-                    'exceed' + ' ' +
-                    market['strikePrice'] + ' ' +
-                    'by' + ' ' + 
-                    dateToStr(market['resolutionDate']) + ' ' + 
-                    '?'
-                );
+            dateToString(date){
+                return dateToStr(date);
             }
         },
         async created(){
@@ -111,35 +109,21 @@
 
 <style scoped>
 
-    .filters-container {
-        display:flex;
-        margin-bottom: 25px;
+    .dashboard-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        background: #07141f;
+        border-radius: 15px;
+        padding: 30px;
+        gap: 30px;
+    }
+
+    .top-dashboard-group {
+        display: flex;
         justify-content: space-between;
         align-items: center;
-        color: #ffffff;
-        font-family: 'Montserrat';
-        background: linear-gradient(90deg, #15344f 0%, rgba(18,47,74,1) 75%, rgb(23, 60, 94) 100%);
-        box-shadow: 1px 1px 5px #121212;
-        border-radius: 5px;
-        padding: 10px;
-        font-size: 13px;
-        gap: 5px;
     }
-
-    .apply-button {
-        background: #00804d;
-        padding: 7px;
-        border-radius: 3px;
-        box-shadow: 1px 1px 8px rgba(18,47,74,1);
-        border: none;
-        color: #ffffff;
-    }
-
-    .apply-button:hover{
-        background: #00603a;
-        box-shadow: none;
-    }
-
     .title{
         font-family: 'Montserrat';
         font-size: 24px;
@@ -148,19 +132,62 @@
         border-radius: 5px;
     }
 
+    .filters-container {
+        display:flex;
+        gap:20px;
+        align-items:center;
+        height:100%;
+    }
+
+    .search-bar-container {
+        height:100%;
+        position:relative;
+        width: 260px;
+    }
+
+    .search-bar{
+        outline: 1px solid #7ea7e4;
+        border: none;
+        background: #0f1f2f;
+        color: #ffffff;
+        border-radius: 25px;
+        padding-left: 35px;
+        padding-right: 15px;
+        width: min(200px, 100%);
+        height: min(100%, 25px);
+    }
+
+    .search-icon {
+        color:#8c8b8b;
+        font-size: 14px;
+        position: absolute;
+        left: 15px;
+        top: 35%;
+    }
+
+    .checkbox {
+        display:flex;
+        align-items:center;
+        gap: 5px;
+        color:#ffffff;
+        font-size: 13px;
+        font-weight:350;
+        font-family:'Montserrat'
+    }
+
     .markets-display {
         display: grid;
-        gap: 20px;
+        gap: 10px;
         padding-bottom: 10px;
-        grid-template-columns: repeat(auto-fit, 300px);
-        grid-template-rows: repeat(auto-fit, minmax(140px, 1fr));
+        grid-template-columns: repeat(3, minmax(250px, 1fr));
+        grid-auto-rows: minmax(170px, 1fr);
     }
 
     .market-info{
-        display: grid;
-        grid-template-rows: 1fr 3fr 1fr;
-        gap: 10px;
-        padding:10px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding:15px;
         border-radius: 10px;
         background-color: #102438;
         color:#ffffff;
@@ -168,12 +195,23 @@
         font-family: 'Montserrat';
         font-weight: 350;
         cursor: pointer;
-        max-height: 140px;
     }
 
-    .market-info:hover{
-        background-color: #183452;
-        box-shadow: none;
+    .asset-pair {
+        margin: 0px;
+        font-weight: 450;
+        font-size: 18px;
+    }
+
+    .predict-button {
+        border-radius: 10px;
+        border: none;
+        padding: 5px;
+        width: max(50%, 130px);
+    }
+
+    .predict-button:hover {
+        background: #acacac;
     }
 
     .item-container{
@@ -198,19 +236,32 @@
         color: #ffffff;
         background: #c92204bc;
         border-radius: 15px;
-        padding: 5px;
+        padding: 3px;
         display: flex;
         justify-content: center;
-        width: 80px;
+        width: 90px;
     }
 
     .resolved {
         color: #ffffff;
         background: #02d70894;
         border-radius: 15px;
-        padding: 5px;
+        padding: 3px;
         display: flex;
         justify-content: center;
-        width: 80px;
+        width: 90px;
     }
+
+    @media (max-width: 899px) {
+        .markets-display {
+            grid-template-columns: repeat(2, minmax(250px, 1fr));
+        }
+    }
+
+    @media (max-width: 500px) {
+        .markets-display {
+            grid-template-columns: repeat(1, minmax(250px, 1fr));
+        }
+    }
+
 </style>

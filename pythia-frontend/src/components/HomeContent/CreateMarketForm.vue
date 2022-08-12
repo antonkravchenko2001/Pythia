@@ -8,7 +8,8 @@
             </div>
             exceed
             <div style="position:relative">
-                <input 
+                <input
+                    style="width:80%"
                     type="number"
                     class='description-input'
                     placeholder='2000'
@@ -24,11 +25,11 @@
                 <input 
                 type='date'
                 class='description-input'
-                :class="{'incorrect-field': !formStatus.resolveDate.correct}"
-                v-model="marketParams.resolveDate"
+                :class="{'incorrect-field': !formStatus.resolutionDate.correct}"
+                v-model="marketParams.resolutionDate"
                 />
-                <div v-if="!formStatus.resolveDate.correct" class="error-message">
-                    {{formStatus.resolveDate.message}}
+                <div v-if="!formStatus.resolutionDate.correct" class="error-message">
+                    {{formStatus.resolutionDate.message}}
                 </div>  
                 <i class="fa-solid fa-calendar" style="position: absolute"></i>
             </div>
@@ -134,8 +135,8 @@
 
 <script>
     import {_numMarkets } from '../../contract-functions/ContractFunctions.js'
-    import {dateToUnix, ethToWei, unixToDate} from '../../utils.js'
-    import {_createMarket} from '../../contract-functions/ContractFunctions.js'
+    import {dateToUnix, ethToWei, dateToStr} from '../../utils.js'
+    // import {_createMarket} from '../../contract-functions/ContractFunctions.js'
     import {minMoneyCreate, minSharesCreate} from '../../config.js';
     import DropDown from '../subcomponents/DropDown.vue';
     import Moralis from '../../main.js'
@@ -151,17 +152,18 @@
         data() {
             return {
                 marketParams: {
+                    marketId: '',
                     asset: '',
                     strikePrice: null,
                     wageDeadline: '',
-                    resolveDate: '',
+                    resolutionDate: '',
                     moneyWaged: [null, null],
                     sharesOwned: [null, null]
                 },
                 formStatus: {
                     strikePrice: {correct: true, message: ''},
                     wageDeadline: {correct: true, message: ''},
-                    resolveDate: {correct: true, message: ''},
+                    resolutionDate: {correct: true, message: ''},
                     moneyWaged: {
                         0: {correct: true, message: ''},
                         1: {correct: true, message: ''},
@@ -214,17 +216,17 @@
                     this.formStatus.wageDeadline.correct = true;
                 }
             },
-            validateResolveDate(){
-                const resolveDate = dateToUnix(this.marketParams.resolveDate);
+            validateResolutionDate(){
+                const resolutionDate = dateToUnix(this.marketParams.resolutionDate);
                 const wageDeadline = dateToUnix(this.marketParams.wageDeadline);
-                if(!this.marketParams.resolveDate){
-                    this.formStatus.resolveDate.correct = false;
-                    this.formStatus.resolveDate.message = 'select resolution date';
-                }else if(resolveDate < wageDeadline){
-                    this.formStatus.resolveDate.correct = false;
-                    this.formStatus.resolveDate.message = 'resolution must be >= wage deadline';
+                if(!this.marketParams.resolutionDate){
+                    this.formStatus.resolutionDate.correct = false;
+                    this.formStatus.resolutionDate.message = 'select resolution date';
+                }else if(resolutionDate < wageDeadline){
+                    this.formStatus.resolutionDate.correct = false;
+                    this.formStatus.resolutionDate.message = 'resolution must be >= wage deadline';
                 }else{
-                    this.formStatus.resolveDate.correct = true;
+                    this.formStatus.resolutionDate.correct = true;
                 }
             },
             validateMoneyWaged(){
@@ -251,7 +253,7 @@
                 if(
                     this.formStatus.strikePrice.correct &
                     this.formStatus.wageDeadline.correct &
-                    this.formStatus.resolveDate.correct &
+                    this.formStatus.resolutionDate.correct &
                     this.formStatus.moneyWaged[0].correct &
                     this.formStatus.moneyWaged[1].correct &
                     this.formStatus.sharesOwned[0].correct &
@@ -262,84 +264,101 @@
                     return false;
                 }
             },
+            validateInputs(){
+                //validate inputs
+                this.validateStrikePrice();
+                this.validateMoneyWaged();
+                this.validateSharesOwned();
+                this.validateWageDeadline();
+                this.validateResolutionDate();
+
+                //get form status
+                return this.getFormStatus();
+            },
+            getDescription(strikePrice, assetPair, resolutionDate){
+                return `will ${assetPair} exceed ${strikePrice} by ${resolutionDate}`
+                        .toLocaleLowerCase()
+            },
+            getCreateMarketTransactionParams(){
+                return {
+                    _sharesOwned: ethToWei(this.marketParams.sharesOwned),
+                    _moneyWaged: ethToWei(this.marketParams.moneyWaged),
+                    _priceFeedAddress: this.marketParams.asset.get('priceFeed'),
+                    _strikePrice: ethToWei([this.marketParams.strikePrice])[0],
+                    _resolutionDate: dateToUnix(this.marketParams.resolutionDate),
+                    _wageDeadline: dateToUnix(this.marketParams.wageDeadline)
+                }
+            },
+            getSaveMarketParams(){
+                return {
+                    marketId: this.marketParams.marketId,
+                    asset: this.marketParams.asset.get('asset'),
+                    strikePrice: this.marketParams.strikePrice,
+                    wageDeadline: this.marketParams.wageDeadline,
+                    resolutionDate: this.marketParams.resolutionDate,
+                    desciption: this.getDescription(
+                        this.marketParams.strikePrice,
+                        this.marketParams.asset.get('asset'),
+                        dateToStr(this.marketParams.resolutionDate)
+                    ),
+                    creator: this.$store.state.user.get('ethAddress'),
+                }
+            },
+            getDepositParams(){
+                return {
+                    marketId: this.marketParams.marketId,
+                    player: this.$store.state.user.get('ethAddress'),
+                    moneyNo:  this.marketParams.moneyWaged[0],
+                    moneyYes: this.marketParams.moneyWaged[1],
+                    sharesNo: this.marketParams.sharesOwned[0],
+                    sharesYes: this.marketParams.sharesOwned[1],
+                    marketCreation: true,
+                }
+            },
             async createMarket(){
                 //get asset
                 const asset =  await this.getAsset();
-                const assetName = asset.get('asset');
-                const priceFeed = asset.get('priceFeed');
-
-                //get strike price
-                const _strikePrice = this.marketParams.strikePrice;
-                this.validateStrikePrice();
-
-                //get money waged
-                const _moneyWaged = this.marketParams.moneyWaged;
-                this.validateMoneyWaged();
-
-                //get shares owned
-                const _sharesOwned = this.marketParams.sharesOwned;
-                this.validateSharesOwned();
-
-                //get wage deadline
-                const _wageDeadline = dateToUnix(this.marketParams.wageDeadline);
-                this.validateWageDeadline();
-
-                //get resolve date
-                const _resolutionDate= dateToUnix(this.marketParams.resolveDate);
-                this.validateResolveDate();
-
+                this.marketParams.asset = asset;
+                
                 //get form status
-                const formStatus = this.getFormStatus();
+                const formStatus = this.validateInputs();
+
                 if(formStatus){
 
                     //create market
-                    const createOptions = {
-                        _sharesOwned: ethToWei(_sharesOwned),
-                        _moneyWaged: ethToWei(_moneyWaged),
-                        _priceFeedAddress: priceFeed,
-                        _strikePrice: ethToWei([_strikePrice])[0],
-                        _resolutionDate,
-                        _wageDeadline
-                    }
-                    const marketId = await _numMarkets();
-                    console.log('market_id', marketId);
-                    try{
-                        await _createMarket(createOptions);
-                    } catch(error){
-                        console.error(error)
-                        return false;
-                    }
+                    const createOptions = this.getCreateMarketTransactionParams();
+                    console.log(createOptions);
+                    this.marketParams.marketId = await _numMarkets();
 
-                    //save market
-                    await Moralis.Cloud.run(
-                        'saveMarket', {
-                            marketId,
-                            values: {
-                                marketId,
-                                asset: assetName,
-                                strikePrice: _strikePrice,
-                                wageDeadline: unixToDate(_wageDeadline),
-                                resolutionDate: unixToDate(_resolutionDate),
-                            }
-                        }
-                    );
-                    console.log('market saved!')
+                    // try{
+                    //     await _createMarket(createOptions);
+                    // } catch(error){
+                    //     console.error(error)
+                    //     return false;
+                    // }
 
-                    //save deposit transaction
-                    await Moralis.Cloud.run(
-                        'deposit', {
-                            marketId,
-                            player: this.$store.state.user.get('ethAddress'),
-                            moneyNo:  _moneyWaged[0],
-                            moneyYes: _moneyWaged[1],
-                            sharesNo: _sharesOwned[0],
-                            sharesYes: _sharesOwned[1]
-                        }
-                    );
-                    console.log('player saved!')
+                    const saveMarketParams = this.getSaveMarketParams();
+                    console.log(saveMarketParams);
+
+                    // //save market
+                    // await Moralis.Cloud.run(
+                    //     'saveMarket', {
+                    //         marketId,
+                    //         values: saveParams
+                    //     }
+                    // );
+                    
+                    const saveDepositParams = this.getDepositParams();
+                    console.log(saveDepositParams);
+                    // save deposit transaction
+                    // await Moralis.Cloud.run(
+                    //     'deposit',
+                    //     saveDepositParams
+                    // );
+                    // console.log('player saved!')
 
                     //reload the page
-                    this.$router.go();
+                    // this.$router.go();
                 }
             },
         },
@@ -350,7 +369,7 @@
     .create-market-window {
         display: grid;
         padding: 20px;
-        width: 450px;
+        width:450px;
         gap: 25px;
         background: linear-gradient(90deg, rgb(25 31 74) 0%, rgba(18,47,74,1) 75%, rgba(18,47,74,1) 100%);
         grid-template-rows: repeat(4, max-content);
@@ -358,9 +377,9 @@
         box-shadow: 1px 1px 8px #121212;
         color: #ffffff;
         font-family: 'Montserrat';
-        font-size: 12px;
+        font-size: 14px;
         position: absolute;
-        top: 45vh;
+        top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
     }
@@ -392,12 +411,10 @@
         font-family: 'Montserrat';
         border: none;
         border-radius: 5px;
-        box-shadow: 1px 1px 5px #121212;
     }
 
     .description-component .fa-solid {
         right: 5px;
-        font-size: 13px;
     }
 
     .wage-deadline-container {
@@ -425,12 +442,10 @@
         max-width: 75px;
         font-family: 'Montserrat';
         font-weight: 400;
-        font-size: 13px;
     }
     .market-info-text {
         display: flex;
         align-items: center;
-        font-size: 12px;
         font-family: 'Montserrat';
         font-weight: 400;
         margin-right: 10px;
@@ -453,7 +468,6 @@
        border-radius: 15px;
        height: 30px;
        border: none;
-       box-shadow: 0.1px 0.1px 5px #010b15;
        width: 100%;
    }
 
@@ -496,9 +510,9 @@
 
    .market-options{
         display: flex;
-        gap: 67px;
+        gap: 75px;
         position: relative;
-        left: 135px;
+        left: 156px;
         margin-bottom: 10px;
         font-size: 14px;
    }

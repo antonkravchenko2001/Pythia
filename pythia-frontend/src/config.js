@@ -527,3 +527,6 @@ export const minSharesCreate = 10;
 export const minMoneyCreate = 10;
 
 export const minMoney = 5;
+
+
+export const incorrectChainMessage = 'Incorrect network: please switch to Kovan testnet';

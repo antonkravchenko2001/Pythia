@@ -1,6 +1,6 @@
 <template>
     <div class="market-info">
-        <div style="border-radius:5px;padding:5px;background:#13304a">
+        <div style="border-radius:5px;padding:5px;background:#102438">
             <div style="font-size: 18px;font-weight:500;margin-bottom:15px;">
                 Will 
                 <span>
@@ -126,7 +126,7 @@
         font-weight: 300;
         border-radius: 5px;
         border-radius: 1px 1px 5px #121212;
-        background: #0e2438;
+        background: #102438;
     }
 
     .description-item-val {
@@ -136,7 +136,7 @@
         font-weight: 300;
         border-radius: 5px;
         border-radius: 1px 1px 5px #121212;
-        background: #11324e;
+        background: #102438;
         margin-left: 5px;
         margin-right: 5px;
         border: 1.2px solid #9287df;
@@ -187,7 +187,7 @@
 
     .market-stats {
        display: grid;
-       background: #13304a;
+       background: #102438;
        row-gap: 10px;
        column-gap: 10px;
        grid-template-columns: 2fr 2fr 2fr;
@@ -202,7 +202,7 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        font-size: 14px;
+        font-size: 16px;
         height: 50px;
     }
     .market-info-text {

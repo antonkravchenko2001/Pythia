@@ -1,10 +1,26 @@
 <template>
     <div v-if='marketExists' class="container-around">
-        <div v-if='marketData.marketInfo' class="market-info-space">
-            <MarketStats :marketData='marketData'/>
-            <div class="state-and-buy-container">
-                <MarketState :marketData='marketData'/>
-                <MarketActions :marketData='marketData'/>
+        <div v-if='marketData.marketInfo' class="market-info-container">
+            <div style="display:flex;flex-direction: column;gap: 10px;">
+                <AlertWindow 
+                    v-if="!$store.state.chainCorrect"
+                    style='font-family:monospace'
+                    color='red'
+                    :text='incorrectChainMessage'
+                />
+                <AlertWindow 
+                    v-if="!$store.state.user"
+                    style='font-family:monospace'
+                    color='yellow'
+                    text='Wallet not connected: connect wallet wage money on the market'
+                />
+            </div>
+            <div class="market-info-space">
+                <MarketStats :marketData='marketData'/>
+                <div class="state-and-buy-container">
+                    <MarketState :marketData='marketData'/>
+                    <MarketActions :marketData='marketData'/>
+                </div>
             </div>
         </div>
     </div>
@@ -22,18 +38,16 @@ import { defineAsyncComponent } from 'vue'
 import MarketActions from './MarketActions.vue'
 import MarketState from './MarketState.vue'
 import {_getMarketInfo, _getPlayerInfo, _getReward, _getExpertScore} from '../../contract-functions/ContractFunctions.js'
+import {incorrectChainMessage} from '../../config.js'
 import Moralis from '../../main.js'
+
 export default {
-    components: {
+        components: {
         MarketStats,
         MarketState,
         MarketActions,
-        Alert: defineAsyncComponent(() =>
-            import('../subcomponents/AlertWindow.vue')
-        ),
-        PageNotFound: defineAsyncComponent(() => 
-            import('../subcomponents/PageNotFound.vue')
-        )
+        AlertWindow: defineAsyncComponent(() => import("../subcomponents/AlertWindow.vue")),
+        PageNotFound: defineAsyncComponent(() => import("../subcomponents/PageNotFound.vue")),
     },
     data(){
         return {
@@ -43,8 +57,9 @@ export default {
                 playerInfo: {
                     marketId: null
                 },
-                withDrawStats: {}
-            }
+                withDrawStats: {},
+            },
+            incorrectChainMessage
         }
     },
     methods: {
@@ -72,20 +87,6 @@ export default {
                 expertScore
             };
         },
-        async updateMarketState(){
-            Moralis.Cloud.run(
-                'saveMarket',
-                {
-                    marketId: this.marketData.marketInfo.marketId,
-                    values: {
-                        resolved: this.marketData.marketInfo.resolved,
-                        resolutionPrice: this.marketData.marketInfo.resolutionPrice,
-                        winningOutcome: this.marketData.marketInfo.winningOutcome
-                    }
-                }
-            )
-            console.log('market updated');
-        },
         async loadInfo(){
             const marketId = this
                         .$route
@@ -100,7 +101,6 @@ export default {
                 this.marketData.marketInfo = await this.loadMarket(
                     marketId
                 );
-                await this.updateMarketState();
                 if(this.$store.state.user){
                     const player = this.$store.state.user.get('ethAddress');
                     this.marketData.playerInfo = await this.loadPlayer(player, marketId)
@@ -141,30 +141,27 @@ export default {
         justify-content: center;
         align-items: center;
         position: relative;
-        top: 10%;
         font-family: 'Montserrat';
         font-weight: 400;
     }
-    .market-info-space {
+    .market-info-container {
         font-size: 13px;
+        display: grid;
+        gap: 20px;
+        grid-template-rows: repeat(2, max-content);
+        background-color: #07141f;
+        border-radius: 15px;
+        padding: 20px;
+    }
+
+    .market-info-space{
         display: grid;
         gap: 50px;
         grid-template-columns: 5fr 3fr;
-        background-color: #0a1e30;
-        border-radius: 15px;
-        padding: 20px;
     }
 
     .state-and-buy-container {
         display: grid;
         grid-template-rows: 1fr 2fr;
-    }
-
-    .alert{
-        position: absolute;
-        width:max-content;
-        right:5px;
-        z-index:100;
-        top: 33px;
     }
 </style>
