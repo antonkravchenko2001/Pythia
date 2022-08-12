@@ -4,30 +4,34 @@
             Leaderboard
         </h3>
         <table>
-            <tr>
-                <th>
-                    <i class="fa-solid fa-hashtag"></i>
-                </th>
-                <th>Player's address</th>
-                <th>Expert score</th>
-                <th>Reward received</th>
-                <th>Total Money waged</th>
-                <th>
-                    # markets that user waged money in
-                </th>
-            </tr>
-            <tr v-for="(player, index) in ranking" :key="player">
-                <td>
-                    <div class="colored-num" :style="{'background': backgroundNum(index + 1)}">
-                        {{index + 1}}
-                    </div>
-                </td>
-                <td style="font-size:13px">{{player.player}}</td>
-                <td>{{round(player.expertScore)}}</td>
-                <td>{{round(player.reward)}} DAI</td>
-                <td>{{round(player.totalMoneyWaged)}} DAI</td>
-                <td>{{round(player.numMarkets)}}</td>
-            </tr>
+            <thead>
+                <tr>
+                    <th>
+                        <i class="fa-solid fa-hashtag"></i>
+                    </th>
+                    <th>Player's address</th>
+                    <th>Expert score</th>
+                    <th>Reward received</th>
+                    <th>Total Money waged</th>
+                    <th>
+                        # markets that user waged money in
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="(player, index) in ranking" :key="player">
+                    <td>
+                        <div class="colored-num" :style="{'background': backgroundNum(index + 1)}">
+                            {{index + 1}}
+                        </div>
+                    </td>
+                    <td style="font-size:13px">{{player.player}}</td>
+                    <td>{{round(player.expertScore)}}</td>
+                    <td>{{round(player.reward)}} DAI</td>
+                    <td>{{round(player.totalMoneyWaged)}} DAI</td>
+                    <td>{{round(player.numMarkets)}}</td>
+                </tr>
+            </tbody>
         </table>
     </div>
 </template>
@@ -92,35 +96,41 @@
 
     }
 
+    table {
+        min-width: 85%;
+        max-width: 97%;
+        padding: 5px;
+        border: none;
+        font-family: 'Montserrat';
+        border-collapse: collapse;
+
+    }
+
+    thead {
+        background: transparent;
+    }
+
+    tbody {
+        background: #123148;
+    }
+
     td {
         text-align: left;
         color: white;
         font-size: 13px;
         font-weight: 350;
-        padding-top: 10px;
-        padding-bottom: 10px;
-        padding-right: 7px;
+        padding: 10px;
     }
     th {
         text-align: left;
-        color: #8f8d8d;
+        color: #90a2ba;
+        padding: 10px;
         font-size: 13px;
         font-weight: 400;
     }
     
     tr {
         padding: 15px;
-    }
-
-    table {
-        width: 85%;
-        padding: 5px;
-        background: #0d2537;
-        border: none;
-        border-radius: 5px;
-        box-shadow: 1px 1px 8px #121212;
-        align-items: center;
-        font-family: 'Montserrat';
     }
 
     .colored-num {
