@@ -331,6 +331,6 @@ const marketsABI = [
 		"type": "function"
 	}
 ];
-
 const marketsAddress = '0x2Cc6ceb084BBDb565fEf43eCA48C753b6b4E0D52';
+export const chainId = "0x2a";
 const chain = 'kovan';
