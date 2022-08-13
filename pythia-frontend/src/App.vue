@@ -27,8 +27,8 @@
   }
 
   input {
-    padding-left: 10px;
-    padding-right: 10px;
+    padding-left: 15px;
+    padding-right: 15px;
     padding-top: 5px;
     padding-bottom: 5px;
   }
@@ -39,7 +39,7 @@
 
   input::placeholder{
     font-weight: 300;
-    font-family: 'Montserrat';
+    font-family: Helvetica;
     color:#b2b2b2;
   }
 

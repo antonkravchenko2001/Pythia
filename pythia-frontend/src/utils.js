@@ -3,11 +3,13 @@ import { chainId } from './config.js';
 
 //getting chain
 export const checkChain = async () => {
-    if(!Moralis.web3){
+    try{
         await Moralis.enableWeb3();
+    }catch(error){
+        console.error('web3 is already enabled')
     }
-    console.log(Moralis.web3.provider.chainId);
-    return Moralis.web3.provider.chainId === chainId;
+    const _chainId = await Moralis.getChainId();
+    return _chainId === chainId;
 }
 
 //unix to Date

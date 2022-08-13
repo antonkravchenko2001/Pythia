@@ -377,7 +377,7 @@ import Moralis from '../../main.js';
         font-family: 'Montserrat';
     }
     .buy-shares-input {
-        max-width: 95px;
+        max-width: 80px;
         height: 20px;
         background: #375d84;
         color:#ffffff;
@@ -435,8 +435,8 @@ import Moralis from '../../main.js';
 
    .withdraw-money-inner {
         display: flex;
-        height: 178px;
-        width: 210px;
+        height: 180.11px;
+        width: 223px;
         flex-direction: column;
         justify-content: space-between;
         background-color: #102438;

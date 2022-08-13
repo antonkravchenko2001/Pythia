@@ -1,5 +1,10 @@
 <template>
-    <div>
+    <div 
+        style="display: flex;
+               flex-direction: column;
+               justify-content: center;
+               position:relative;"
+    >
         <i @click='show=true' class="fa-solid fa-circle-info"></i>
         <span :style="{'background': background, 'color': color, 'width': width, 'height': height}" v-if='show' class="popup">
             {{text}}
@@ -25,17 +30,17 @@
     .popup{
         display: flex;
         justify-content: space-between;
+        gap: 10px;
         padding: 7px;
         font-size: 12px;
         border: none;
         border-radius: 5px;
-        box-shadow: 1px 1px 5px #121212;
-        font-weight: 300;
-        font-family: 'Montserrat';
+        font-family: system-ui;
+        font-weight: 400;
         z-index: 10;
         position: absolute;
         top:0px;
-        right: 0px;
+        left: 0px;
     }
 
     .fa-circle-info {

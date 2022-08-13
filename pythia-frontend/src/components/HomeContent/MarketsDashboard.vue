@@ -1,15 +1,18 @@
 <template>
     <div class="dashboard-container">
         <div style="display:flex;flex-direction:column;gap:10px">
-            <div v-if="!$store.state.chainCorrect" style="font-family:monospace">
-                <AlertWindow color='red' :text='incorrectChainMessage'/>
-            </div>
-            <div v-if="!$store.state.user" style="font-family:monospace">
-                <AlertWindow 
-                    color='yellow'
-                    text='Wallet not connected: connect wallet to make predictions and create new markets'
-                />
-            </div>
+            <AlertWindow 
+                v-if="!$store.state.chainCorrect"
+                style="font-family:monospace"
+                color='red'
+                :text='incorrectChainMessage'
+            />
+            <AlertWindow 
+                v-if="!$store.state.user"
+                style="font-family:monospace"
+                color='yellow'
+                text='Wallet not connected: connect wallet to make predictions and create new markets'
+            />
         </div>
         <div class="top-dashboard-group">
             <div class="filters-container">

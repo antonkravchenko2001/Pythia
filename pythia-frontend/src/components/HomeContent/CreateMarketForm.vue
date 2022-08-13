@@ -9,7 +9,7 @@
             exceed
             <div style="position:relative">
                 <input
-                    style="width:80%"
+                    style="width:60%"
                     type="number"
                     class='description-input'
                     placeholder='2000'
@@ -51,7 +51,7 @@
             </div>
             <PopUpWindow 
                 text='Deadline for waging money in this market' 
-                background="#121f2a"
+                background="#213f58"
                 color="#afafaf"
                 width="120px"
                 height="70px"
@@ -135,8 +135,8 @@
 
 <script>
     import {_numMarkets } from '../../contract-functions/ContractFunctions.js'
-    import {dateToUnix, ethToWei, dateToStr} from '../../utils.js'
-    // import {_createMarket} from '../../contract-functions/ContractFunctions.js'
+    import {dateToUnix, unixToDate, ethToWei, dateToStr} from '../../utils.js'
+    import {_createMarket} from '../../contract-functions/ContractFunctions.js'
     import {minMoneyCreate, minSharesCreate} from '../../config.js';
     import DropDown from '../subcomponents/DropDown.vue';
     import Moralis from '../../main.js'
@@ -279,7 +279,7 @@
                 return `will ${assetPair} exceed ${strikePrice} by ${resolutionDate}`
                         .toLocaleLowerCase()
             },
-            getCreateMarketTransactionParams(){
+            getCreateMarketParams(){
                 return {
                     _sharesOwned: ethToWei(this.marketParams.sharesOwned),
                     _moneyWaged: ethToWei(this.marketParams.moneyWaged),
@@ -294,9 +294,9 @@
                     marketId: this.marketParams.marketId,
                     asset: this.marketParams.asset.get('asset'),
                     strikePrice: this.marketParams.strikePrice,
-                    wageDeadline: this.marketParams.wageDeadline,
-                    resolutionDate: this.marketParams.resolutionDate,
-                    desciption: this.getDescription(
+                    wageDeadline: unixToDate(dateToUnix(this.marketParams.wageDeadline)),
+                    resolutionDate: unixToDate(dateToUnix(this.marketParams.resolutionDate)),
+                    description: this.getDescription(
                         this.marketParams.strikePrice,
                         this.marketParams.asset.get('asset'),
                         dateToStr(this.marketParams.resolutionDate)
@@ -326,39 +326,35 @@
                 if(formStatus){
 
                     //create market
-                    const createOptions = this.getCreateMarketTransactionParams();
-                    console.log(createOptions);
+                    const createOptions = this.getCreateMarketParams();
                     this.marketParams.marketId = await _numMarkets();
+                    try{
+                        await _createMarket(createOptions);
+                    } catch(error){
+                        console.error(error)
+                        return false;
+                    }
 
-                    // try{
-                    //     await _createMarket(createOptions);
-                    // } catch(error){
-                    //     console.error(error)
-                    //     return false;
-                    // }
 
+                    //save market
                     const saveMarketParams = this.getSaveMarketParams();
-                    console.log(saveMarketParams);
+                    await Moralis.Cloud.run(
+                        'saveMarket', {
+                            marketId: this.marketParams.marketId,
+                            values: saveMarketParams
+                        }
+                    );
 
-                    // //save market
-                    // await Moralis.Cloud.run(
-                    //     'saveMarket', {
-                    //         marketId,
-                    //         values: saveParams
-                    //     }
-                    // );
-                    
-                    const saveDepositParams = this.getDepositParams();
-                    console.log(saveDepositParams);
                     // save deposit transaction
-                    // await Moralis.Cloud.run(
-                    //     'deposit',
-                    //     saveDepositParams
-                    // );
-                    // console.log('player saved!')
+                    const saveDepositParams = this.getDepositParams();
+                    await Moralis.Cloud.run(
+                        'deposit',
+                        saveDepositParams
+                    );
+                    console.log('player saved!')
 
-                    //reload the page
-                    // this.$router.go();
+                    // reload the page
+                    this.$router.go();
                 }
             },
         },
@@ -371,10 +367,9 @@
         padding: 20px;
         width:450px;
         gap: 25px;
-        background: linear-gradient(90deg, rgb(25 31 74) 0%, rgba(18,47,74,1) 75%, rgba(18,47,74,1) 100%);
+        background: #0e2a44;
         grid-template-rows: repeat(4, max-content);
         border-radius: 10px;
-        box-shadow: 1px 1px 8px #121212;
         color: #ffffff;
         font-family: 'Montserrat';
         font-size: 14px;
@@ -405,10 +400,8 @@
     }
 
     .description-input {
-        width: 90%;
         background: #16446c;
         color:#ffffff;
-        font-family: 'Montserrat';
         border: none;
         border-radius: 5px;
     }
@@ -471,14 +464,9 @@
        width: 100%;
    }
 
-   
-   .submit-button:active{
-       box-shadow: none;
-   }
-
 
    .submit-button:hover{
-       box-shadow: none;
+       background:#4377e8;
    }
 
    .fa-solid {
@@ -510,7 +498,7 @@
 
    .market-options{
         display: flex;
-        gap: 75px;
+        gap: 88px;
         position: relative;
         left: 156px;
         margin-bottom: 10px;
