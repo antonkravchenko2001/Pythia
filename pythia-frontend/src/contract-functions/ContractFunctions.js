@@ -5,6 +5,27 @@ import {unixToDate, weiToEth, roundNum} from '../utils.js'
 
 //call methods
 
+export const _allowance = async(owner) => {
+    let options = {
+        chain: chain,
+        address: payTokenAddress,
+        function_name: "allowance",
+        abi: ERC20ABI,
+        params: {
+            owner,
+            spender: marketsAddress,
+        },
+    };
+    try {
+        let allowance = await Moralis.Web3API.native.runContractFunction(
+            options
+        );
+        return allowance;
+    } catch (error){
+        console.error(error);
+    }
+}
+
 export const _numMarkets = async() => {
     const options = {
         chain: chain,
@@ -167,23 +188,34 @@ export const _getReward = async(_player, _marketId) => {
 //send methods
 
 export const _approvePayTokenTransfer = async(_amount) => {
-    await Moralis.enableWeb3();
-    let options = {
-        chain: chain,
-        contractAddress: payTokenAddress,
-        functionName: "approve",
-        abi: ERC20ABI,
-        params: {
-            spender: marketsAddress,
-            amount: _amount
-        },
-    };
-    try{
-        await Moralis.executeFunction(options);
-        console.log(`approved ${_amount} of token`)
-    } catch(error) {
-        console.error(error);
+
+    //get _amount to pay
+    const owner = Moralis.User.current().get('ethAddress');
+    const allowance = await _allowance(owner, marketsAddress);
+
+    console.log('allowance', allowance);
+    console.log('amount', _amount);
+
+    if(allowance < _amount){
+        _amount -= allowance
+        let options = {
+            chain: chain,
+            contractAddress: payTokenAddress,
+            functionName: "approve",
+            abi: ERC20ABI,
+            params: {
+                spender: marketsAddress,
+                amount: _amount
+            },
+        };
+        try{
+            await Moralis.executeFunction(options);
+            console.log(`approved ${_amount} of token`)
+        } catch(error) {
+            console.error(error);
+        }
     }
+    return false;
 }
 
 

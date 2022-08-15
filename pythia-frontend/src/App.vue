@@ -30,7 +30,7 @@
     padding-left: 15px;
     padding-right: 15px;
     padding-top: 5px;
-    padding-bottom: 5px;
+    padding-bottom: 4px;
   }
 
   input:focus{

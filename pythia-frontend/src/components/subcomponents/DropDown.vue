@@ -31,7 +31,7 @@
             select(obj){
                 this.selected = true;
                 this.input = obj;
-            }
+            },
         }
     }
 </script>

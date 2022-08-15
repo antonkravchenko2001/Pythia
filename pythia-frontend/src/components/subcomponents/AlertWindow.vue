@@ -1,6 +1,7 @@
 <template>
     <span :style="{'color': color, 'background': background}" class="alert-container">
-        <i class="fa-solid fa-triangle-exclamation"></i>
+        <i v-if='!success' class="fa-solid fa-triangle-exclamation"></i>
+        <i v-if='success' class="fa-solid fa-circle-check"></i>
         <span class="alert-text">{{message}}</span>
         <span class="alert-text">
             {{text}}
@@ -10,7 +11,7 @@
 
 <script>
     export default {
-        props: ['message', 'background', 'text', 'color'],
+        props: ['message', 'background', 'text', 'color', 'success'],
     }
 </script>
 

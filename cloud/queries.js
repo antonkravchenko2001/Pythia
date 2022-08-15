@@ -25,70 +25,64 @@ Moralis.Cloud.define("saveMarket",  async(request) => {
     await market.save();
 });
 
-Moralis.Cloud.define(
-    'updateMarketStatus', async(request) => {
 
-        let options;
-        //filter markets
-        const query = new Moralis.Query('Markets');
-        const today = new Date();
-        today.setUTCHours(12,0,0,0);
-        query.equalTo('resolutionDate', today);
-        const markets = await query.find();
-        logger.info('markets that fit');
-        logger.info(markets[0]);
+//get market info
+Moralis.Cloud.define('getMarketstatus', async(request) => {
+    const _marketId = request.params._marketId;
+    const options = {
+        chain: chain,
+        address: marketsAddress,
+        function_name: "getMarketInfo",
+        abi: marketsABI,
+        params: {_marketId},
+    };
+    let _marketInfo = await Moralis.Web3API.native.runContractFunction(
+        options
+    )
 
-        let _marketInfo;
-        let market;
-    
-        for(let _id in markets){
-            market = markets[_id];
-            options = {
-                chain: chain,
-                address: marketsAddress,
-                function_name: "getMarketInfo",
-                abi: marketsABI,
-                params: {_marketId: market.get('marketId')},
-            };
-            _marketInfo = await Moralis.Web3API.native.runContractFunction(
-                options
-            );
-            market.set('resolved', _marketInfo[5]);
-            await market.save();
-            logger.info('market updated');
-        }
+    let asset = await Moralis.Cloud.run(
+        "getAssets",
+        {priceFeed: _marketInfo[0]}
+    );
+    asset = asset[0];
+    asset = asset.get('asset');
+
+    let marketInfo = {
+        marketId: _marketId,
+        resolved: _marketInfo[5],
+        winningOutcome: parseInt(_marketInfo[6])
     }
+    return marketInfo;
+}
 )
 
 
 Moralis.Cloud.define(
-    'updateMarketStatus', async(request) => {
-
-        let options;
-        //filter markets
+    '_updateMarketStatus',
+    async(request) => {
         const query = new Moralis.Query('Markets');
         const today = new Date();
         today.setUTCHours(12,0,0,0);
         query.equalTo('resolutionDate', today);
-        const markets = await query.find();
+        logger.info(today);
+        let markets = await query.find();
 
         let marketInfo;
+        let res = [];
         let market;
     
-        for(let _id in markets){
-            market = markets[_id];
-            marketInfo = await _getMarketInfo(
-                _id
-            );
+        for(let i = 0; i < markets.length; i++){
+            market = markets[i];
+            marketInfo = await Moralis.Cloud.run(
+                'getMarketstatus',
+                {_marketId: market.get('marketId')}
+            )
             market.set('resolved', marketInfo.resolved);
-            market.set('winningOutcome', marketInfo.winningOutcome)
-            market.set('resolutionPrice', marketInfo.resolutionPrice)
+            market.set('winningOutcome', marketInfo.winningOutcome);
             await market.save();
-            logger.info('market updated');
         }
     }
 )
-
 
 Moralis.Cloud.define(
     'checkMarketExistence',

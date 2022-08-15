@@ -1,4 +1,5 @@
 import Moralis from './main.js'
+import {_allowance} from './contract-functions/ContractFunctions.js'
 import { chainId } from './config.js';
 
 //getting chain
@@ -8,6 +9,7 @@ export const checkChain = async () => {
     }catch(error){
         console.error('web3 is already enabled')
     }
+    console.log('allowance', await _allowance(Moralis.User.current().get('ethAddress')));
     const _chainId = await Moralis.getChainId();
     return _chainId === chainId;
 }

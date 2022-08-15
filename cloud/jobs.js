@@ -1,4 +1,4 @@
-Moralis.Cloud.job("updMarketStatus", (request) =>  {
-    const run  = async() => await Moralis.Cloud.run('updateMarketStatus', {});
+Moralis.Cloud.job("updateMarketStatus", (request) =>  {
+    const run  = async() => await Moralis.Cloud.run('_updateMarketStatus', {});
     return run();
 });

@@ -1,6 +1,21 @@
 <template>
     <div class="create-market-window" style="z-index:100">
-        <i class="fa-solid fa-xmark" @click="cancel"></i>
+        <div style="display:flex;gap: 10px;flex-direction:column;justify-content:space-between">
+            <AlertWindow 
+                v-if='transaction.status === 1'
+                style="font-family:monospace"
+                color='red'
+                :text='transaction.message'
+            />
+            <AlertWindow 
+                v-if='transaction.status === 0'
+                style="font-family:monospace"
+                color='green'
+                :text='transaction.message'
+                :success="true"
+            />
+            <i class="fa-solid fa-xmark" @click="cancel"></i>
+        </div>
         <div class="market-description">
             Will
             <div style="display: flex;flex-direction: column;justify-content: center;">
@@ -30,8 +45,7 @@
                 />
                 <div v-if="!formStatus.resolutionDate.correct" class="error-message">
                     {{formStatus.resolutionDate.message}}
-                </div>  
-                <i class="fa-solid fa-calendar" style="position: absolute"></i>
+                </div>
             </div>
             ?
         </div>
@@ -46,8 +60,7 @@
                 />
                 <div v-if="!formStatus.wageDeadline.correct" class="error-message">
                     {{formStatus.wageDeadline.message}}
-                </div>  
-                <i class="fa-solid fa-calendar" style="position: absolute"></i>
+                </div>
             </div>
             <PopUpWindow 
                 text='Deadline for waging money in this market' 
@@ -144,9 +157,8 @@
     export default {
         components: {
             DropDown,
-            PopUpWindow: defineAsyncComponent(() =>
-                import('../subcomponents/PopUpWindow.vue')
-            )
+            PopUpWindow: defineAsyncComponent(() => import("../subcomponents/PopUpWindow.vue")),
+            AlertWindow: defineAsyncComponent(() => import("../subcomponents/AlertWindow.vue")),
         },
         props: ['assetNames'],
         data() {
@@ -173,6 +185,10 @@
                         1: {correct: true, message: ''},
                     }
                 },
+                transaction: {
+                    message: '',
+                    status: -1
+                },
                 minMoney: minMoneyCreate,
                 minShares: minSharesCreate
             };
@@ -180,6 +196,9 @@
         methods: {
             cancel(){
                 this.$store.state.showForm=false;
+            },
+            delay(time) {
+                return new Promise(resolve => setTimeout(resolve, time));
             },
             async getAsset(){
                 const assetName = this.$refs.dropdown.input;
@@ -275,6 +294,10 @@
                 //get form status
                 return this.getFormStatus();
             },
+            resetTransactionStatus(){
+                this.transaction.message = '';
+                this.transaction.status = -1;
+            },
             getDescription(strikePrice, assetPair, resolutionDate){
                 return `will ${assetPair} exceed ${strikePrice} by ${resolutionDate}`
                         .toLocaleLowerCase()
@@ -316,6 +339,8 @@
                 }
             },
             async createMarket(){
+                //reset transaction status
+                this.resetTransactionStatus();
                 //get asset
                 const asset =  await this.getAsset();
                 this.marketParams.asset = asset;
@@ -331,7 +356,8 @@
                     try{
                         await _createMarket(createOptions);
                     } catch(error){
-                        console.error(error)
+                        this.transaction.status = 1;
+                        this.transaction.message = 'Transaction failed: try creating market again'
                         return false;
                     }
 
@@ -353,8 +379,12 @@
                     );
                     console.log('player saved!')
 
-                    // reload the page
-                    this.$router.go();
+                    //dalay loading
+                    this
+                    .delay(3000)
+                    .then(
+                        () => this.$router.go()
+                    );
                 }
             },
         },
@@ -368,7 +398,7 @@
         width:450px;
         gap: 25px;
         background: #0e2a44;
-        grid-template-rows: repeat(4, max-content);
+        grid-template-rows: repeat(auto-fit, max-content);
         border-radius: 10px;
         color: #ffffff;
         font-family: 'Montserrat';
@@ -381,6 +411,7 @@
 
     .create-market-window .fa-xmark {
         position: relative;
+        width: max-content;
     }
 
     .market-description {
@@ -433,7 +464,6 @@
         background-color: rgb(22, 68, 108);
         height: 25px;
         max-width: 75px;
-        font-family: 'Montserrat';
         font-weight: 400;
     }
     .market-info-text {
