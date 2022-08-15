@@ -333,7 +333,7 @@ export const marketsABI = [
 		"type": "function"
 	}
 ];
-export const marketsAddress = '0xDfEc2EC7E96f54fD41B229122c30874e49c23a5F';
+export const marketsAddress = '0x2Cc6ceb084BBDb565fEf43eCA48C753b6b4E0D52';
 export const ERC20ABI = [
 	{
 		"anonymous": false,
@@ -520,12 +520,12 @@ export const ERC20ABI = [
 	}
 ];
 export const payTokenAddress = '0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063';
-export const chain = 'polygon';
-export const chainId = "0x89";
+export const chain = 'kovan';
+export const chainId = "0x2a";
 
-export const minSharesCreate = 4;
-export const minMoneyCreate = 4;
+export const minSharesCreate = 10;
+export const minMoneyCreate = 10;
 
-export const minMoney = 2;
+export const minMoney = 5;
 
-export const incorrectChainMessage = 'Incorrect network: please switch to Polygon mainnet';
+export const incorrectChainMessage = 'Incorrect network: please switch to Kovan testnet';
