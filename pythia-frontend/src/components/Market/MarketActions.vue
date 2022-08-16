@@ -64,13 +64,25 @@
 
         <div  v-if='buttons.withdraw && $store.state.user' class="withdraw-money-inner">
             <div class="withdraw-money-stats">
-                <div>% of winning shares</div><div class="withdraw-money-stat-values">{{round(winMoneyPercent)}}%</div>
-                <div>% of winning money</div><div class="withdraw-money-stat-values">{{round(winSharesPercent)}}%</div>
-                <div>Money won</div><div class="withdraw-money-stat-values">{{round(marketData.withDrawStats.reward)}} Dai</div>
-                <div>Expert score</div><div class="withdraw-money-stat-values">{{round(marketData.withDrawStats.expertScore)}}</div>
+                <div style="color:#a3b7ce;">% of winning shares</div><div class="withdraw-money-stat-values">{{round(winMoneyPercent)}}%</div>
+                <div style="color:#a3b7ce;">% of winning money</div><div class="withdraw-money-stat-values">{{round(winSharesPercent)}}%</div>
+                <div style="color:#a3b7ce;">Money won</div><div class="withdraw-money-stat-values">{{round(marketData.withDrawStats.reward)}} Dai</div>
+                <div style="color:#a3b7ce;">Expert score</div><div class="withdraw-money-stat-values">{{round(marketData.withDrawStats.expertScore)}}</div>
             </div>
             <div class="withdraw-button-div">
-                <button class="withdraw-button-submit" @click="withDrawWinnings()" :class="{unclickable: isWithdrawed || withdrawed}">Collect reward</button>
+                <button 
+                    class="withdraw-button-submit"
+                    @click="withDrawWinnings()"
+                    :class="{
+                        unclickable: (
+                            isWithdrawed ||
+                            withdrawed ||
+                            marketData.withDrawStats.reward == 0
+                        )
+                    }"
+                >
+                    Collect reward
+                </button>
             </div>
         </div>
     </div>
@@ -104,6 +116,10 @@ import Moralis from '../../main.js';
             },
             round(num){
                 return roundNum(num)
+            },
+            setTransactionStatus(status, message){
+                this.transaction.message = message;
+                this.transaction.status = status;
             },
             getMoneyToWage(){
                 let moneyToWage = []
@@ -168,7 +184,7 @@ import Moralis from '../../main.js';
                 return shares;
             },
             async wageMoney(){
-
+                this.setTransactionStatus(-1, '');
                 const moneyToWage = this.getMoneyToWage();
                 this.validateMoneyWaged();
                 let formStatus = this.getFormStatus();
@@ -186,9 +202,10 @@ import Moralis from '../../main.js';
                             }
                         )
                     } catch(error){
+                        this.setTransactionStatus(1, 'Transaction failed: try predicting again');
                         return false;
                     }
-
+                    this.setTransactionStatus(0, 'Transaction successful: prediction recorded');
                     //save player
                     await this.saveDeposit(
                         moneyToWage,
@@ -251,6 +268,10 @@ import Moralis from '../../main.js';
                 buttons :{
                     buy: true,
                     withdraw: false
+                },
+                transaction: {
+                    status: -1,
+                    message: ''
                 }
             }
         },
@@ -317,7 +338,7 @@ import Moralis from '../../main.js';
         column-gap: 3px;
         grid-template-columns: repeat(2,1fr);
         background: #102438;
-        padding:10px;
+        padding:15px;
         border-radius: 5px;
     }
     .buy-withdraw-buttons {
@@ -326,6 +347,7 @@ import Moralis from '../../main.js';
     }
 
     .withdraw-button {
+        font-size: 15px;
         background-color: transparent;
         margin-bottom: 5px;
         border: none;
@@ -340,6 +362,7 @@ import Moralis from '../../main.js';
     }
 
     .buy-button {
+        font-size: 15px;
         background-color: transparent;
         margin-bottom: 5px;
         border: none;
@@ -377,7 +400,7 @@ import Moralis from '../../main.js';
         font-family: 'Montserrat';
     }
     .buy-shares-input {
-        max-width: 80px;
+        max-width: 85px;
         height: 20px;
         background: #375d84;
         color:#ffffff;
@@ -393,16 +416,16 @@ import Moralis from '../../main.js';
     }
 
     .submit-button {
-        background: #0d48aa;
+        background: #2060e6;
         border: none;
         border-radius: 15px;
         color:#ffffff;
         width: 100%;
-        height: 25px;
+        height: 30px;
     }
 
-    .submit-button:active{
-        background: #1d67de;
+    .submit-button:hover{
+        background: #4377e8;
         box-shadow: none;
     }
 
@@ -435,12 +458,12 @@ import Moralis from '../../main.js';
 
    .withdraw-money-inner {
         display: flex;
-        height: 180.11px;
-        width: 223px;
+        height: 191px;
+        width: 237px;
         flex-direction: column;
         justify-content: space-between;
         background-color: #102438;
-        padding:10px;
+        padding:15px;
         border-radius: 5px;
    }
 
@@ -454,7 +477,7 @@ import Moralis from '../../main.js';
    }
 
    .withdraw-money-stat-values {
-        font-weight: 200;
+        font-weight: 300;
    }
 
    .withdraw-button-div {
@@ -466,8 +489,8 @@ import Moralis from '../../main.js';
    }
 
    .withdraw-button-submit {
-        background-color:#0d48aa;
-        height:25px;
+        background-color:#2060e6;
+        height:30px;
         color:#ffffff;
         border: none;
         padding-top: 3px;
@@ -476,9 +499,9 @@ import Moralis from '../../main.js';
         width: 100%;
    }
 
-    .withdraw-button-submit:active {
+    .withdraw-button-submit:hover {
         box-shadow: none;
-        background-color: #0d48aa;
+        background-color: #4377e8;
 
     }
 

@@ -294,9 +294,9 @@
                 //get form status
                 return this.getFormStatus();
             },
-            resetTransactionStatus(){
-                this.transaction.message = '';
-                this.transaction.status = -1;
+            setTransactionStatus(status, message){
+                this.transaction.message = message;
+                this.transaction.status = status;
             },
             getDescription(strikePrice, assetPair, resolutionDate){
                 return `will ${assetPair} exceed ${strikePrice} by ${resolutionDate}`
@@ -340,7 +340,7 @@
             },
             async createMarket(){
                 //reset transaction status
-                this.resetTransactionStatus();
+                this.setTransactionStatus(-1, '');
                 //get asset
                 const asset =  await this.getAsset();
                 this.marketParams.asset = asset;
@@ -355,9 +355,9 @@
                     this.marketParams.marketId = await _numMarkets();
                     try{
                         await _createMarket(createOptions);
+                        this.setTransactionStatus(0, 'Transaction successful: market is created');
                     } catch(error){
-                        this.transaction.status = 1;
-                        this.transaction.message = 'Transaction failed: try creating market again'
+                        this.setTransactionStatus(1, 'Transaction failed: try creating market again');
                         return false;
                     }
 

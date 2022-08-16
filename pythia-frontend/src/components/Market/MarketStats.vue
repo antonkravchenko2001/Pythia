@@ -1,24 +1,24 @@
 <template>
     <div class="market-info">
-        <div style="border-radius:5px;padding:5px;background:#102438">
-            <div style="font-size: 18px;font-weight:500;margin-bottom:15px;">
-                Will 
+        <div style="border-radius:5px;padding:15px;background:#102438">
+            <div style="font-size: 20px;font-weight:500;margin-bottom:15px;">
+                <span style="color:#a3b7ce;font-weight:400">Will </span> 
                 <span>
                     {{marketData.marketInfo.asset.toUpperCase()}}
                 </span>
-                exceed 
+                <span style="color:#a3b7ce;font-weight:400"> exceed </span> 
                 <span>
                     {{marketData.marketInfo.strikePrice}} 
                 </span>
-                by 
+                <span style="color:#a3b7ce;font-weight:400"> by </span> 
                 <span>
                     {{_dateToStr(marketData.marketInfo.resolutionDate)}} 
                 </span>
-                ?
+                <span style="color:#a3b7ce;font-weight:400"> ?</span> 
             </div>
-            <div style="width:max-content; font-size: 13px;color: grey">
-                Wage Deadline:
-                {{_dateToStr(marketData.marketInfo.wageDeadline)}}
+            <div style="width:max-content; font-size: 13px">
+                <span style="color:#a3b7ce">Wage Deadline: </span>
+                <span style="color:white">{{_dateToStr(marketData.marketInfo.wageDeadline)}}</span>
             </div>
         </div>
         <div class="field-with-buttons">
@@ -114,8 +114,7 @@
         gap: 82px;
         justify-content: space-between;
         font-family: 'Montserrat';
-        font-weight: 400;
-        font-size: 13px;
+        font-size: 15px;
         color: #ffffff;
 
     }
@@ -161,6 +160,7 @@
     }
 
     .market-info-button {
+        font-size: 14px;
         background-color: transparent;
         margin-bottom: 5px;
         border: none;
@@ -173,6 +173,7 @@
     }
 
     .portfolio-info-button {
+        font-size: 14px;
         background-color: transparent;
         margin-bottom: 5px;
         border: none;
@@ -192,10 +193,7 @@
        column-gap: 10px;
        grid-template-columns: 2fr 2fr 2fr;
        grid-template-rows: 0.3fr 1fr 1fr;
-       padding-left: 20px;
-       padding-right: 20px;
-       padding-bottom: 10px;
-       padding-top: 10px;
+       padding: 15px;
     }
 
     .market-stats-component {
@@ -203,6 +201,7 @@
         justify-content: center;
         align-items: center;
         font-size: 16px;
+        font-weight: 500;
         height: 50px;
     }
     .market-info-text {

@@ -1,35 +1,39 @@
 <template>
     <div class="dashboard-container">
-        <AlertWindow 
-            v-if="!$store.state.chainCorrect"
-            style="font-family:monospace"
-            color='red'
-            :text='incorrectChainMessage'
-        />
-        <AlertWindow 
-            v-if="!$store.state.user"
-            style="font-family:monospace"
-            color='yellow'
-            text='Wallet not connected: connect wallet to make predictions and create new markets'
-        />
-        <div class="top-dashboard-group">
-            <div class="filters-container">
-                <div class="search-bar-container">
-                    <input class="search-bar"
-                        placeholder="type keywords to find markets"
-                        type='text'
-                        v-model='searchInput'
-                        @keyup="findMarkets"
-                    />
-                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        <div style="display:flex;flex-direction: column;">
+            <AlertWindow 
+                v-if="!$store.state.chainCorrect"
+                style='font-family:monospace'
+                color='red'
+                :text='incorrectChainMessage'
+                :style="{'margin-bottom':'12px'}"
+            />
+            <AlertWindow 
+                v-if="!$store.state.user"
+                style='font-family:monospace'
+                color='yellow'
+                text='Wallet not connected: connect wallet wage money on the market'
+                :style="{'margin-bottom':'12px'}"
+            />
+            <div class="top-dashboard-group">
+                <div class="filters-container">
+                    <div class="search-bar-container">
+                        <input class="search-bar"
+                            placeholder="type keywords to find markets"
+                            type='text'
+                            v-model='searchInput'
+                            @keyup="findMarkets"
+                        />
+                        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                    </div>
+                    <span class='checkbox'>
+                        markets created by me
+                        <input type="checkbox" v-model='checkBox' @change='findMarkets'/>
+                    </span>
                 </div>
-                <span class='checkbox'>
-                    markets created by me
-                    <input type="checkbox" v-model='checkBox' @change='findMarkets'/>
-                </span>
-            </div>
-            <CreateMarketButton/>
-        </div>       
+                <CreateMarketButton/>
+            </div>  
+        </div>     
         <div class="markets-display">
             <div class="market-info unselectable" v-for="market in markets" :key="market">
                 <div style="display:flex;justify-content:space-between">
@@ -44,7 +48,8 @@
                     <span style="font-size:15;color:white">{{dateToString(market['resolutionDate'])}}</span>
                 </div>
                 <div style="display:flex;justify-content:space-between">
-                    <button class='predict-button' @click="$router.push(`/markets/${market['marketId']}`)">Make prediction</button>
+                    <button  v-if="!market['resolved']"  class='predict-button' @click="$router.push(`/markets/${market['marketId']}`)">Make prediction</button>
+                    <button  v-if="market['resolved']"  class='predict-button' @click="$router.push(`/markets/${market['marketId']}`)">Collect reward</button>
                     <span style="display:flex; align-items: center;font-weight:400">TVL: {{Math.round(market['tvl'] * 100) / 100}} Dai</span>
                 </div>
 
@@ -81,7 +86,7 @@
                     creator = this.$store.state.user.get('ethAddress');
                 }
                 this.markets = await Moralis.Cloud.run(
-                    '_getMarketInfo', 
+                    'getMarkets', 
                     {
                         creator,
                         description
@@ -147,8 +152,7 @@
     }
 
     .search-bar{
-        outline: 1px solid #7ea7e4;
-        border: none;
+        border: 1.2px solid #a3b7ce;
         background: #0f1f2f;
         color: #ffffff;
         border-radius: 25px;
@@ -159,7 +163,7 @@
     }
 
     .search-icon {
-        color:#8c8b8b;
+        color:#a3b7ce;
         font-size: 14px;
         position: absolute;
         left: 15px;
@@ -212,7 +216,7 @@
     }
 
     .predict-button:hover {
-        background: #acacac;
+        background: #a3b7ce;
     }
 
     .item-container{

@@ -179,7 +179,8 @@ export const _getReward = async(_player, _marketId) => {
         );
         return weiToEth(_reward);
     }catch(error){
-        console.error('could not compute expert score')
+        console.error('could not compute reward')
+        return 0;
     }
 
 }

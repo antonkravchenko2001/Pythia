@@ -1,5 +1,4 @@
 import Moralis from './main.js'
-import {_allowance} from './contract-functions/ContractFunctions.js'
 import { chainId } from './config.js';
 
 //getting chain
@@ -9,7 +8,6 @@ export const checkChain = async () => {
     }catch(error){
         console.error('web3 is already enabled')
     }
-    console.log('allowance', await _allowance(Moralis.User.current().get('ethAddress')));
     const _chainId = await Moralis.getChainId();
     return _chainId === chainId;
 }
@@ -48,6 +46,9 @@ export const dateToUnix = (date=null) => {
 
 //wei to Eth
 export const weiToEth = (weiString) => {
+    if(!weiString){
+        return 0;
+    }
     return parseFloat(Moralis.Units.FromWei(weiString, 18));
 }
 

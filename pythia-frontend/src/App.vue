@@ -40,7 +40,7 @@
   input::placeholder{
     font-weight: 300;
     font-family: Helvetica;
-    color:#b2b2b2;
+    color:#a3b7ce;
   }
 
 

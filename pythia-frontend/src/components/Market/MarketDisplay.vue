@@ -1,18 +1,33 @@
 <template>
     <div v-if='marketExists' class="container-around">
         <div v-if='marketData.marketInfo' class="market-info-container">
-            <div style="display:flex;flex-direction: column;gap: 10px;">
+            <div style="display:flex;flex-direction: column;">
+                <!-- <AlertWindow 
+                    v-if="$refs.marketActions.transaction.status == 1"
+                    style='font-family:monospace'
+                    color='red'
+                    :text='refs.transaction.message'
+                />
+                <AlertWindow 
+                    v-if="$refs.marketActions.transaction.status == 0"
+                    style='font-family:monospace'
+                    color='green'
+                    :text='refs.transaction.message'
+                    :success="true"
+                /> -->
                 <AlertWindow 
                     v-if="!$store.state.chainCorrect"
                     style='font-family:monospace'
                     color='red'
                     :text='incorrectChainMessage'
+                    :style="{'margin-bottom':'12px'}"
                 />
                 <AlertWindow 
                     v-if="!$store.state.user"
                     style='font-family:monospace'
                     color='yellow'
                     text='Wallet not connected: connect wallet wage money on the market'
+                    :style="{'margin-bottom':'12px'}"
                 />
             </div>
             <div class="market-info-space">
@@ -98,7 +113,7 @@ export default {
                 {marketId}
             )
             if(this.marketExists){
-                this.marketData.marketInfo = await this.loadMarket(
+                this.marketData['marketInfo'] = await this.loadMarket(
                     marketId
                 );
                 if(this.$store.state.user){
@@ -129,7 +144,9 @@ export default {
         }
     },
     async created() {
+        console.log(this.marketData);
         this.loadInfo();
+        console.log(this.marketData);
     }
 }
 </script>
@@ -145,13 +162,10 @@ export default {
         font-weight: 400;
     }
     .market-info-container {
-        font-size: 13px;
-        display: grid;
-        gap: 20px;
-        grid-template-rows: repeat(2, max-content);
+        font-size: 14px;
         background-color: #07141f;
         border-radius: 15px;
-        padding: 20px;
+        padding: 25px;
     }
 
     .market-info-space{

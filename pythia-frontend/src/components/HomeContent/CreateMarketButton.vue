@@ -44,12 +44,18 @@ export default {
         width: 160px;
         border: none;
         position:relative;
-        background-color: #177FFF;
+        background-color: #2060e6;
         font-weight: 400;
         color: #ffffff;
         font-size: 12px;
         font-family: 'Montserrat';
     }
+    
+    .create-market-button:hover{
+        background-color: #4377e8;
+    }
+
+    
 
     .inactive-button {
         filter: brightness(40%);
