@@ -26,7 +26,7 @@
                     v-if="!$store.state.user"
                     style='font-family:monospace'
                     color='yellow'
-                    text='Wallet not connected: connect wallet wage money on the market'
+                    text='Wallet not connected: connect wallet to make predictions'
                     :style="{'margin-bottom':'12px'}"
                 />
             </div>
