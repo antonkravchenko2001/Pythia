@@ -3,17 +3,19 @@
         <div v-if='marketData.marketInfo' class="market-info-container">
             <div style="display:flex;flex-direction: column;">
                 <!-- <AlertWindow 
-                    v-if="$refs.marketActions.transaction.status == 1"
-                    style='font-family:monospace'
-                    color='red'
-                    :text='refs.transaction.message'
-                />
-                <AlertWindow 
                     v-if="$refs.marketActions.transaction.status == 0"
                     style='font-family:monospace'
                     color='green'
-                    :text='refs.transaction.message'
+                    :text='$refs.marketActions.transaction.message'
+                    :style="{'margin-bottom':'12px'}"
                     :success="true"
+                />
+                <AlertWindow 
+                    v-if="$refs.marketActions.transaction.status == 1"
+                    style='font-family:monospace'
+                    color='red'
+                    :text='$refs.marketActions.transaction.message'
+                    :style="{'margin-bottom':'12px'}"
                 /> -->
                 <AlertWindow 
                     v-if="!$store.state.chainCorrect"
@@ -26,7 +28,7 @@
                     v-if="!$store.state.user"
                     style='font-family:monospace'
                     color='yellow'
-                    text='Wallet not connected: connect wallet wage money on the market'
+                    text='Wallet not connected: connect wallet make predictions'
                     :style="{'margin-bottom':'12px'}"
                 />
             </div>
@@ -34,7 +36,7 @@
                 <MarketStats :marketData='marketData'/>
                 <div class="state-and-buy-container">
                     <MarketState :marketData='marketData'/>
-                    <MarketActions :marketData='marketData'/>
+                    <MarketActions :marketData='marketData' ref='marketActions'/>
                 </div>
             </div>
         </div>
@@ -103,22 +105,33 @@ export default {
             };
         },
         async loadInfo(){
+            //get market id
             const marketId = this
                         .$route
                         .params
                         .marketId
                         .toString();
+
+            //check whether market exists
             this.marketExists = await Moralis.Cloud.run(
                 'checkMarketExistence',
                 {marketId}
             )
+
+            //if market exists  load market info
             if(this.marketExists){
-                this.marketData['marketInfo'] = await this.loadMarket(
+                this.marketData.marketInfo = await this.loadMarket(
                     marketId
                 );
+
+                // if user connected wallet
                 if(this.$store.state.user){
+
+                    //load player
                     const player = this.$store.state.user.get('ethAddress');
                     this.marketData.playerInfo = await this.loadPlayer(player, marketId)
+
+                    //if market is resolved get withdraw stats
                     if(this.marketData.marketInfo.resolved){
                         this.marketData.withDrawStats =  await this.loadWithdrawStats(player, marketId);
                     }
@@ -128,7 +141,7 @@ export default {
         }
     },
     watch: {
-        '$store.state.user': async function(newVal){
+        '$store.state.user': function(newVal){
             if(newVal && (this.marketData.playerInfo !== null)){
                 const marketId = this
                         .$route
@@ -136,18 +149,29 @@ export default {
                         .marketId
                         .toString()
                 const player = this.$store.state.user.get('ethAddress');
-                this.marketData.playerInfo = await this.loadPlayer(player, marketId)
+                this.loadPlayer(player, marketId)
+                    .then(
+                        (playerInfo) => {
+                            this.marketData.playerInfo = playerInfo;
+                        }
+                    )
                 if(this.marketData.marketInfo.resolved){
-                    this.marketData.withDrawStats =  await this.loadWithdrawStats(player, marketId);
+                    this.loadWithdrawStats(player, marketId)
+                        .then(
+                            (withDrawStats) => {
+                                this.marketData.withDrawStats =  withDrawStats;
+                            }
+                        );
                 }
             }
         }
     },
-    async created() {
-        console.log(this.marketData);
-        this.loadInfo();
+    async mounted(){
+        await this.loadInfo();
+        console.log(this.$refs);
         console.log(this.marketData);
     }
+
 }
 </script>
 
