@@ -99,6 +99,30 @@ import { minMoney } from '../../config';
 import Moralis from '../../main.js';
     export default {
         props: ['marketData'],
+        data(){
+            return {
+                withdrawed: false,
+                buyInfo: {
+                    odds: [0, 0],
+                    moneyToWage: [null, null],
+                    sharesToBuy: [null, null],
+                },
+                formStatus: {
+                    moneyToWage: {
+                        correct: true,
+                        message: ''
+                    }
+                },
+                buttons :{
+                    buy: true,
+                    withdraw: false
+                },
+                transaction: {
+                    status: -1,
+                    message: ''
+                }
+            }
+        },
         methods: {
             delay(time) {
                 return new Promise(resolve => setTimeout(resolve, time));
@@ -251,30 +275,6 @@ import Moralis from '../../main.js';
                 )
             }
         },
-        data(){
-            return {
-                withdrawed: false,
-                buyInfo: {
-                    odds: [0, 0],
-                    moneyToWage: [null, null],
-                    sharesToBuy: [null, null],
-                },
-                formStatus: {
-                    moneyToWage: {
-                        correct: true,
-                        message: ''
-                    }
-                },
-                buttons :{
-                    buy: true,
-                    withdraw: false
-                },
-                transaction: {
-                    status: -1,
-                    message: ''
-                }
-            }
-        },
         computed :{
             getOdds(){
                 const m0 = (
@@ -400,7 +400,7 @@ import Moralis from '../../main.js';
         font-family: 'Montserrat';
     }
     .buy-shares-input {
-        max-width: 85px;
+        max-width: 90px;
         height: 20px;
         background: #375d84;
         color:#ffffff;

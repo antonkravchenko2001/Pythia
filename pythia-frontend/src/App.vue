@@ -10,7 +10,8 @@
       async created(){
           let chainCorrect = await checkChain();
           this.$store.state.chainCorrect = chainCorrect;
-      }
+      },
+
     }
 </script>
 
