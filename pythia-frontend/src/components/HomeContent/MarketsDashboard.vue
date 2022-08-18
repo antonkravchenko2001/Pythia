@@ -92,7 +92,6 @@
                         description
                     }
                 )
-                console.log(this.markets);
             },
             getOptions(obj){
                 return Object.keys(obj);
@@ -107,7 +106,6 @@
         async created(){
             const markets = await Moralis.Cloud.run('getMarkets');
             this.markets = markets;
-            console.log('market', markets);
         }
 
     }

@@ -2,21 +2,6 @@
     <div v-if='marketExists' class="container-around">
         <div v-if='marketData.marketInfo' class="market-info-container">
             <div style="display:flex;flex-direction: column;">
-                <!-- <AlertWindow 
-                    v-if="$refs.marketActions.transaction.status == 0"
-                    style='font-family:monospace'
-                    color='green'
-                    :text='$refs.marketActions.transaction.message'
-                    :style="{'margin-bottom':'12px'}"
-                    :success="true"
-                />
-                <AlertWindow 
-                    v-if="$refs.marketActions.transaction.status == 1"
-                    style='font-family:monospace'
-                    color='red'
-                    :text='$refs.marketActions.transaction.message'
-                    :style="{'margin-bottom':'12px'}"
-                /> -->
                 <AlertWindow 
                     v-if="!$store.state.chainCorrect"
                     style='font-family:monospace'
@@ -168,8 +153,6 @@ export default {
     },
     async mounted(){
         await this.loadInfo();
-        console.log(this.$refs);
-        console.log(this.marketData);
     }
 
 }

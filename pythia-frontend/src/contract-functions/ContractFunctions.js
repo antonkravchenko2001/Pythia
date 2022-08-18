@@ -1,19 +1,19 @@
 import Moralis from '../main.js'
 import {marketsAddress, marketsABI, payTokenAddress, ERC20ABI, chain} from '../config.js'
-import {unixToDate, weiToEth, roundNum} from '../utils.js'
+import {unixToDate, weiToEth, roundNum, ethToWei} from '../utils.js'
 
 
 //call methods
 
 export const _allowance = async(owner) => {
     let options = {
-        chain: chain,
+        chain: '0x89',
         address: payTokenAddress,
         function_name: "allowance",
         abi: ERC20ABI,
         params: {
             owner,
-            spender: marketsAddress,
+            spender: marketsAddress
         },
     };
     try {
@@ -188,17 +188,15 @@ export const _getReward = async(_player, _marketId) => {
 
 //send methods
 
-export const _approvePayTokenTransfer = async(_amount) => {
-
+export const _approvePayTokenTransfer = async(amount) => {
     //get _amount to pay
     const owner = Moralis.User.current().get('ethAddress');
-    const allowance = await _allowance(owner, marketsAddress);
-
-    console.log('allowance', allowance);
-    console.log('amount', _amount);
-
-    if(allowance < _amount){
-        _amount -= allowance
+    let allowance = await _allowance(owner, marketsAddress);
+    amount = weiToEth(amount);
+    allowance = weiToEth(allowance);
+    if(allowance < amount){
+        amount -= allowance;
+        console.log('amount', amount);
         let options = {
             chain: chain,
             contractAddress: payTokenAddress,
@@ -206,25 +204,30 @@ export const _approvePayTokenTransfer = async(_amount) => {
             abi: ERC20ABI,
             params: {
                 spender: marketsAddress,
-                amount: _amount
+                amount: ethToWei([amount])[0]
             },
         };
         try{
             await Moralis.executeFunction(options);
-            console.log(`approved ${_amount} of token`)
+            console.log(`approved ${amount} of token`)
         } catch(error) {
             console.error(error);
+            return false;
         }
     }
-    return false;
+    console.log('amount is smaller than allowance');
 }
 
 
 export const _createMarket = async(params) =>  {
-    const amount =  params._moneyWaged.reduce(
-        (acc, curr) => {return acc + curr;}
-    );
+    const amount =  ethToWei(
+        [
+            weiToEth(params._moneyWaged[0]) + weiToEth(params._moneyWaged[0])
+        ]
+    )[0]
+    console.log(amount);
     await _approvePayTokenTransfer(amount);
+    // console.log('payment approved');
 
     let options = {
         chain: chain,
@@ -245,9 +248,11 @@ export let _wageMoney = async(params) =>  {
         abi: marketsABI,
         params: params
     };
-    const amount = options.params._moneyToWage.reduce(
-        (acc, curr) => {return acc + curr;}
-    );
+    const amount =  ethToWei(
+        [
+            weiToEth(params._moneyToWage[0]) + weiToEth(params._moneyToWage[1])
+        ]
+    )[0]
     await _approvePayTokenTransfer(amount);
     try{
         await Moralis.executeFunction(options);
