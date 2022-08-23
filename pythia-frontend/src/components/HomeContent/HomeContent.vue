@@ -1,5 +1,5 @@
 <template>
-    <div style="display:flex; justify-content:center; height: max-content;position:relative">
+    <div style="display:flex; justify-content:center; height: max-content;position:relative;margin-top:81px;margin-bottom:100px">
         <div class='home-content' :class="{'blur-class': condition}">
             <span style="display:flex;flex-direction:column;gap:10px">
                 <h1 class="title">
@@ -67,8 +67,6 @@ export default {
 <style scoped>
 
     .home-content{
-        max-width: 97%;
-        min-width: 80%;
         display: grid;
         grid-template-rows: repeat(3, max-content);
         gap: 25px;
@@ -83,16 +81,16 @@ export default {
         text-align:left;
         color: #ffffff;
         font-family: 'Montserrat';
-        font-size: 28px;
-        font-weight:450;
+        font-size: 32px;
+        font-weight:500;
         margin: 0px;
     }
 
     .description{
         text-align:left;
-        color: #959595;
+        color: #e8e3fd;
         font-family: 'Montserrat';
-        font-weight:200;
+        font-weight:300;
         font-size: 15px;
         margin: 0px;
     }
@@ -103,5 +101,23 @@ export default {
         right:5px;
         z-index:100;
         top: 0px;
+    }
+
+    @media only screen and (max-width: 1000px) {
+        .home-content {
+            width: 95%;
+        }
+    }
+
+    @media only screen and (min-width: 1001px) {
+        .home-content {
+            width: 85%;
+        }
+    }
+
+    @media only screen and (min-width: 1200px) {
+        .home-content {
+            width: 80%;
+        }
     }
 </style>

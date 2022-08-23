@@ -6,7 +6,6 @@
                     <img src="../../../public/pythia-icon.svg" width='55' height='55' fill="none"/>
                     <h2 style="color:white;font-family:'Montserrat'">Pythia</h2>
                 </div>
-                <BetaVersionSymb/>
             </div>
             <div class="nav-bar-inner">
                 <div v-if="!(this.$route.name === 'home')">
@@ -16,7 +15,7 @@
                     <NavButton path='/leaderboard' text='Leaderboard' type='internal'/>
                 </div>
                 <div>
-                    <NavButton :path="'https://docs.pythia.company/'" text='User docs' type='external'/>
+                    <NavButton :path="'https://docs.pythia.company/'" text='Docs' type='external'/>
                 </div>
                 <div style="display:flex; justify-content:center; align-items:center">
                     <LoginUi/>
@@ -29,7 +28,6 @@
 <script>
 import NavButton from './NavButton.vue'
 import LoginUi from '../subcomponents/LoginUi.vue'
-import BetaVersionSymb from './BetaVersionSymb.vue';
 
     export default {
 
@@ -44,7 +42,6 @@ import BetaVersionSymb from './BetaVersionSymb.vue';
         components: {
             NavButton,
             LoginUi,
-            BetaVersionSymb
         }
     }
 </script>
@@ -55,8 +52,7 @@ import BetaVersionSymb from './BetaVersionSymb.vue';
         display: flex;
         align-items: center;
         justify-content: center;
-        background:#07141f;
-        margin-bottom: 10%;
+        background: #0D1825;
     }
 
     .nav-bar-inner {
@@ -68,8 +64,6 @@ import BetaVersionSymb from './BetaVersionSymb.vue';
         display: flex;
         justify-content: space-between;
         align-items: center;
-        max-width: 97%;
-        min-width: 80%;
     }
 
     .protocol-name-container{
@@ -85,5 +79,23 @@ import BetaVersionSymb from './BetaVersionSymb.vue';
         font-weight: 600;
         color: #b6b5ea;
         font-size: 18px;
+    }
+
+    @media only screen and (max-width: 1000px) {
+        .nav-bar-items {
+            width: 95%;
+        }
+    }
+
+    @media only screen and (min-width: 1001px) {
+        .nav-bar-items {
+            width: 85%;
+        }
+    }
+
+    @media only screen and (min-width: 1200px) {
+        .nav-bar-items {
+            width: 80%;
+        }
     }
 </style>

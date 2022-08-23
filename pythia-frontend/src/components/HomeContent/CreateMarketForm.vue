@@ -1,20 +1,29 @@
 <template>
     <div class="create-market-window" style="z-index:100">
         <div style="display:flex;gap: 10px;flex-direction:column;justify-content:space-between">
+            <i class="fa-solid fa-xmark" @click="cancel"></i>
             <AlertWindow 
-                v-if='transaction.status === 1'
+                v-if="transaction.status === 'fail'"
                 style="font-family:monospace"
                 color='red'
                 :text='transaction.message'
+                :status="transaction.status"
             />
             <AlertWindow 
-                v-if='transaction.status === 0'
+                v-if="transaction.status === 'success'"
                 style="font-family:monospace"
                 color='green'
                 :text='transaction.message'
                 :success="true"
+                :status="transaction.status"
             />
-            <i class="fa-solid fa-xmark" @click="cancel"></i>
+            <AlertWindow 
+                v-if="transaction.status === 'pending'"
+                style="font-family:monospace"
+                color='#ffaf00'
+                :text='transaction.message'
+                :status="transaction.status"
+            />
         </div>
         <div class="market-description">
             Will
@@ -187,7 +196,7 @@
                 },
                 transaction: {
                     message: '',
-                    status: -1
+                    status: null
                 },
                 minMoney: minMoneyCreate,
                 minShares: minSharesCreate
@@ -325,6 +334,7 @@
                         dateToStr(this.marketParams.resolutionDate)
                     ),
                     creator: this.$store.state.user.get('ethAddress'),
+
                 }
             },
             getDepositParams(){
@@ -339,8 +349,6 @@
                 }
             },
             async createMarket(){
-                //reset transaction status
-                this.setTransactionStatus(-1, '');
                 //get asset
                 const asset =  await this.getAsset();
                 this.marketParams.asset = asset;
@@ -353,38 +361,46 @@
                     //create market
                     const createOptions = this.getCreateMarketParams();
                     this.marketParams.marketId = await _numMarkets();
-                    try{
-                        await _createMarket(createOptions);
-                        this.setTransactionStatus(0, 'Transaction successful: market is created');
-                    } catch(error){
-                        this.setTransactionStatus(1, 'Transaction failed: try creating market again');
-                        return false;
+
+                    this.setTransactionStatus(
+                        'pending',
+                        'Transaction pending: wait until it is completed'
+                    );
+                    
+                    //get transaction status
+                    const creationStatus  = await _createMarket(createOptions);
+
+                    //check if transaction is successful
+                    if(creationStatus){
+
+                        //save market
+                        this.setTransactionStatus('success', 'Transaction successful: market is created');
+                        const saveMarketParams = this.getSaveMarketParams();
+                        await Moralis.Cloud.run(
+                            'saveMarket', {
+                                marketId: this.marketParams.marketId,
+                                values: saveMarketParams
+                            }
+                        );
+
+                        // save deposit transaction
+                        const saveDepositParams = this.getDepositParams();
+                        await Moralis.Cloud.run(
+                            'deposit',
+                            saveDepositParams
+                        );
+
+
+                        //delay loading
+                        this
+                        .delay(2000)
+                        .then(
+                            () => this.$router.go()
+                        );
+
+                    }else{
+                        this.setTransactionStatus('fail', 'Transaction failed: try creating market again');
                     }
-
-
-                    //save market
-                    const saveMarketParams = this.getSaveMarketParams();
-                    await Moralis.Cloud.run(
-                        'saveMarket', {
-                            marketId: this.marketParams.marketId,
-                            values: saveMarketParams
-                        }
-                    );
-
-                    // save deposit transaction
-                    const saveDepositParams = this.getDepositParams();
-                    await Moralis.Cloud.run(
-                        'deposit',
-                        saveDepositParams
-                    );
-                    console.log('player saved!')
-
-                    //dalay loading
-                    this
-                    .delay(3000)
-                    .then(
-                        () => this.$router.go()
-                    );
                 }
             },
         },

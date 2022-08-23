@@ -22,7 +22,7 @@
     width: 100%;
     overflow-x: hidden;
     padding: 0px;
-    background: linear-gradient(90deg, rgb(11 30 44) 0%, #081723 53%, #0d2234 100%);
+    background:#0F1C2C;
     margin:0px;
     font-family: ui-sans-serif;
   }
@@ -42,15 +42,9 @@
     font-weight: 300;
     font-family: Helvetica;
     color:#a3b7ce;
+    font-size: 15px;
   }
-
-
-  textarea::placeholder{
-    font-weight: 200;
-    font-family: 'Montserrat';
-    color:#bebebe;
-  }
-
+  
   button{
     font-family: 'Montserrat';
     font-weight: 450;

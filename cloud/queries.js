@@ -188,6 +188,9 @@ Moralis.Cloud.define('deposit', async(request) => {
     deposit.set('moneyNo', params.moneyNo);
     deposit.set('sharesNo', params.sharesNo);
     deposit.set('sharesYes', params.sharesYes);
+    if(params.marketCreation){
+        deposit.set('marketCreation', params.marketCreation);
+    }
 
     await deposit.save();
 });

@@ -7,19 +7,21 @@
                 color='red'
                 :text='incorrectChainMessage'
                 :style="{'margin-bottom':'12px'}"
+                status="fail"
             />
             <AlertWindow 
                 v-if="!$store.state.user"
                 style='font-family:monospace'
                 color='yellow'
-                text='Wallet not connected: connect wallet wage money on the market'
+                text='Wallet not connected: connect wallet to start predicting'
                 :style="{'margin-bottom':'12px'}"
+                status="fail"
             />
             <div class="top-dashboard-group">
                 <div class="filters-container">
                     <div class="search-bar-container">
                         <input class="search-bar"
-                            placeholder="type keywords to find markets"
+                            placeholder="type key words to find markets"
                             type='text'
                             v-model='searchInput'
                             @keyup="findMarkets"
@@ -27,8 +29,13 @@
                         <i class="fa-solid fa-magnifying-glass search-icon"></i>
                     </div>
                     <span class='checkbox'>
-                        markets created by me
-                        <input type="checkbox" v-model='checkBox' @change='findMarkets'/>
+                        created by me
+                        <div v-if="$store.state.user">
+                            <input type="checkbox" v-model='checkBox' @change='findMarkets'/>
+                        </div>
+                        <div v-else>
+                            <input type="checkbox" v-model='checkBox' @change='findMarkets' disabled/>
+                        </div>
                     </span>
                 </div>
                 <CreateMarketButton/>
@@ -117,7 +124,7 @@
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        background: #07141f;
+        background: #0F1824;
         border-radius: 15px;
         padding: 30px;
         gap: 30px;
@@ -156,8 +163,9 @@
         border-radius: 25px;
         padding-left: 35px;
         padding-right: 15px;
-        width: min(200px, 100%);
-        height: min(100%, 25px);
+        font-size: 15px;
+        width: min(210px, 100%);
+        height: min(100%, 30px);
     }
 
     .search-icon {
@@ -173,7 +181,7 @@
         align-items:center;
         gap: 5px;
         color:#ffffff;
-        font-size: 13px;
+        font-size: 14px;
         font-weight:350;
         font-family:'Montserrat'
     }
@@ -192,7 +200,7 @@
         justify-content: space-between;
         padding:15px;
         border-radius: 10px;
-        background-color: #102438;
+        background-color: #162A43;
         color:#ffffff;
         font-size: 13px;
         font-family: 'Montserrat';
@@ -203,18 +211,23 @@
     .asset-pair {
         margin: 0px;
         font-weight: 450;
-        font-size: 18px;
+        font-size: 20px;
     }
 
     .predict-button {
-        border-radius: 10px;
+        border-radius: 15px;
         border: none;
         padding: 5px;
-        width: max(50%, 130px);
+        height: 35px;
+        font-size: 15px;
+        width: max(50%, 150px);
+        box-shadow: rgb(15 38 56 / 15%) 0px 48px 100px 0px;
     }
 
     .predict-button:hover {
-        background: #a3b7ce;
+        background: #5491d5cf;
+        color: white;
+        box-shadow:none;
     }
 
     .item-container{
@@ -231,7 +244,7 @@
     }
 
     .description{
-        font-size: 14px;
+        font-size: 15px;
         font-weight: 500;
     }
 
@@ -239,19 +252,23 @@
         color: #ffffff;
         background: #c92204bc;
         border-radius: 15px;
+        height: 20px;
         padding: 3px;
         display: flex;
         justify-content: center;
+        align-items: center;
         width: 90px;
     }
 
     .resolved {
         color: #ffffff;
         background: #02d70894;
+        height: 20px;
         border-radius: 15px;
         padding: 3px;
         display: flex;
         justify-content: center;
+        align-items: center;
         width: 90px;
     }
 

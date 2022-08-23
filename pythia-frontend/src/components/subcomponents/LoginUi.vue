@@ -70,8 +70,8 @@ export default {
     color: #000000;
     border: none;
     border-radius: 15px;
-    font-size: 12px;
-    min-width:135px;
+    font-size: 14px;
+    min-width:160px;
 }
 
  .login-button:hover{

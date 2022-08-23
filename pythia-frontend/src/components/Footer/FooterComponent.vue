@@ -2,7 +2,7 @@
     <div style="width: 100%;display: flex;justify-content: center;">
         <div class="footer">
             <span style="display:flex;justify-content:center;align-items:center;gap:10px;">
-                <img src="../../../public/pythia-icon.svg" width='50' height='50' fill="none"/>
+                <img src="../../../public/pythia-icon.svg" width='55' height='55' fill="none"/>
                 <h2 class="title">Pythia</h2>
             </span>
             <ul class="no-bullets">
@@ -13,16 +13,16 @@
                 <span class="list-title">Social media</span>
                 <span class="social-media" style="margin-top:10px;">
                     <span style='cursor:pointer'>
-                        <img src="../../../public/logos/telegram.svg" width='20' height='20' fill="none" @click="open('telegram')"/>
+                        <img src="../../../public/logos/telegram.svg" width='27' height='27' fill="none" @click="open('telegram')"/>
                     </span>
                     <span style='cursor:pointer'>
-                        <img src="../../../public/logos/twitter.svg" width='20' height='20' fill="none" @click="open('twitter')"/>
+                        <img src="../../../public/logos/twitter.svg" width='27' height='27' fill="none" @click="open('twitter')"/>
                     </span>
                     <span style='cursor:pointer'>
-                        <img src="../../../public/logos/linkedin.svg" width='20' height='20' fill="none" @click="open('linkedin')"/>
+                        <img src="../../../public/logos/linkedin.svg" width='27' height='27' fill="none" @click="open('linkedin')"/>
                     </span>
                     <span style='cursor:pointer'>
-                        <img src="../../../public/logos/github.svg" width='20' height='20' fill="none" @click="open('github')"/>
+                        <img src="../../../public/logos/github.svg" width='27' height='27' fill="none" @click="open('github')"/>
                     </span>
                 </span>
             </div>
@@ -52,15 +52,12 @@
 <style scoped>
     .footer {
         display:flex;
-        justify-content: center;
-        gap: 7%;
-        max-width: max-content;
-        min-width: 100%;
-        margin-top: 10%;
-        padding-bottom: 5%;
+        justify-content: space-between;
+        padding-bottom: 20px;
         font-family: 'Montserrat';
+        width: 85%;
         font-weight: 350;
-        font-size: 13px;
+        font-size: 15px;
         color: #909090;
     }
 
@@ -103,4 +100,28 @@
         color:#ffffff;
         font-size: 24px;
     }
+
+
+    @media only screen and (max-width: 1000px) {
+        .footer {
+            width: 95%;
+        }
+    }
+
+    @media only screen and (min-width: 1001px) {
+        .footer {
+            width: 85%;
+        }
+    }
+
+    @media only screen and (min-width: 1200px) {
+        .footer {
+            width: 80%;
+        }
+    }
+
+
+
+
+
 </style>

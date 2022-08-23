@@ -40,14 +40,14 @@ export default {
         align-items: center;
         justify-content: space-evenly;
         border-radius: 8px;
-        height: 35px;
-        width: 160px;
+        height: 40px;
+        width: 180px;
         border: none;
         position:relative;
         background-color: #2060e6;
         font-weight: 400;
         color: #ffffff;
-        font-size: 12px;
+        font-size: 14px;
         font-family: 'Montserrat';
     }
     

@@ -4,24 +4,52 @@
             <div style="display:flex;flex-direction: column;">
                 <AlertWindow 
                     v-if="!$store.state.chainCorrect"
-                    style='font-family:monospace'
                     color='red'
                     :text='incorrectChainMessage'
                     :style="{'margin-bottom':'12px'}"
+                    status="fail"
                 />
                 <AlertWindow 
                     v-if="!$store.state.user"
-                    style='font-family:monospace'
                     color='yellow'
-                    text='Wallet not connected: connect wallet to make predictions'
+                    text='Wallet not connected: connect wallet to start predicting'
                     :style="{'margin-bottom':'12px'}"
+                    status="fail"
+                />
+
+
+                <AlertWindow 
+                    v-if="transaction.status === 'fail'"
+                    :style="{'margin-bottom':'12px'}"
+                    color='red'
+                    :text='transaction.message'
+                    :status="transaction.status"
+                />
+                <AlertWindow 
+                    v-if="transaction.status === 'success'"
+                    :style="{'margin-bottom':'12px'}"
+                    color='green'
+                    :text='transaction.message'
+                    :success="true"
+                    :status="transaction.status"
+                />
+                <AlertWindow 
+                    v-if="transaction.status === 'pending'"
+                    :style="{'margin-bottom':'12px'}"
+                    color='#ffaf00'
+                    :text='transaction.message'
+                    :status="transaction.status"
                 />
             </div>
             <div class="market-info-space">
                 <MarketStats :marketData='marketData'/>
                 <div class="state-and-buy-container">
                     <MarketState :marketData='marketData'/>
-                    <MarketActions :marketData='marketData' ref='marketActions'/>
+                    <MarketActions 
+                        :marketData='marketData'
+                        ref='marketActions' 
+                        @transaction="setTransaction"
+                    />
                 </div>
             </div>
         </div>
@@ -44,7 +72,7 @@ import {incorrectChainMessage} from '../../config.js'
 import Moralis from '../../main.js'
 
 export default {
-        components: {
+    components: {
         MarketStats,
         MarketState,
         MarketActions,
@@ -61,10 +89,20 @@ export default {
                 },
                 withDrawStats: {},
             },
-            incorrectChainMessage
+            incorrectChainMessage,
+            transaction: {
+                status: null,
+                message: ''
+            }
         }
     },
     methods: {
+
+        //set transaction status
+        setTransaction(transaction){
+            this.transaction.status = transaction.status;
+            this.transaction.message = transaction.message
+        },
         //load market info
         async loadMarket(marketId){
             let marketInfo = await _getMarketInfo(marketId);
@@ -167,10 +205,12 @@ export default {
         position: relative;
         font-family: 'Montserrat';
         font-weight: 400;
+        margin-top: 81px;
+        margin-bottom: 100px;
     }
     .market-info-container {
         font-size: 14px;
-        background-color: #07141f;
+        background-color: #0F1824;
         border-radius: 15px;
         padding: 25px;
     }

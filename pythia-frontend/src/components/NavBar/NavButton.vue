@@ -22,12 +22,15 @@ export default {
 
  .home-button {
     background: transparent;
-    padding:10px;
+    padding-right:30px;
+    padding-top: 32.5px;
+    padding-left: 10px;
+    padding-bottom: 32.5px;
     color: #ffffff;
     border: None;
-    font-size: 13px;
+    font-size: 14px;
     font-family: 'MontSerrat';
-    font-weight: 450;
+    font-weight: 400;
  }
 
  .home-button:hover{

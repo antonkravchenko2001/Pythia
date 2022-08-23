@@ -5,6 +5,11 @@ import {unixToDate, weiToEth, roundNum, ethToWei} from '../utils.js'
 
 //call methods
 
+const executeTransaction = async(options) => {
+    let tx = await Moralis.executeFunction(options);
+    await tx.wait();
+}
+
 export const _allowance = async(owner) => {
     let options = {
         chain: chain,
@@ -20,7 +25,6 @@ export const _allowance = async(owner) => {
         let allowance = await Moralis.Web3API.native.runContractFunction(
             options
         );
-        console.log('allowance', allowance);
         return allowance;
     } catch (error){
         console.error(error);
@@ -79,7 +83,6 @@ export const _getMarketInfo = async(_marketId) => {
             resolved: _marketInfo[5],
             winningOutcome: parseInt(_marketInfo[6])
         }
-        console.log(marketInfo);
         return marketInfo;
 
     } catch (error){
@@ -111,7 +114,6 @@ export const _getPlayerInfo = async(_player, _marketId) => {
             expertScore: weiToEth(_playerInfo[3]),
             withdrawed: _playerInfo[4]
         };
-        console.log(playerInfo);
         return playerInfo;
     } catch (error){
         console.error(error);
@@ -196,8 +198,6 @@ export const _approvePayTokenTransfer = async(amount) => {
     amount = weiToEth(amount);
     allowance = weiToEth(allowance);
     if(allowance < amount){
-        amount -= allowance;
-        console.log('amount', amount);
         let options = {
             chain: chain,
             contractAddress: payTokenAddress,
@@ -209,36 +209,43 @@ export const _approvePayTokenTransfer = async(amount) => {
             },
         };
         try{
-            await Moralis.executeFunction(options);
-            console.log(`approved ${amount} of token`)
+            await executeTransaction(options);
+            return true;
         } catch(error) {
             console.error(error);
             return false;
         }
     }
-    console.log('amount is smaller than allowance');
+    return true;
+
 }
 
 
 export const _createMarket = async(params) =>  {
     const amount =  ethToWei(
         [
-            weiToEth(params._moneyWaged[0]) + weiToEth(params._moneyWaged[0])
+            weiToEth(params._moneyWaged[0]) + weiToEth(params._moneyWaged[1])
         ]
     )[0]
-    console.log(amount);
-    await _approvePayTokenTransfer(amount);
-    // console.log('payment approved');
-
-    let options = {
-        chain: chain,
-        contractAddress: marketsAddress,
-        functionName: "createMarket",
-        abi: marketsABI,
-        params: params
-    };
-    await Moralis.executeFunction(options);
-
+    let approvalStatus = await _approvePayTokenTransfer(amount);
+    console.log('status', approvalStatus);
+    if(approvalStatus){
+        let options = {
+            chain: chain,
+            contractAddress: marketsAddress,
+            functionName: "createMarket",
+            abi: marketsABI,
+            params: params
+        };
+        try{
+            await executeTransaction(options);
+            return true;
+        }catch(error){
+            console.error(error);
+            return false;
+        }
+    }
+    return false;
 }
 
 export let _wageMoney = async(params) =>  {
@@ -254,13 +261,17 @@ export let _wageMoney = async(params) =>  {
             weiToEth(params._moneyToWage[0]) + weiToEth(params._moneyToWage[1])
         ]
     )[0]
-    await _approvePayTokenTransfer(amount);
-    try{
-        await Moralis.executeFunction(options);
-        console.log('money waged');
-    } catch(error){
-        console.error(error);
+    let approvalStatus = await _approvePayTokenTransfer(amount);
+    if(approvalStatus){
+        try{
+            await executeTransaction(options);
+            return true;
+        } catch(error){
+            console.error(error);
+            return false;
+        }
     }
+    return false;
 }
 
 export let _withdrawWinnings = async(_marketId) =>  {
@@ -272,10 +283,9 @@ export let _withdrawWinnings = async(_marketId) =>  {
         params: {_marketId}
     };
     try{
-        await Moralis.executeFunction(options);
-        console.log('money withdrawed');
+        await executeTransaction(options);
         return true;
-    } catch(error){
+    }catch(error){
         console.error(error);
         return false;
     }

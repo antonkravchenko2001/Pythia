@@ -141,10 +141,6 @@ import Moralis from '../../main.js';
             round(num){
                 return roundNum(num)
             },
-            setTransactionStatus(status, message){
-                this.transaction.message = message;
-                this.transaction.status = status;
-            },
             getMoneyToWage(){
                 let moneyToWage = []
                 for(const el of this.buyInfo.moneyToWage){
@@ -208,7 +204,7 @@ import Moralis from '../../main.js';
                 return shares;
             },
             async wageMoney(){
-                this.setTransactionStatus(-1, '');
+
                 const moneyToWage = this.getMoneyToWage();
                 this.validateMoneyWaged();
                 let formStatus = this.getFormStatus();
@@ -217,32 +213,50 @@ import Moralis from '../../main.js';
 
                     let shares0 = await this.calcShares(0);
                     let shares1 = await this.calcShares(1);
-                    console.log('shares to buy', shares0, shares1);
-                    try{
-                        await _wageMoney(
-                            {
-                                _marketId: this.marketData.marketInfo.marketId,
-                                _moneyToWage: ethToWei(moneyToWage)
-                            }
-                        )
-                    } catch(error){
-                        this.setTransactionStatus(1, 'Transaction failed: try predicting again');
-                        return false;
-                    }
-                    this.setTransactionStatus(0, 'Transaction successful: prediction recorded');
-                    //save player
-                    await this.saveDeposit(
-                        moneyToWage,
-                        [shares0, shares1]
-                    );
 
-                    //reload the page
-                    this
-                    .delay(3000)
-                    .then(
-                        () => this.$router.go()
+                    //emit event
+                    this.$emit(
+                        'transaction', {
+                            status: 'pending',
+                            message: 'Transaction pending: wait until it is completed'
+                        }
                     );
-                    
+                    const status = await _wageMoney(
+                        {
+                            _marketId: this.marketData.marketInfo.marketId,
+                            _moneyToWage: ethToWei(moneyToWage)
+                        }
+                    )
+                    console.log(status);
+                    if(status){
+
+                        //emit event
+                        this.$emit(
+                            'transaction', {
+                                status: 'success',
+                                message: 'Transaction successful: prediction made'
+                            }
+                        );
+
+                        await this.saveDeposit(
+                            moneyToWage,
+                            [shares0, shares1]
+                        );
+
+                        //reload the page
+                        this
+                        .delay(2000)
+                        .then(
+                            () => this.$router.go()
+                        );
+                    }else{
+                        this.$emit(
+                            'transaction', {
+                                status: 'fail',
+                                message: 'Transaction failed: try predicting again'
+                            }
+                        );
+                    }
                 }
             },
             async saveWithdraw(reward, expertScore){
@@ -263,16 +277,43 @@ import Moralis from '../../main.js';
                                 .params
                                 .marketId
                                 .toString();
-                try{
-                    await _withdrawWinnings(_marketId);
-                } catch(error){
-                    return false;
-                }
 
-                await this.saveWithdraw(
-                    this.marketData.withDrawStats.reward,
-                    this.marketData.withDrawStats.expertScore
-                )
+                this.$emit(
+                    'transaction', {
+                        status: 'pending',
+                        message: 'Transaction pending: wait until it is completed'
+                    }
+                );
+
+                const status = await _withdrawWinnings(_marketId);
+                if(status){
+
+                    this.$emit(
+                        'transaction', {
+                            status: 'success',
+                            message: 'Transaction successful: reward is received'
+                        }
+                    );
+
+                    await this.saveWithdraw(
+                        this.marketData.withDrawStats.reward,
+                        this.marketData.withDrawStats.expertScore
+                    );
+
+                    //reload the page
+                    this
+                    .delay(2000)
+                    .then(
+                        () => this.$router.go()
+                    );
+                }else{
+                    this.$emit(
+                        'transaction', {
+                            status: 'fail',
+                            message: 'Transaction failed: try receiving reward again'
+                        }
+                    );
+                }
             }
         },
         computed :{
@@ -404,8 +445,8 @@ import Moralis from '../../main.js';
         height: 20px;
         background: #375d84;
         color:#ffffff;
-        font-weight: 200;
-        font-family: 'Montserrat';
+        font-weight: 400;
+        font-family: Helvetica;
         border: none;
     }
 
