@@ -357,9 +357,9 @@
                 const formStatus = this.validateInputs();
 
                 if(formStatus){
-
                     //create market
                     const createOptions = this.getCreateMarketParams();
+                    console.log(createOptions);
                     this.marketParams.marketId = await _numMarkets();
 
                     this.setTransactionStatus(

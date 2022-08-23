@@ -64,6 +64,8 @@ export const _getMarketInfo = async(_marketId) => {
             options
         );
 
+        console.log(_marketInfo);
+
         let asset = await Moralis.Cloud.run(
             "getAssets",
             {priceFeed: _marketInfo[0]}
@@ -77,7 +79,7 @@ export const _getMarketInfo = async(_marketId) => {
             strikePrice: weiToEth(_marketInfo[1][0]),
             resolutionPrice: weiToEth(_marketInfo[1][1]),
             wageDeadline: unixToDate(_marketInfo[2][0]),
-            resolutionDate: unixToDate(_marketInfo[2][0]),
+            resolutionDate: unixToDate(_marketInfo[2][1]),
             sharesOwned: [weiToEth(_marketInfo[3][0]), weiToEth(_marketInfo[3][1])],
             moneyWaged: [weiToEth(_marketInfo[4][0]), weiToEth(_marketInfo[4][1])],
             resolved: _marketInfo[5],
