@@ -36,7 +36,7 @@
             return {
                 telegram: 'https://t.me/+861c-md9WcVkZmQy',
                 github: 'https://github.com/antonkravchenko2001/Pythia',
-                twitter: 'https://twitter.com/PythiaCompany',
+                twitter: 'https://twitter.com/PythiaOfficial',
                 linkedin: 'https://www.linkedin.com/company/pythia-company/about/?viewAsMember=true',
                 email: 'support@pythia.company'
             }
