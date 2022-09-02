@@ -6,6 +6,14 @@
                     <img src="../../../public/pythia-icon.svg" width='55' height='55' fill="none"/>
                     <h2 style="color:white;font-family:'Montserrat'">Pythia</h2>
                 </div>
+                <div>
+                    <NavButton 
+                        path='https://faucets.chain.link/'
+                        text='Kovan faucet'
+                        type='external'
+                        fontweight='450'
+                    />
+                </div>
             </div>
             <div class="nav-bar-inner">
                 <div v-if="!(this.$route.name === 'home')">
