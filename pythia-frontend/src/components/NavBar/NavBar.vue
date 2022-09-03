@@ -8,10 +8,11 @@
                 </div>
                 <div>
                     <NavButton 
-                        path='https://faucets.chain.link/'
-                        text='Kovan faucet'
+                        path='https://kovan.balancer.fi/#/trade/0xdfcea9088c8a88a76ff74892c1457c17dfeef9c1/0x04df6e4121c27713ed22341e7c7df330f56f289b'
+                        text='Get Kovan Dai'
                         type='external'
-                        fontweight='450'
+                        fontweight='500'
+                        fontsize="15px"
                     />
                 </div>
             </div>
