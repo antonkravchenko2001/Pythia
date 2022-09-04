@@ -9,7 +9,7 @@
                 <div>
                     <NavButton 
                         path='https://kovan.balancer.fi/#/trade/0xdfcea9088c8a88a76ff74892c1457c17dfeef9c1/0x04df6e4121c27713ed22341e7c7df330f56f289b'
-                        text='Get Kovan Dai'
+                        text='Get DAI on Kovan'
                         type='external'
                         fontweight='500'
                         fontsize="15px"
