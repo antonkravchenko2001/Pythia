@@ -6,8 +6,16 @@
 
 <script>
     import { checkChain } from './utils';
+    import Moralis from './main.js'
+  
     export default {
       async created(){
+          console.log(
+            await Moralis.Cloud.run(
+              'getMarketstatus',
+               {_marketId: '3'}
+            )
+          );
           let chainCorrect = await checkChain();
           this.$store.state.chainCorrect = chainCorrect;
       },

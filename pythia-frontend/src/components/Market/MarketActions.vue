@@ -77,6 +77,7 @@
                         unclickable: (
                             isWithdrawed ||
                             withdrawed ||
+                            !$store.state.chainCorrect ||
                             marketData.withDrawStats.reward == 0
                         )
                     }"
