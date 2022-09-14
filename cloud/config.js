@@ -331,5 +331,5 @@ const marketsABI = [
 		"type": "function"
 	}
 ];
-const marketsAddress = '0x2Cc6ceb084BBDb565fEf43eCA48C753b6b4E0D52';
-const chain = 'kovan';
+const marketsAddress = '0x0650f7C019D26D913C42472aE52D2Cf414C7BeC4';
+const chain = 'mumbai';

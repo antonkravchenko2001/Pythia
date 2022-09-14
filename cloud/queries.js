@@ -63,29 +63,30 @@ Moralis.Cloud.define(
         const query = new Moralis.Query('Markets');
         const today = new Date();
         today.setUTCHours(12,0,0,0);
-        const previous = new Date();
-        previous.setDate(today.getDate() - 2);
-        previous.setUTCHours(12,0,0,0);
 
         query.lessThanOrEqualTo('resolutionDate', today);
-        query.greaterThanOrEqualTo("resolutionDate", previous);
 
         let markets = await query.find();
 
         let marketInfo;
-        let res = [];
         let market;
     
         for(let i = 0; i < markets.length; i++){
             market = markets[i];
-            marketInfo = await Moralis.Cloud.run(
-                'getMarketstatus',
-                {_marketId: market.get('marketId')}
-            )
 
-            market.set('resolved', marketInfo.resolved);
-            market.set('winningOutcome', marketInfo.winningOutcome);
-            await market.save();
+            if(!market.get('resolved')){
+                marketInfo = await Moralis.Cloud.run(
+                    'getMarketstatus',
+                    {_marketId: market.get('marketId')}
+                )
+    
+                market.set('resolved', marketInfo.resolved);
+                market.set('winningOutcome', marketInfo.winningOutcome);
+                console.log(
+                    `market: ${market.get('marketId')}, resolved: ${market.get('resolved')}`
+                )
+                await market.save();
+            }
         }
     }
 )

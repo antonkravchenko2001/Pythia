@@ -6,6 +6,7 @@
 
 <script>
     import { checkChain } from './utils';
+
     export default {
       async created(){
           let chainCorrect = await checkChain();

@@ -1,5 +1,5 @@
-export const serverUrl = 'https://uj5tozevki90.usemoralis.com:2053/server';
-export const appId = 'cKC95YPjyNN8qvLLqEEeGiYZwwc1qRZd8MqoBegb';
+export const serverUrl = 'https://wrxrdt8cxkm2.usemoralis.com:2053/server';
+export const appId = '5AU8mfgNoDiEmw48V0OvieNLOpPzkz3TthML2GmD';
 export const marketsABI = [
 	{
 		"inputs": [
@@ -333,7 +333,7 @@ export const marketsABI = [
 		"type": "function"
 	}
 ];
-export const marketsAddress = '0x2Cc6ceb084BBDb565fEf43eCA48C753b6b4E0D52';
+export const marketsAddress = '0x0650f7C019D26D913C42472aE52D2Cf414C7BeC4';
 export const ERC20ABI = [
 	{
 		"anonymous": false,
@@ -519,14 +519,14 @@ export const ERC20ABI = [
 		"type": "function"
 	}
 ];
-export const payTokenAddress = '0x04DF6e4121c27713ED22341E7c7Df330F56f289B';
-export const chain = 'kovan';
-export const chainId = "0x2a";
+export const payTokenAddress = '0x01551CbD6981E461cACbb6DC5E18d1493E78dB0f';
+export const chain = 'mumbai';
+export const chainId = "0x13881";
 
 
-export const minSharesCreate = 10;
-export const minMoneyCreate = 10;
+export const minSharesCreate = 1;
+export const minMoneyCreate = 1;
 
 export const minMoney = 5;
 
-export const incorrectChainMessage = 'Incorrect network: please switch to Kovan Test Network';
+export const incorrectChainMessage = 'Incorrect network: please switch to Mumbai Test Network';
