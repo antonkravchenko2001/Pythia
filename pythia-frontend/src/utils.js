@@ -9,6 +9,7 @@ export const checkChain = async () => {
         console.error('web3 is already enabled')
     }
     const _chainId = await Moralis.getChainId();
+    console.log('chain id', _chainId);
     return _chainId === chainId;
 }
 
