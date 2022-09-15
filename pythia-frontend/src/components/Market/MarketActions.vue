@@ -362,6 +362,9 @@ import Moralis from '../../main.js';
             isWithdrawed(){
                 return this.marketData.playerInfo.withdrawed
             }
+        },
+        mounted(){
+            console.log(this.marketData);
         }
     }
 </script>

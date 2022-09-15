@@ -63,7 +63,6 @@ export const _getMarketInfo = async(_marketId) => {
         let _marketInfo = await Moralis.Web3API.native.runContractFunction(
             options
         );
-        console.log(_marketInfo);
 
         let asset = await Moralis.Cloud.run(
             "getAssets",

@@ -6,15 +6,6 @@
                     <img src="../../../public/pythia-icon.svg" width='55' height='55' fill="none"/>
                     <h2 style="color:white;font-family:'Montserrat'">Pythia</h2>
                 </div>
-                <div>
-                    <NavButton 
-                        path='https://kovan.balancer.fi/#/trade/0xdfcea9088c8a88a76ff74892c1457c17dfeef9c1/0x04df6e4121c27713ed22341e7c7df330f56f289b'
-                        text='Get DAI on Kovan'
-                        type='external'
-                        fontweight='500'
-                        fontsize="15px"
-                    />
-                </div>
             </div>
             <div class="nav-bar-inner">
                 <div v-if="!(this.$route.name === 'home')">

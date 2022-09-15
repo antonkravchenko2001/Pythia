@@ -38,7 +38,7 @@ export const dateToUnix = (date=null) => {
         unixTimestamp = Math.floor(date.getTime() / 1000);
     }else {
         date = new Date(Date.parse(date));
-        date.setUTCHours(12,0,0,0);
+        date.setUTCHours(13,32,0,0);
         unixTimestamp = Math.floor(date.getTime() / 1000);
     }
     return unixTimestamp;

@@ -62,7 +62,7 @@ Moralis.Cloud.define(
     async(request) => {
         const query = new Moralis.Query('Markets');
         const today = new Date();
-        today.setUTCHours(12,0,0,0);
+        today.setUTCHours(13,32,0,0);
 
         query.lessThanOrEqualTo('resolutionDate', today);
 
@@ -73,7 +73,7 @@ Moralis.Cloud.define(
     
         for(let i = 0; i < markets.length; i++){
             market = markets[i];
-
+          
             if(!market.get('resolved')){
                 marketInfo = await Moralis.Cloud.run(
                     'getMarketstatus',
@@ -82,7 +82,7 @@ Moralis.Cloud.define(
     
                 market.set('resolved', marketInfo.resolved);
                 market.set('winningOutcome', marketInfo.winningOutcome);
-                console.log(
+                logger.info(
                     `market: ${market.get('marketId')}, resolved: ${market.get('resolved')}`
                 )
                 await market.save();
