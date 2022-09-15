@@ -19,7 +19,7 @@
                         <img src="../../../public/logos/twitter.svg" width='27' height='27' fill="none" @click="open('twitter')"/>
                     </span>
                     <span style='cursor:pointer'>
-                        <img src="../../../public/logos/linkedin.svg" width='27' height='27' fill="none" @click="open('linkedin')"/>
+                        <img src="../../../public/logos/discord.svg" width='27' height='27' fill="none" @click="open('discord')"/>
                     </span>
                     <span style='cursor:pointer'>
                         <img src="../../../public/logos/github.svg" width='27' height='27' fill="none" @click="open('github')"/>
@@ -37,7 +37,7 @@
                 telegram: 'https://t.me/+861c-md9WcVkZmQy',
                 github: 'https://github.com/antonkravchenko2001/Pythia',
                 twitter: 'https://twitter.com/PythiaOfficial',
-                linkedin: 'https://www.linkedin.com/company/pythia-company/about/?viewAsMember=true',
+                discord: 'https://discord.gg/kAQfXtxC44',
                 email: 'support@pythia.company'
             }
         },
