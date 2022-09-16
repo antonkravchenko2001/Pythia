@@ -523,9 +523,9 @@ export const payTokenAddress = '0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063';
 export const chain = 'polygon';
 export const chainId = "0x89";
 
-export const minSharesCreate = 4;
-export const minMoneyCreate = 4;
+export const minSharesCreate = 2;
+export const minMoneyCreate = 2;
 
-export const minMoney = 2;
+export const minMoney = 1;
 
 export const incorrectChainMessage = 'Incorrect network: please switch to Polygon Main Network';
