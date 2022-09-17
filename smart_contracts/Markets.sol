@@ -339,7 +339,7 @@ contract Markets is KeeperCompatibleInterface{
         for(uint256 i; i < _resolvedMarketIds.length; i++){
             _marketId = _resolvedMarketIds[i];
 
-            //double check that the market is not resolved
+            //check that the market is not resolved
             if(
                 (!markets[_marketId].resolved) &&
                 (markets[_marketId].resolutionDate <= block.timestamp)
@@ -599,4 +599,3 @@ contract Markets is KeeperCompatibleInterface{
     }
 
 }
-
