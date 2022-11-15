@@ -1,5 +1,5 @@
-import Moralis from './main.js'
 import { chainId } from './config.js';
+import Moralis from './main.js';
 
 //getting chain
 export const checkChain = async () => {
@@ -38,7 +38,7 @@ export const dateToUnix = (date=null) => {
         unixTimestamp = Math.floor(date.getTime() / 1000);
     }else {
         date = new Date(Date.parse(date));
-        date.setUTCHours(13,32,0,0);
+        date.setUTCHours(19,30,0,0);
         unixTimestamp = Math.floor(date.getTime() / 1000);
     }
     return unixTimestamp;

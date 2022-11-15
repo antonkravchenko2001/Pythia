@@ -62,7 +62,7 @@ Moralis.Cloud.define(
     async(request) => {
         const query = new Moralis.Query('Markets');
         const today = new Date();
-        today.setUTCHours(13,32,0,0);
+        today.setUTCHours(19,30,0,0);
 
         query.lessThanOrEqualTo('resolutionDate', today);
 
